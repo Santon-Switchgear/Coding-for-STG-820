@@ -1,7 +1,10 @@
 /**
   ******************************************************************************
   * File Name          : main.c
-  * Description        : Main program body
+  * Description        : Main program body Changed in accordance with 50Mz Project
+	* Company						 : Santon Switchgear / santon Holland BV
+	* Author/Editor			 : Zander van der Steege
+	* Project code based on Example of STMicroelectronics
   ******************************************************************************
   *
   * COPYRIGHT(c) 2016 STMicroelectronics
@@ -34,16 +37,18 @@
 #include "main.h"
 #include "stm32f0xx_hal.h"
 #include "main_hal.h"
-#include "CANopen.h" 
+#include "CANopen.h"
+#include <stdlib.h>
+#include <string.h>
 
 /* Private variables ---------------------------------------------------------*/
 CanTxMsgTypeDef CAN_TX_Msg;
 CanRxMsgTypeDef CAN_RX_Msg;
 __IO uint16_t u16Timer = 0;
 __IO uint8_t u8TmrCallbackEnabled = 0;
+int NodeID = 56;
 
-
-#define TMR_TASK_INTERVAL   (1000)          /* Interval of tmrTask thread in microseconds */
+#define TMR_TASK_INTERVAL   (100)          /* Interval of tmrTask thread in microseconds */
 #define INCREMENT_1MS(var)  (var++)         /* Increment 1ms variable in tmrTask */
 
 /* Global variables and objects */
@@ -122,6 +127,116 @@ void HAL_SYSTICK_Callback(void)
 	  tmrTask_thread();
 }
 
+
+int Initialize_outputs(){
+	//STG-826 
+	// 6 INPUTS(3X DIGITAL,3 X ANALOG 0-34VDC), 
+	// 4 OUTPUTS (3X DIGITAL, 1X ANALOG)
+	//========================================================================
+	
+	
+	//initialize Analog output 5V 
+	//for encoder with DAC functionality (OUT4) analogset to 5V
+	//DAC1_CHANNEL_1_WritePin(GPIOC,GPIO_PIN_4,50); // trigger set analog OUT4 to 5V
+	
+	//Initialize Jumper output set HIGH (24V)
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, 1); //JUMPER Set pin 2 (OUT1) HIGH / TRUE
+	
+	//Initialize Microswitch Status powered outputs
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_2, 1); //MICROSWITCH 1 + 2 Set pin 3 (OUT2) HIGH / TRUE
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, 1); //MICROSWITCH 3 + 4 Set pin 4 (OUT3) HIGH / TRUE
+	
+	
+	return(true);
+}
+
+
+float EN1_filter(n)
+{
+	
+	//uint16_t data[n];
+	float SUM = 0;
+	float Enc_val = 0;
+	int N=n;
+	long Average;
+	while (n<=25)
+		{
+		float Enc_Val_raw = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_0);// READ ENCODER VALUE float value NOT digital value
+		//Normalization
+		//____________________
+		
+		Enc_val = Enc_Val_raw - 2.917;//Subtraction
+		Enc_val = Enc_val / 0.94;      			//Division
+		Enc_val = Enc_val * 1023;           //GAIN
+	  //data[n] = Enc_val;
+		SUM = SUM + Enc_val;   							//Sum for Average 
+		n = n+1;														//value counter
+		}
+	
+	return(Average = (long)SUM/(long)N);
+}
+
+ int * Validaton(Enc_valid){
+	 static int Data[10]= {0};
+	 
+	 if(Enc_valid > -5 && Enc_valid < 1028) // Datavalidility check {Enc_DataVal}
+	 {
+		 Data[0] = true;
+	 }
+	 else
+	 {
+		 Data[0] = false;
+	 }
+	 
+	 if(Enc_valid > 631 && Enc_valid < 1028) // TRACTION Pos active {TrBr_T}
+	 {
+		 Data[1] = true;
+		 if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_3)){Data[5] = 0;}else{Data[5]=1;} //Check status of S1 {MICRO1_TrBr_Ko}
+	 }
+	 else
+	 {
+		 Data[1] = false;
+		 if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_3)){Data[5] = 1;}else{Data[5]=0;}
+	 }
+	 
+	 if(Enc_valid > 541 && Enc_valid < 551) // IDLE Pos active {TrBr_Zero}
+	 {
+		 Data[2] = true;
+		 if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4)){Data[6] = 0;}else{Data[6]=1;} //Check status of S2 {MICRO2_TrBr_Ko}
+	 }
+	 else
+	 {
+		 Data[2] = false;
+		 if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4)){Data[6] = 1;}else{Data[6]=0;}
+	 }
+	 
+	 if(Enc_valid > 109 && Enc_valid < 500) // BRAKE Pos active {TrBr_B}
+	 {
+		 Data[3] = true;
+		 if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_6)){Data[8] = 0;}else{Data[8]=1;} //Check status of S4 {MICRO4_TrBr_Ko}
+	 }
+	 else
+	 {
+		 Data[3] = false;
+		 if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_6)){Data[8] = 1;}else{Data[8]=0;}
+	 }
+	 
+	 	 if(Enc_valid > -5 && Enc_valid < 5) // EMERGENCY Pos active {TrBr_EMG} 
+	 {
+		 Data[4] = true;
+		 if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_5)){Data[7] = 1;}else{Data[7]=0;} //Check status of S3 {MICRO3_TrBr_Ko}
+	 }
+	 else
+	 {
+		 Data[4] = false;
+		 if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_5)){Data[7] = 0;}else{Data[7]=1;}
+	 }
+	 if( Data[5] || Data[6] || Data[7] || Data[8]){Data[9] = 0;} else{Data[9]=1;}
+	 return(Data);
+ }
+
+
+
 int main(void)
 {
 	// Do not change the system clock above 16 MHz! Higher speed can lead to the destruction of the module!
@@ -148,9 +263,44 @@ int main(void)
 		// CANOpen sample code
 		// Untested port of https://github.com/CANopenNode/CANopenNode
 		// =======================================================================
+		bool STAT1 = Initialize_outputs();
+		//========================================================================
+			//CAN-Open NodeID depending on if Jumper of OUT1 is TRUE/FALSE
+			//TRUE : closed/TRUE (Node ID = 58) 
+			//FALSE: open/FALSE  (Node ID = 56)
+			//========================================================================
+			int NodeID1 = 56; //Default set Node ID if Jumper open/FALSE
+			bool NodeID = 0;
+			if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1))  //Condition is TRUE if pin 13 of register c is HIGH / TRUE
+			{
+				int NodeID1 = 58; //CPU1-CAB2
+				NodeID = 1;
+			}
+			else
+			{
+				int NodeID1 = 56; //CPU1-CAB1
+				NodeID = 0;
+			}
+			
+			
+			STAT1 = Initialize_outputs();
+			//========================================================================
+			//Read analog inputs and call arithmitic function for n values of encoder
+			//1. Moving average function + convert Float to LONG int 
+			//2. Switch status readout
+			//========================================================================
+			 
+			
+			long Enc_Val_filtered = EN1_filter(25);//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
+			
+			int * CAN_DATA[10] = {Validaton(Enc_Val_filtered)};//Function to validate the microswitches and encoder validility and convert them to an array
 
 		while(reset != CO_RESET_APP)
 		{
+			
+			
+			
+			
 			/* CANopen communication reset - initialize CANopen objects *******************/
 			CO_ReturnError_t err;
 			uint16_t timer1msPrevious;
@@ -159,7 +309,7 @@ int main(void)
       CanDisable();
 
 			/* initialize CANopen */
-			err = CO_init(0/* CAN module address */, 10/* NodeID */, CAN_250K /* bit rate */);
+			err = CO_init(0/* CAN module address */, NodeID1 /* NodeID */, CAN_250K /* bit rate */);
 			if(err != CO_ERROR_NO)
 			{
 					while(1)
@@ -176,8 +326,54 @@ int main(void)
 
 
 			/* Configure Timer interrupt function for execution every 1 millisecond */
-
-
+			
+			//50MZ CANOPEN SETUP Not functioning
+			//==========================================================================
+			hcan.pTxMsg->IDE = CAN_ID_STD;//Standard-ID
+			if (NodeID){hcan.pTxMsg->StdId = 0x003A;   //Reciever adres: 0x003A (DMA-15)
+				}
+			else{hcan.pTxMsg->StdId = 0x0038;   //Reciever adres: 0x0038 (DMA-15)
+				}
+			int * Data[16] = {0};
+			
+			hcan.pTxMsg->DLC = 18;         //Message length: 18 bytes
+//			//==========================================================================
+//			//50MZ CANOPEN MSG Extracted from CAN_DATA list                              NEED TO FIGURE OUT OUT TO INSERT CAN_DATA[] INTO Data[]
+			hcan.pTxMsg-> Data [0] = 0x09; // Enc_Val 				[long]
+			hcan.pTxMsg-> Data [1] = 0x01; // Enc_Data_Val		[bool]
+			hcan.pTxMsg-> Data [2] = 0x01; // TrBr_T 					[bool]
+			hcan.pTxMsg-> Data [3] = 0x01; // TrBr_Zero				[bool]
+			hcan.pTxMsg-> Data [4] = 0x01; // TrBr_B     			[bool]
+			hcan.pTxMsg-> Data [5] = 0x01; // TrBr_EMG				[bool]
+			hcan.pTxMsg-> Data [6] = 0x01; // MICRO1_TrBr_Ko	[bool]
+			hcan.pTxMsg-> Data [7] = 0x01; // MICRO2_TrBr_Ko	[bool]
+//			hcan.pTxMsg-> Data [8] = 0x01; // MICRO3_TrBr_Ko	[bool]
+//			hcan.pTxMsg-> Data [9] = 0x01; // MICRO4_TrBr_Ko	[bool]
+//			hcan.pTxMsg-> Data [10] = 0x01; // TrBr_dataValid	[bool]
+//			HAL_CAN_Transmit (& hcan, 10);  // 10ms time delay for safe transmission
+//			}
+			long Enc_Val = Enc_Val_filtered;
+			bool Enc_Data_Val 	= CAN_DATA[0];
+			bool TrBr_T 				= CAN_DATA[1];
+			bool TrBr_Zero			= CAN_DATA[2];
+			bool TrBr_B					= CAN_DATA[3];
+			bool TrBr_EMG				= CAN_DATA[4];
+			bool MICRO1_TrBr_Ko	= CAN_DATA[5];
+			bool MICRO2_TrBr_Ko	= CAN_DATA[6];
+			bool MICRO3_TrBr_Ko	= CAN_DATA[7];
+			bool MICRO4_TrBr_Ko	= CAN_DATA[8];
+					
+				
+			hcan.pTxMsg->Data[0] = Enc_Val; //Freigabevariable übergeben 
+			hcan.pTxMsg->Data[1] = Enc_Data_Val;    //Stromvariable übergeben
+			hcan.pTxMsg->Data[2] = TrBr_T; //Schrittzahl Low-Byte übergeben
+			hcan.pTxMsg->Data[3] = TrBr_Zero; //Schrittzahl High-Byte übergeben
+			hcan.pTxMsg->Data[4] = TrBr_B; //MinimalFrequenz Low-Byte übergeben
+			hcan.pTxMsg->Data[5] = TrBr_EMG; //MinimalFrequenz High-Byte übergeben
+			hcan.pTxMsg->Data[6] = MICRO1_TrBr_Ko; //MaximalFrequenz Low-Byte übergeben
+			hcan.pTxMsg->Data[7] = MICRO2_TrBr_Ko; //MaximalFrequenz Low-Byte übergeben
+			hcan.pTxMsg->Data[8] = MICRO3_TrBr_Ko;
+			HAL_CAN_Transmit(&hcan, 10);  //10ms Zeitverzögerung für sicheres Senden	
 			/* Configure CAN transmit and receive interrupt */
       CanEnable();
 
@@ -233,7 +429,7 @@ int main(void)
     /* stop threads */
 
     /* delete objects from memory */
-    CO_delete(0/* CAN module address */);
+    CO_delete(NodeID1/* CAN module address */);
  		
 		
   }

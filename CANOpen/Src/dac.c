@@ -1,10 +1,11 @@
 /**
   ******************************************************************************
-  * File Name          : main.h
-  * Description        : This file contains the common defines of the application
+  * File Name          : DAC.c
+  * Description        : This file provides code for the configuration
+  *                      of the DAC instances.
   ******************************************************************************
   *
-  * COPYRIGHT(c) 2016 STMicroelectronics
+  * COPYRIGHT(c) 2021 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -30,64 +31,100 @@
   *
   ******************************************************************************
   */
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MAIN_H
-#define __MAIN_H
-  /* Includes ------------------------------------------------------------------*/
 
-/* USER CODE BEGIN Includes */
+/* Includes ------------------------------------------------------------------*/
+#include "dac.h"
 
-/* USER CODE END Includes */
+#include "gpio.h"
 
-/* Private define ------------------------------------------------------------*/
-#define CAN_1M 1
-#define CAN_500K 2
-#define CAN_250K 4
-#define CAN_125K 8
-#define CAN_100K 10
-#define CAN_50K 20
-#define ADC_IN1 1
-#define ADC_IN2 2
-#define ADC_IN3 3
+/* USER CODE BEGIN 0 */
 
-#define Out1_HS_Pin GPIO_PIN_13
-#define Out1_HS_GPIO_Port GPIOC
-#define Out2_HS_Pin GPIO_PIN_14
-#define Out2_HS_GPIO_Port GPIOC
-#define Out3_HS_Pin GPIO_PIN_15
-#define Out3_HS_GPIO_Port GPIOC
-#define Out4_HS_Pin GPIO_PIN_4
-#define Out4_HS_GPIO_Port GPIOA
-#define LED_Pin GPIO_PIN_8
-#define LED_GPIO_Port GPIOA
-#define CAN_S_Pin GPIO_PIN_6
-#define CAN_S_GPIO_Port GPIOB
-#define Out5_LS_T17_1N_Pin GPIO_PIN_7
-#define Out5_LS_T17_1N_GPIO_Port GPIOB
-/* USER CODE BEGIN Private defines */
+/* USER CODE END 0 */
 
-#define PRODUCTION_VERSION 0 // Version for Debugging without Watch dog
-//#define PRODUCTION_VERSION 1 // Version for Production with Watch dog
+DAC_HandleTypeDef hdac;
 
-#define DIN4_Pin GPIO_PIN_12
-#define DIN4_Port GPIOA
-#define DIN5_Pin GPIO_PIN_15
-#define DIN5_Port GPIOA
+/* DAC init function */
+void MX_DAC_Init(void)
+{
+  DAC_ChannelConfTypeDef sConfig;
 
-#define EEPROM_ADDRESS			0xA0
-#define EEPROM_BUFFER_SIZE	32  // Page size
-#define EEPROM_WRITE_TIME		5   // Page write time in ms
-#define EEPROM_TIMEOUT			10  // timeout for write
+    /**DAC Initialization
+    */
+  hdac.Instance = DAC;
+  if (HAL_DAC_Init(&hdac) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
-/* USER CODE END Private defines */
+    /**DAC channel OUT2 config
+    */
+  sConfig.DAC_Trigger = DAC_TRIGGER_NONE;
+  sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
+  if (HAL_DAC_ConfigChannel(&hdac, &sConfig, DAC_CHANNEL_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+}
+
+void HAL_DAC_MspInit(DAC_HandleTypeDef* dacHandle)
+{
+
+  GPIO_InitTypeDef GPIO_InitStruct;
+  if(dacHandle->Instance==DAC)
+  {
+  /* USER CODE BEGIN DAC_MspInit 0 */
+
+  /* USER CODE END DAC_MspInit 0 */
+    /* Peripheral clock enable */
+    __HAL_RCC_DAC1_CLK_ENABLE();
+
+    /**DAC GPIO Configuration
+    PA5     ------> DAC_OUT2
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_5;
+    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN DAC_MspInit 1 */
+
+  /* USER CODE END DAC_MspInit 1 */
+  }
+}
+
+void HAL_DAC_MspDeInit(DAC_HandleTypeDef* dacHandle)
+{
+
+  if(dacHandle->Instance==DAC)
+  {
+  /* USER CODE BEGIN DAC_MspDeInit 0 */
+
+  /* USER CODE END DAC_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_DAC1_CLK_DISABLE();
+
+    /**DAC GPIO Configuration
+    PA5     ------> DAC_OUT2
+    */
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_5);
+
+  }
+  /* USER CODE BEGIN DAC_MspDeInit 1 */
+
+  /* USER CODE END DAC_MspDeInit 1 */
+}
+
+/* USER CODE BEGIN 1 */
+
+/* USER CODE END 1 */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-*/ 
+  */
 
-#endif /* __MAIN_H */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
