@@ -1,0 +1,6 @@
+--cpu Cortex-M0 -g --apcs=interwork --pd "__MICROLIB SETA 1"
+-I.\RTE\_BARTH
+-IC:\Users\zvdsteege\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include
+-IC:\Users\zvdsteege\AppData\Local\Arm\Packs\Keil\STM32F0xx_DFP\2.1.0\Drivers\CMSIS\Device\ST\STM32F0xx\Include
+--pd "__UVISION_VERSION SETA 535" --pd "_RTE_ SETA 1" --pd "STM32F091xC SETA 1" --pd "_RTE_ SETA 1"
+-o .\out\startup_stm32f091xc.o --depend .\out\startup_stm32f091xc.d "startup_stm32f091xc.s"

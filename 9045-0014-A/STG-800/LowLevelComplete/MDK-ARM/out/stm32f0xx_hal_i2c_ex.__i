@@ -1,0 +1,6 @@
+-c --cpu Cortex-M0 -D__MICROLIB -g -O0 -Otime --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F0xx_HAL_Driver/Inc -I ../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F0xx/Include -I ../Drivers/CMSIS/Include --C99
+-I.\RTE\_BARTH
+-IC:\Users\zvdsteege\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include
+-IC:\Users\zvdsteege\AppData\Local\Arm\Packs\Keil\STM32F0xx_DFP\2.1.0\Drivers\CMSIS\Device\ST\STM32F0xx\Include
+-D__UVISION_VERSION="535" -D_RTE_ -DSTM32F091xC -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F091xC
+-o .\out\stm32f0xx_hal_i2c_ex.o --omf_browse .\out\stm32f0xx_hal_i2c_ex.crf --depend .\out\stm32f0xx_hal_i2c_ex.d "../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_i2c_ex.c"
