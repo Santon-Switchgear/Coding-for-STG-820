@@ -175,7 +175,7 @@ int Initialize_outputs(){
 	//for encoder with DAC functionality (OUT4) analogset to 5V
 	//DAC1_CHANNEL_1_WritePin(GPIOC,GPIO_PIN_4,50); // trigger set analog OUT4 to 5V
 	
-	SetAnalogOutput(5100);
+//	SetAnalogOutput(5100);
 	//Initialize Jumper output set HIGH (24V)
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, 1); //JUMPER Set pin 2 (OUT1) HIGH / TRUE
 	
@@ -291,11 +291,11 @@ int main(void)
   MainInit();
 	// LED On
 	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
-	
+//	HAL_DAC_Init()
 	// Setup Analog output										//ANALOG SETUP WITH DAC FILES ARE NOT LINKING UNSURE WHY FOR THE MOMENT
-	HAL_DAC_Start(&hdac, DAC_CHANNEL_2);			// I TRIED ADDING DAC TO MAIN_HAL.C I MIGHT BE DOING THIS INCORRECTLY
+//	HAL_DAC_Start(&hdac, DAC_CHANNEL_2);			// I TRIED ADDING DAC TO MAIN_HAL.C I MIGHT BE DOING THIS INCORRECTLY
 																						// I NEED TO FIGURE OUT HOW TO INSERT NEW LIBRARY'S TO PROJECT EXAMPLE: DAC 
-	SetAnalogOutput(5100);//5000 mV output constant (max 5100)
+//	SetAnalogOutput(5100);//5000 mV output constant (max 5100)
 	// =======================================================================
 	// Set up baudrate
 	hcan.Instance->BTR &= 0xFFFFFC00;

@@ -1,6 +1,6 @@
 .\out\canopen.o: ..\CANopenNode-master\CANopen.c
 .\out\canopen.o: ..\CANopenNode-master\CANopen.h
-.\out\canopen.o: ..\CANopenNode-master\stack\CO_driver.h
+.\out\canopen.o: ../Drivers/CMSIS/Include/CO_driver.h
 .\out\canopen.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal.h
 .\out\canopen.o: ../Inc/stm32f0xx_hal_conf.h
 .\out\canopen.o: ../Inc/main.h
