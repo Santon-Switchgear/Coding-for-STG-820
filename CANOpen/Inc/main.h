@@ -58,6 +58,8 @@
 #define Out3_HS_GPIO_Port GPIOC
 #define Out4_HS_Pin GPIO_PIN_4
 #define Out4_HS_GPIO_Port GPIOA
+#define OUT5_DAC_Pin GPIO_PIN_5
+#define OUT5_DAC_GPIO_Port GPIOA
 #define LED_Pin GPIO_PIN_8
 #define LED_GPIO_Port GPIOA
 #define CAN_S_Pin GPIO_PIN_6

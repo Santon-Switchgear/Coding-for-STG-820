@@ -11,6 +11,7 @@ static void MX_ADC_Init(void);
 static void MX_CAN_Init(void);
 static void MX_I2C2_Init(void);
 static void MX_IWDG_Init(void);
+static void MX_DAC_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM17_Init(void);
@@ -24,10 +25,20 @@ ADC_HandleTypeDef hadc;
 CAN_HandleTypeDef hcan;
 I2C_HandleTypeDef hi2c2;
 IWDG_HandleTypeDef hiwdg;
+DAC_HandleTypeDef hdac;
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim17;
 UART_HandleTypeDef huart1;
+
+
+void SetAnalogOutput ( uint16_t u16mV )
+{
+	if ( u16mV > 5100 )
+		u16mV = 5100;
+	HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, (uint16_t)((uint32_t)u16mV*4095/5100));
+}
+
 
 void CanEnable ( void )
 {
@@ -183,6 +194,7 @@ void MainInit ( void )
   MX_I2C2_Init();
   MX_IWDG_Init();
   MX_TIM1_Init();
+	MX_DAC_Init();//added
   MX_TIM2_Init();
   MX_TIM17_Init();
   MX_USART1_UART_Init();
@@ -415,6 +427,31 @@ static void MX_CAN_Init(void)
   hcan.Init.RFLM = DISABLE;
   hcan.Init.TXFP = DISABLE;
   if (HAL_CAN_Init(&hcan) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+}
+
+/* DAC init function */
+static void MX_DAC_Init(void)
+{
+
+  DAC_ChannelConfTypeDef sConfig;
+
+    /**DAC Initialization 
+    */
+  hdac.Instance = DAC;
+  if (HAL_DAC_Init(&hdac) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+    /**DAC channel OUT2 config 
+    */
+  sConfig.DAC_Trigger = DAC_TRIGGER_NONE;
+  sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
+  if (HAL_DAC_ConfigChannel(&hdac, &sConfig, DAC_CHANNEL_2) != HAL_OK)
   {
     Error_Handler();
   }

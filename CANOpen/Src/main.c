@@ -32,6 +32,41 @@
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *
   ******************************************************************************
+	MAIN.C +MAIN_HAL.C HAVE BEEN EDITED FOR THE SAKE OF THIS PROJECT,
+	THE FOLLOWING CHANGES ARE NOT WORKING YET, I WILL TRY FINING A SOLUTION 
+	BUT	ALSO REQUEST BARTH ELEKTRONIK FOR ASSITANCE.
+	_________________________________________
+	1. CAN COMMUNICATION EXCEEDS 8 BYTE DATA 
+	HOW DO I ASSIGN LARGER DATA TO THE CAN ID TRANSMISSION DATA? 16 BIT/32 BIT
+	
+	1 LONG, 10 BOOL VARIABLES
+	_________________________________________
+	2.ANALOG OUTPUT FUNCTION NOT WORKING DUE TO INCOORECLY IMPORTING INTO PROJECT
+	IS THERE A MANUAL THAT I MISSED FOR THIS, CAN YOU FIX THE LINK FOR ME IN THE MEANTIME?
+	
+	_________________________________________
+	3.
+	I/O STG-820			I/O µC		GIPO_PIN
+				IN 1			PA0
+				IN 2			PA1
+				IN 3			PA2
+				IN 4			PA12
+				IN 5			PA15
+				IN 6			PA16?			
+				OUT 1			PC13			GPIO_PIN_1
+				OUT 2			PC14			GPIO_PIN_2
+				OUT 3			PC15			GPIO_PIN_3
+				OUT 4			PA4				GPIO_PIN_2
+				OUT 5			PB7				NA
+				IRDA_TX		PB10
+				IRDA_RX		PB11
+				RS232_TX	PA9
+				RS232_RX	PA10
+				CAN_TX		PB9
+				CAN_RX		PB8
+				LED	PA8
+
+	
   */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -52,13 +87,14 @@ int NodeID = 56;
 #define INCREMENT_1MS(var)  (var++)         /* Increment 1ms variable in tmrTask */
 
 /* Global variables and objects */
-    volatile uint16_t   CO_timer1ms = 0U;   /* variable increments each millisecond */ 
+    volatile uint16_t   CO_timer1ms = 0U;   /* variable increments each millisecond */  //UNSURE OF PURPOSE
+		volatile bool FAILSTATE = false; // added foas global FAILSTATE variable
 
-/* Private function prototypes -----------------------------------------------*/
+/* Private function prototypes -----------------------------------------------*/ //UNSURE OF PURPOSE
 uint8_t u8Data[16];
 
 
-/* timer thread executes in constant intervals ********************************/
+/* timer thread executes in constant intervals ********************************/ //UNSURE OF PURPOSE
 static void tmrTask_thread(void)
 {
   //for(;;) 
@@ -139,6 +175,7 @@ int Initialize_outputs(){
 	//for encoder with DAC functionality (OUT4) analogset to 5V
 	//DAC1_CHANNEL_1_WritePin(GPIOC,GPIO_PIN_4,50); // trigger set analog OUT4 to 5V
 	
+	SetAnalogOutput(5100);
 	//Initialize Jumper output set HIGH (24V)
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, 1); //JUMPER Set pin 2 (OUT1) HIGH / TRUE
 	
@@ -231,7 +268,15 @@ float EN1_filter(n)
 		 Data[4] = false;
 		 if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_5)){Data[7] = 0;}else{Data[7]=1;}
 	 }
-	 if( Data[5] || Data[6] || Data[7] || Data[8]){Data[9] = 0;} else{Data[9]=1;}
+	 if( Data[5] || Data[6] || Data[7] || Data[8] || FAILSTATE)
+		{
+			Data[9] = 0;
+			FAILSTATE = true;
+		} 
+		else
+		{
+			Data[9]=1;
+		}
 	 return(Data);
  }
 
@@ -247,6 +292,10 @@ int main(void)
 	// LED On
 	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
 	
+	// Setup Analog output										//ANALOG SETUP WITH DAC FILES ARE NOT LINKING UNSURE WHY FOR THE MOMENT
+	HAL_DAC_Start(&hdac, DAC_CHANNEL_2);			// I TRIED ADDING DAC TO MAIN_HAL.C I MIGHT BE DOING THIS INCORRECTLY
+																						// I NEED TO FIGURE OUT HOW TO INSERT NEW LIBRARY'S TO PROJECT EXAMPLE: DAC 
+	SetAnalogOutput(5100);//5000 mV output constant (max 5100)
 	// =======================================================================
 	// Set up baudrate
 	hcan.Instance->BTR &= 0xFFFFFC00;
@@ -263,7 +312,7 @@ int main(void)
 		// CANOpen sample code
 		// Untested port of https://github.com/CANopenNode/CANopenNode
 		// =======================================================================
-		bool STAT1 = Initialize_outputs();
+		bool STAT1 = Initialize_outputs(); // Initialization of outputs Analog and digital
 		//========================================================================
 			//CAN-Open NodeID depending on if Jumper of OUT1 is TRUE/FALSE
 			//TRUE : closed/TRUE (Node ID = 58) 
@@ -336,9 +385,9 @@ int main(void)
 				}
 			int * Data[16] = {0};
 			
-			hcan.pTxMsg->DLC = 18;         //Message length: 18 bytes
+			hcan.pTxMsg->DLC = 18;         //Message length: 16 bytes (0-1023 long int + 10 bool binary variables
 //			//==========================================================================
-//			//50MZ CANOPEN MSG Extracted from CAN_DATA list                              NEED TO FIGURE OUT OUT TO INSERT CAN_DATA[] INTO Data[]
+//			//50MZ CANOPEN MSG Extracted from CAN_DATA list                              !!!!!!NEED TO FIGURE OUT OUT TO INSERT CAN_DATA[] INTO Data[]
 			hcan.pTxMsg-> Data [0] = 0x09; // Enc_Val 				[long]
 			hcan.pTxMsg-> Data [1] = 0x01; // Enc_Data_Val		[bool]
 			hcan.pTxMsg-> Data [2] = 0x01; // TrBr_T 					[bool]
@@ -347,10 +396,10 @@ int main(void)
 			hcan.pTxMsg-> Data [5] = 0x01; // TrBr_EMG				[bool]
 			hcan.pTxMsg-> Data [6] = 0x01; // MICRO1_TrBr_Ko	[bool]
 			hcan.pTxMsg-> Data [7] = 0x01; // MICRO2_TrBr_Ko	[bool]
-//			hcan.pTxMsg-> Data [8] = 0x01; // MICRO3_TrBr_Ko	[bool]
-//			hcan.pTxMsg-> Data [9] = 0x01; // MICRO4_TrBr_Ko	[bool]
-//			hcan.pTxMsg-> Data [10] = 0x01; // TrBr_dataValid	[bool]
-//			HAL_CAN_Transmit (& hcan, 10);  // 10ms time delay for safe transmission
+			hcan.pTxMsg-> Data [8] = 0x01; // MICRO3_TrBr_Ko	[bool]
+			hcan.pTxMsg-> Data [9] = 0x01; // MICRO4_TrBr_Ko	[bool]
+			hcan.pTxMsg-> Data [10] = 0x01; // TrBr_dataValid	[bool]
+			HAL_CAN_Transmit (& hcan, 10);  // 10ms time delay for safe transmission
 //			}
 			long Enc_Val = Enc_Val_filtered;
 			bool Enc_Data_Val 	= CAN_DATA[0];
@@ -362,17 +411,19 @@ int main(void)
 			bool MICRO2_TrBr_Ko	= CAN_DATA[6];
 			bool MICRO3_TrBr_Ko	= CAN_DATA[7];
 			bool MICRO4_TrBr_Ko	= CAN_DATA[8];
-					
+			bool TrBr_dataValid = CAN_DATA[9];	
 				
-			hcan.pTxMsg->Data[0] = Enc_Val; //Freigabevariable übergeben 
-			hcan.pTxMsg->Data[1] = Enc_Data_Val;    //Stromvariable übergeben
-			hcan.pTxMsg->Data[2] = TrBr_T; //Schrittzahl Low-Byte übergeben
-			hcan.pTxMsg->Data[3] = TrBr_Zero; //Schrittzahl High-Byte übergeben
-			hcan.pTxMsg->Data[4] = TrBr_B; //MinimalFrequenz Low-Byte übergeben
-			hcan.pTxMsg->Data[5] = TrBr_EMG; //MinimalFrequenz High-Byte übergeben
-			hcan.pTxMsg->Data[6] = MICRO1_TrBr_Ko; //MaximalFrequenz Low-Byte übergeben
-			hcan.pTxMsg->Data[7] = MICRO2_TrBr_Ko; //MaximalFrequenz Low-Byte übergeben
-			hcan.pTxMsg->Data[8] = MICRO3_TrBr_Ko;
+			hcan.pTxMsg->Data[0] = Enc_Val; //Encoder Value 0-1023
+			hcan.pTxMsg->Data[1] = Enc_Data_Val;    //Verify Encoder is within range
+			hcan.pTxMsg->Data[2] = TrBr_T; //Enc_Val within Traction position range 
+			hcan.pTxMsg->Data[3] = TrBr_Zero; //Enc_Val within IDLE/Zero position range 
+			hcan.pTxMsg->Data[4] = TrBr_B; //Enc_Val within Brake position range 
+			hcan.pTxMsg->Data[5] = TrBr_EMG; //Enc_Val within Emergency position range 
+			hcan.pTxMsg->Data[6] = MICRO1_TrBr_Ko; //Micro switch not in error (=0/FALSE) (within range of TRACTION)
+			hcan.pTxMsg->Data[7] = MICRO2_TrBr_Ko; //Micro switch not in error (=0/FALSE) (within range of IDLE)
+			hcan.pTxMsg->Data[8] = MICRO3_TrBr_Ko; //Micro switch not in error (=0/FALSE) (within range of EMERGENCY)
+			hcan.pTxMsg->Data[9] = MICRO4_TrBr_Ko; //Micro switch not in error (=0/FALSE) (within range of BRAKE)
+			hcan.pTxMsg->Data[10] = TrBr_dataValid;//Micro switches 1-4 not in error (=0/FALSE) (within range)			
 			HAL_CAN_Transmit(&hcan, 10);  //10ms Zeitverzögerung für sicheres Senden	
 			/* Configure CAN transmit and receive interrupt */
       CanEnable();
@@ -436,4 +487,4 @@ int main(void)
 }
 
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics & Santon Switchgear *****END OF FILE****/

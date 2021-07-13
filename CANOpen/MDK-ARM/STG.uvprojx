@@ -384,16 +384,6 @@
           <GroupName>Application/User</GroupName>
           <Files>
             <File>
-              <FileName>stm32f0xx_hal_msp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Src/stm32f0xx_hal_msp.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f0xx_it.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Src/stm32f0xx_it.c</FilePath>
-            </File>
-            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/main.c</FilePath>
@@ -448,6 +438,21 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
+            </File>
+            <File>
+              <FileName>stm32f0xx_it.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Src/stm32f0xx_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_hal_msp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Src/stm32f0xx_hal_msp.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_hal_dac.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Src\stm32f0xx_hal_dac.h</FilePath>
             </File>
             <File>
               <FileName>main_hal.c</FileName>
@@ -559,6 +564,21 @@
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_gpio.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f0xx_hal_dac_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\stm32f0xx_hal_dac_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_hal_dac.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Src\stm32f0xx_hal_dac.h</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_hal_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\stm32f0xx_hal_dac.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -665,5 +685,14 @@
     </components>
     <files/>
   </RTE>
+
+  <LayerInfo>
+    <Layers>
+      <Layer>
+        <LayName>STG</LayName>
+        <LayPrjMark>1</LayPrjMark>
+      </Layer>
+    </Layers>
+  </LayerInfo>
 
 </Project>
