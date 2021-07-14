@@ -35,3 +35,6 @@
 .\out\stm32f0xx_hal_msp.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_tim_ex.h
 .\out\stm32f0xx_hal_msp.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart.h
 .\out\stm32f0xx_hal_msp.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart_ex.h
+.\out\stm32f0xx_hal_msp.o: ../Src/stm32f0xx_hal_dac.h
+.\out\stm32f0xx_hal_msp.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_dac_ex.h
+.\out\stm32f0xx_hal_msp.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_dac.h

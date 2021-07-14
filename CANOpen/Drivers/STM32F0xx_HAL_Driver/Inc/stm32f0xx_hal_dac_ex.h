@@ -53,7 +53,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f0xx_hal_def.h"
-           
+#include "stm32f0xx_hal_dac.h"         
 /** @addtogroup DACEx
   * @{
   */

@@ -2,6 +2,8 @@
 #include "main.h"
 #include "stm32f0xx_hal.h"
 #include "main_hal.h"
+#include "stm32f0xx_hal_dac.h"
+#include "stm32f0xx_hal_dac_ex.h"
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -11,7 +13,7 @@ static void MX_ADC_Init(void);
 static void MX_CAN_Init(void);
 static void MX_I2C2_Init(void);
 static void MX_IWDG_Init(void);
-//static void MX_DAC_Init(void);//added
+static void MX_DAC_Init(void);//added
 static void MX_TIM1_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM17_Init(void);
@@ -25,12 +27,12 @@ ADC_HandleTypeDef hadc;
 CAN_HandleTypeDef hcan;
 I2C_HandleTypeDef hi2c2;
 IWDG_HandleTypeDef hiwdg;
-//DAC_HandleTypeDef hdac;
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim17;
 UART_HandleTypeDef huart1;
 
+DAC_HandleTypeDef hdac;
 
 //void SetAnalogOutput ( uint16_t u16mV )
 //{
@@ -194,7 +196,7 @@ void MainInit ( void )
   MX_I2C2_Init();
   MX_IWDG_Init();
   MX_TIM1_Init();
-	//MX_DAC_Init();//added
+	MX_DAC_Init();//added
   MX_TIM2_Init();
   MX_TIM17_Init();
   MX_USART1_UART_Init();
@@ -434,29 +436,29 @@ static void MX_CAN_Init(void)
 }
 
 /* DAC init function */
-//static void MX_DAC_Init(void)
-//{
+static void MX_DAC_Init(void)
+{
 
-//  DAC_ChannelConfTypeDef sConfig;
+  DAC_ChannelConfTypeDef sConfig;
 
-//    /**DAC Initialization 
-//    */
-//  hdac.Instance = DAC;
-//  if (HAL_DAC_Init(&hdac) != HAL_OK)
-//  {
-//    Error_Handler();
-//  }
+    /**DAC Initialization 
+    */
+  hdac.Instance = DAC;
+  if (HAL_DAC_Init(&hdac) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
-//    /**DAC channel OUT2 config 
-//    */
-//  sConfig.DAC_Trigger = DAC_TRIGGER_NONE;
-//  sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
-//  if (HAL_DAC_ConfigChannel(&hdac, &sConfig, DAC_CHANNEL_2) != HAL_OK)
-//  {
-//    Error_Handler();
-//  }
+    /**DAC channel OUT2 config 
+    */
+  sConfig.DAC_Trigger = DAC_TRIGGER_NONE;
+  sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
+  if (HAL_DAC_ConfigChannel(&hdac, &sConfig, DAC_CHANNEL_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
-//}
+}
 
 /* I2C2 init function */
 static void MX_I2C2_Init(void)
@@ -687,7 +689,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, Out1_HS_Pin|Out2_HS_Pin|Out3_HS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, Out4_HS_Pin|LED_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, OUT5_DAC_Pin|LED_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(CAN_S_GPIO_Port, CAN_S_Pin, GPIO_PIN_SET);
@@ -708,7 +710,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : Out4_HS_Pin LED_Pin */
-  GPIO_InitStruct.Pin = Out4_HS_Pin|LED_Pin;
+  GPIO_InitStruct.Pin = OUT5_DAC_Pin|LED_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

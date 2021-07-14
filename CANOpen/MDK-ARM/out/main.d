@@ -35,6 +35,9 @@
 .\out\main.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_tim_ex.h
 .\out\main.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart.h
 .\out\main.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart_ex.h
+.\out\main.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_dac_ex.h
+.\out\main.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_dac.h
+.\out\main.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_dac_ex.h
 .\out\main.o: ../Inc/main_hal.h
 .\out\main.o: ../Drivers/CMSIS/Include/CANopen.h
 .\out\main.o: ../Drivers/CMSIS/Include/CO_driver.h
@@ -48,3 +51,5 @@
 .\out\main.o: ..\CANopenNode-master\stack\CO_HBconsumer.h
 .\out\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\out\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\out\main.o: ../Drivers/CMSIS/Include/stm32f0xx_hal_dac_ex.c
+.\out\main.o: ../Src/stm32f0xx_hal_dac.c

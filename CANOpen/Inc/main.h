@@ -56,10 +56,10 @@
 #define Out2_HS_GPIO_Port GPIOC
 #define Out3_HS_Pin GPIO_PIN_15
 #define Out3_HS_GPIO_Port GPIOC
-#define Out4_HS_Pin GPIO_PIN_4
-#define Out4_HS_GPIO_Port GPIOA
-//#define OUT5_DAC_Pin GPIO_PIN_5//added
-//#define OUT5_DAC_GPIO_Port GPIOA//added
+#define OUT4_DAC_Pin GPIO_PIN_4//edited to DAC out 4
+#define OUT4_DAC_Pin GPIO_PIN_4
+#define OUT5_DAC_Pin GPIO_PIN_5//added
+#define OUT5_DAC_GPIO_Port GPIOA//added
 #define LED_Pin GPIO_PIN_8
 #define LED_GPIO_Port GPIOA
 #define CAN_S_Pin GPIO_PIN_6

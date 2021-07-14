@@ -71,6 +71,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f0xx_hal.h"
+#include "stm32f0xx_hal_dac_ex.h"
 #include "main_hal.h"
 #include "CANopen.h"
 #include <stdlib.h>
@@ -326,9 +327,12 @@ int main(void)
 	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
 //	HAL_DAC_Init()
 	// Setup Analog output										//ANALOG SETUP WITH DAC FILES ARE NOT LINKING UNSURE WHY FOR THE MOMENT
-//	HAL_DAC_Start(&hdac, DAC_CHANNEL_2);			// I TRIED ADDING DAC TO MAIN_HAL.C I MIGHT BE DOING THIS INCORRECTLY
+	#include "stm32f0xx_hal_dac_ex.c"
+	#include "stm32f0xx_hal_dac_ex.h"
+	#include "stm32f0xx_hal_dac.c"
+	HAL_DAC_Start(&hdac, DAC_CHANNEL_2);			// I TRIED ADDING DAC TO MAIN_HAL.C I MIGHT BE DOING THIS INCORRECTLY
 																						// I NEED TO FIGURE OUT HOW TO INSERT NEW LIBRARY'S TO PROJECT EXAMPLE: DAC 
-//	SetAnalogOutput(5100);//5000 mV output constant (max 5100)
+	SetAnalogOutput(5100);//5000 mV output constant (max 5100)
 	// =======================================================================
 	// Set up baudrate
 	hcan.Instance->BTR &= 0xFFFFFC00;
