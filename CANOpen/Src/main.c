@@ -177,13 +177,13 @@ int Initialize_outputs(){
 	
 //	SetAnalogOutput(5100);
 	//Initialize Jumper output set HIGH (24V)
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, 1); //JUMPER Set pin 2 (OUT1) HIGH / TRUE
+	HAL_GPIO_WritePin(Out1_HS_GPIO_Port, Out1_HS_Pin, GPIO_PIN_SET); //JUMPER Set pin 2 (OUT1) HIGH / TRUE
 	
 	//Initialize Microswitch Status powered outputs
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_2, 1); //MICROSWITCH 1 + 2 Set pin 3 (OUT2) HIGH / TRUE
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, 1); //MICROSWITCH 3 + 4 Set pin 4 (OUT3) HIGH / TRUE
+	HAL_GPIO_WritePin(Out2_HS_GPIO_Port, Out2_HS_Pin, GPIO_PIN_SET); //MICROSWITCH 1 + 2 Set pin 3 (OUT2) HIGH / TRUE
+	HAL_GPIO_WritePin(Out3_HS_GPIO_Port, Out3_HS_Pin, GPIO_PIN_SET); //MICROSWITCH 3 + 4 Set pin 4 (OUT3) HIGH / TRUE
 	
-	
+
 	return(true);
 }
 
@@ -198,7 +198,7 @@ float EN1_filter(n)
 	long Average;
 	while (n<=25)
 		{
-		float Enc_Val_raw = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_0);// READ ENCODER VALUE float value NOT digital value
+		float Enc_Val_raw = ReadAnalogInput(ADC_IN1);//HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_0);// READ ENCODER VALUE float value NOT digital value
 		//Normalization
 		//____________________
 		
@@ -228,45 +228,45 @@ float EN1_filter(n)
 	 if(Enc_valid > 631 && Enc_valid < 1028) // TRACTION Pos active {TrBr_T}
 	 {
 		 Data[1] = true;
-		 if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_3)){Data[5] = 0;}else{Data[5]=1;} //Check status of S1 {MICRO1_TrBr_Ko}
+		 if(ReadAnalogInput(ADC_IN3)>10){Data[5] = 0;}else{Data[5]=1;} //Check status of S1 {MICRO1_TrBr_Ko}
 	 }
 	 else
 	 {
 		 Data[1] = false;
-		 if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_3)){Data[5] = 1;}else{Data[5]=0;}
+		 if(ReadAnalogInput(ADC_IN3)>10){Data[5] = 1;}else{Data[5]=0;}
 	 }
 	 
 	 if(Enc_valid > 541 && Enc_valid < 551) // IDLE Pos active {TrBr_Zero}
 	 {
 		 Data[2] = true;
-		 if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4)){Data[6] = 0;}else{Data[6]=1;} //Check status of S2 {MICRO2_TrBr_Ko}
+		 if(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)){Data[6] = 0;}else{Data[6]=1;} //Check status of S2 {MICRO2_TrBr_Ko}
 	 }
 	 else
 	 {
 		 Data[2] = false;
-		 if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4)){Data[6] = 1;}else{Data[6]=0;}
+		 if(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)){Data[6] = 1;}else{Data[6]=0;}
 	 }
 	 
-	 if(Enc_valid > 109 && Enc_valid < 500) // BRAKE Pos active {TrBr_B}
-	 {
-		 Data[3] = true;
-		 if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_6)){Data[8] = 0;}else{Data[8]=1;} //Check status of S4 {MICRO4_TrBr_Ko}
-	 }
-	 else
-	 {
-		 Data[3] = false;
-		 if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_6)){Data[8] = 1;}else{Data[8]=0;}
-	 }
+//	 if(Enc_valid > 109 && Enc_valid < 500) // BRAKE Pos active {TrBr_B}
+//	 {
+//		 Data[3] = true;
+//		 if(HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin)){Data[8] = 0;}else{Data[8]=1;} //Check status of S4 {MICRO4_TrBr_Ko}
+//	 }
+//	 else
+//	 {
+//		 Data[3] = false;
+//		 if(HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin)){Data[8] = 1;}else{Data[8]=0;}
+//	 }
 	 
 	 	 if(Enc_valid > -5 && Enc_valid < 5) // EMERGENCY Pos active {TrBr_EMG} 
 	 {
 		 Data[4] = true;
-		 if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_5)){Data[7] = 1;}else{Data[7]=0;} //Check status of S3 {MICRO3_TrBr_Ko}
+		 if(HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin)){Data[7] = 1;}else{Data[7]=0;} //Check status of S3 {MICRO3_TrBr_Ko}
 	 }
 	 else
 	 {
 		 Data[4] = false;
-		 if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_5)){Data[7] = 0;}else{Data[7]=1;}
+		 if(HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin)){Data[7] = 0;}else{Data[7]=1;}
 	 }
 	 if( Data[5] || Data[6] || Data[7] || Data[8] || FAILSTATE)
 		{
@@ -281,6 +281,38 @@ float EN1_filter(n)
  }
 
 
+ int Dataset(bool b1,bool b2,bool b3,bool b4,bool b5,bool b6,bool b7,bool b8)
+{
+	static int dataBits[8]= {0};
+	int value=0;
+	
+	dataBits[0] = b1;
+	dataBits[1] = b2; 
+	dataBits[2] = b3;
+	dataBits[3] = b4;
+	dataBits[4] = b5;
+	dataBits[5] = b6;
+	dataBits[6] = b7;
+	dataBits[7] = b8;
+	
+	dataBits[0] = (int)dataBits[0] << 0;
+	dataBits[1] = (int)dataBits[0] << 1;
+	dataBits[2] = (int)dataBits[0] << 2;
+	dataBits[3] = (int)dataBits[0] << 3;
+	dataBits[4] = (int)dataBits[0] << 4;
+	dataBits[5] = (int)dataBits[0] << 5;
+	dataBits[6] = (int)dataBits[0] << 6;
+	dataBits[7] = (int)dataBits[0] << 7;
+	
+	for(int i = 0;i < sizeof(dataBits);i++)
+	{
+		value |= (int)dataBits[i] << i;
+	}
+	//value = (int)dataBits[0] << 7| (int)dataBits[0] << 6 | (int)dataBits[0] << 5 |(int)dataBits[0] << 4 |(int)dataBits[0] << 3 |(int)dataBits[0] << 2 |(int)dataBits[0] << 1| (int)dataBits[0] << 0;
+	return(value);
+		
+}
+ 
 
 int main(void)
 {
@@ -290,6 +322,7 @@ int main(void)
   // System init	
   MainInit();
 	// LED On
+	bool STAT2 = Initialize_outputs();
 	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
 //	HAL_DAC_Init()
 	// Setup Analog output										//ANALOG SETUP WITH DAC FILES ARE NOT LINKING UNSURE WHY FOR THE MOMENT
@@ -387,19 +420,32 @@ int main(void)
 			
 			hcan.pTxMsg->DLC = 18;         //Message length: 16 bytes (0-1023 long int + 10 bool binary variables
 //			//==========================================================================
-//			//50MZ CANOPEN MSG Extracted from CAN_DATA list                              !!!!!!NEED TO FIGURE OUT OUT TO INSERT CAN_DATA[] INTO Data[]
-			hcan.pTxMsg-> Data [0] = 0x09; // Enc_Val 				[long]
-			hcan.pTxMsg-> Data [1] = 0x01; // Enc_Data_Val		[bool]
-			hcan.pTxMsg-> Data [2] = 0x01; // TrBr_T 					[bool]
-			hcan.pTxMsg-> Data [3] = 0x01; // TrBr_Zero				[bool]
-			hcan.pTxMsg-> Data [4] = 0x01; // TrBr_B     			[bool]
-			hcan.pTxMsg-> Data [5] = 0x01; // TrBr_EMG				[bool]
-			hcan.pTxMsg-> Data [6] = 0x01; // MICRO1_TrBr_Ko	[bool]
-			hcan.pTxMsg-> Data [7] = 0x01; // MICRO2_TrBr_Ko	[bool]
-			hcan.pTxMsg-> Data [8] = 0x01; // MICRO3_TrBr_Ko	[bool]
-			hcan.pTxMsg-> Data [9] = 0x01; // MICRO4_TrBr_Ko	[bool]
-			hcan.pTxMsg-> Data [10] = 0x01; // TrBr_dataValid	[bool]
-			HAL_CAN_Transmit (& hcan, 10);  // 10ms time delay for safe transmission
+			/* increase variable each startup. Variable should be stored in EEPROM. 
+			Enc_Val 				[long]		0x09		0-8		Byte 1
+			
+			Enc_Data_Val		[bool]		0x01		0			Byte 2
+			TrBr_T 					[bool]		0x01		1			...	
+			TrBr_Zero				[bool]		0x01		2			...
+			TrBr_B     			[bool]		0x01		3			...
+			TrBr_EMG				[bool]		0x01		4			...
+			MICRO1_TrBr_Ko	[bool]		0x01		5			...
+			MICRO2_TrBr_Ko	[bool]		0x01		6			...
+			MICRO3_TrBr_Ko	[bool]		0x01		7			...
+			
+			MICRO4_TrBr_Ko	[bool]		0x01		0			Byte 3
+			TrBr_dataValid	[bool]		0x01		1			...
+			*/
+			
+//			//50MZ CANOPEN MSG Extracted from CAN_DATA list      !!!!!!NEED TO FIGURE OUT OUT TO INSERT CAN_DATA[] INTO Data[]
+			hcan.pTxMsg-> Data [0] = 0x3FF; // Enc_Val 			[long]
+			hcan.pTxMsg-> Data [1] = 0xFF; // dataset 1			[word]
+			hcan.pTxMsg-> Data [2] = 0xFF; // dataset 2			[word]
+			hcan.pTxMsg-> Data [3] = 0x03; // dataset 3			[word]
+			hcan.pTxMsg-> Data [4] = 0x00; // 
+			hcan.pTxMsg-> Data [5] = 0x00; // 
+			hcan.pTxMsg-> Data [6] = 0x00; // 
+			hcan.pTxMsg-> Data [7] = 0x00; // 
+			HAL_CAN_Transmit (& hcan, 10);	HAL_Delay(10);  // 10ms time delay for safe transmission
 //			}
 			long Enc_Val = Enc_Val_filtered;
 			bool Enc_Data_Val 	= CAN_DATA[0];
@@ -412,19 +458,25 @@ int main(void)
 			bool MICRO3_TrBr_Ko	= CAN_DATA[7];
 			bool MICRO4_TrBr_Ko	= CAN_DATA[8];
 			bool TrBr_dataValid = CAN_DATA[9];	
-				
-			hcan.pTxMsg->Data[0] = Enc_Val; //Encoder Value 0-1023
-			hcan.pTxMsg->Data[1] = Enc_Data_Val;    //Verify Encoder is within range
-			hcan.pTxMsg->Data[2] = TrBr_T; //Enc_Val within Traction position range 
-			hcan.pTxMsg->Data[3] = TrBr_Zero; //Enc_Val within IDLE/Zero position range 
-			hcan.pTxMsg->Data[4] = TrBr_B; //Enc_Val within Brake position range 
-			hcan.pTxMsg->Data[5] = TrBr_EMG; //Enc_Val within Emergency position range 
-			hcan.pTxMsg->Data[6] = MICRO1_TrBr_Ko; //Micro switch not in error (=0/FALSE) (within range of TRACTION)
-			hcan.pTxMsg->Data[7] = MICRO2_TrBr_Ko; //Micro switch not in error (=0/FALSE) (within range of IDLE)
-			hcan.pTxMsg->Data[8] = MICRO3_TrBr_Ko; //Micro switch not in error (=0/FALSE) (within range of EMERGENCY)
-			hcan.pTxMsg->Data[9] = MICRO4_TrBr_Ko; //Micro switch not in error (=0/FALSE) (within range of BRAKE)
-			hcan.pTxMsg->Data[10] = TrBr_dataValid;//Micro switches 1-4 not in error (=0/FALSE) (within range)			
-			HAL_CAN_Transmit(&hcan, 10);  //10ms Zeitverzögerung für sicheres Senden	
+			
+			int dataset1 = Dataset(Enc_Data_Val,TrBr_T,TrBr_Zero,TrBr_B,TrBr_EMG,MICRO1_TrBr_Ko,MICRO2_TrBr_Ko,MICRO3_TrBr_Ko);
+			int dataset2 = Dataset(MICRO4_TrBr_Ko,TrBr_dataValid,0,0,0,0,0,0);
+			
+			hcan.pTxMsg->Data[0] = Enc_Val;
+			hcan.pTxMsg->Data[1] = dataset1;
+			hcan.pTxMsg->Data[2] = dataset2;
+//			hcan.pTxMsg->Data[0] = Enc_Val; //Encoder Value 0-1023
+//			hcan.pTxMsg->Data[1] = Enc_Data_Val;    //Verify Encoder is within range
+//			hcan.pTxMsg->Data[2] = TrBr_T; //Enc_Val within Traction position range 
+//			hcan.pTxMsg->Data[3] = TrBr_Zero; //Enc_Val within IDLE/Zero position range 
+//			hcan.pTxMsg->Data[4] = TrBr_B; //Enc_Val within Brake position range 
+//			hcan.pTxMsg->Data[5] = TrBr_EMG; //Enc_Val within Emergency position range 
+//			hcan.pTxMsg->Data[6] = MICRO1_TrBr_Ko; //Micro switch not in error (=0/FALSE) (within range of TRACTION)
+//			hcan.pTxMsg->Data[7] = MICRO2_TrBr_Ko; //Micro switch not in error (=0/FALSE) (within range of IDLE)
+//			hcan.pTxMsg->Data[8] = MICRO3_TrBr_Ko; //Micro switch not in error (=0/FALSE) (within range of EMERGENCY)
+//			hcan.pTxMsg->Data[9] = MICRO4_TrBr_Ko; //Micro switch not in error (=0/FALSE) (within range of BRAKE)
+//			hcan.pTxMsg->Data[10] = TrBr_dataValid;//Micro switches 1-4 not in error (=0/FALSE) (within range)			
+//			HAL_CAN_Transmit(&hcan, 10);  //10ms Zeitverzögerung für sicheres Senden	
 			/* Configure CAN transmit and receive interrupt */
       CanEnable();
 

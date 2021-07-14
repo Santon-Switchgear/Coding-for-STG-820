@@ -75,6 +75,8 @@
 #define DIN4_Port GPIOA
 #define DIN5_Pin GPIO_PIN_15
 #define DIN5_Port GPIOA
+#define DIN6_Pin GPIO_PIN_15
+#define DIN6_Port GPIOA
 
 #define EEPROM_ADDRESS			0xA0
 #define EEPROM_BUFFER_SIZE	32  // Page size
