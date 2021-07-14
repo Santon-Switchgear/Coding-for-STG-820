@@ -36,7 +36,7 @@
 #include "main_hal.h"
 #include <stdlib.h>
 #include <string.h>
-
+//latest
 /* Private variables ---------------------------------------------------------*/
 CanTxMsgTypeDef CAN_TX_Msg; //Variablen, die zur Struktur "hcan" des HAL-Treibers              
 CanRxMsgTypeDef CAN_RX_Msg; //gehören
