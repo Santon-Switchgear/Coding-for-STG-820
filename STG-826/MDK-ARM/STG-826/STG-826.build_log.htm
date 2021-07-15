@@ -1,0 +1,187 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: µVision V5.35.0.0
+Copyright (C) 2021 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: Zander van der Steege, Santon Holland, LIC=LB4EI-T5TUG-WTAKF-JFV0E-NJ0C2-Q16LT
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Cortex-M0/M0+ for ST  Version: 5.35.0.2
+Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 update 7 (build 960)
+Assembler:       Armasm.exe V5.06 update 7 (build 960)
+Linker/Locator:  ArmLink.exe V5.06 update 7 (build 960)
+Library Manager: ArmAr.exe V5.06 update 7 (build 960)
+Hex Converter:   FromElf.exe V5.06 update 7 (build 960)
+CPU DLL:         SARMCM3.DLL V5.35.0.2
+Dialog DLL:      DARMCM1.DLL V1.19.4.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.9.0
+Dialog DLL:      TARMCM1.DLL V1.14.4.0
+ 
+<h2>Project:</h2>
+Y:\BARTH softwar\9045-0014-A\Coding-for-50MZ\STG-826\MDK-ARM\STG-826.uvprojx
+Project File Date:  07/15/2021
+
+<h2>Output:</h2>
+*** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
+Rebuild target 'STG-826'
+assembling startup_stm32f091xc.s...
+compiling main.c...
+../Src/CANopen.h(75): error:  #5: cannot open source input file "CO_driver.h": No such file or directory
+      #include "CO_driver.h"
+../Src/main.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_adc_ex.c...
+compiling stm32f0xx_hal.c...
+compiling stm32f0xx_hal_i2c_ex.c...
+compiling stm32f0xx_hal_dma.c...
+compiling stm32f0xx_hal_gpio.c...
+compiling stm32f0xx_it.c...
+compiling stm32f0xx_hal_msp.c...
+compiling stm32f0xx_hal_rcc_ex.c...
+compiling stm32f0xx_hal_adc.c...
+compiling stm32f0xx_hal_rcc.c...
+compiling stm32f0xx_hal_i2c.c...
+compiling stm32f0xx_hal_cortex.c...
+compiling stm32f0xx_hal_dac.c...
+compiling stm32f0xx_hal_flash_ex.c...
+compiling stm32f0xx_hal_pwr.c...
+compiling stm32f0xx_hal_tim_ex.c...
+compiling stm32f0xx_hal_pwr_ex.c...
+compiling stm32f0xx_hal_iwdg.c...
+compiling stm32f0xx_hal_dac_ex.c...
+compiling stm32f0xx_hal_flash.c...
+compiling stm32f0xx_hal_can.c...
+compiling stm32f0xx_hal_tim.c...
+compiling CANopen.c...
+..\CANopenNode-master\CANopen.h(75): error:  #5: cannot open source input file "CO_driver.h": No such file or directory
+      #include "CO_driver.h"
+..\CANopenNode-master\CANopen.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_uart.c...
+compiling stm32f0xx_hal_uart_ex.c...
+compiling stm32f0xx_hal_irda.c...
+compiling system_stm32f0xx.c...
+compiling CO_driver.c...
+..\CANopenNode-master\stack\CO_driver.h(120): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_0"  (declared at line 473 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_0   ((uint8_t)0x00)
+..\CANopenNode-master\stack\CO_driver.h(121): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_1"  (declared at line 474 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_1   ((uint8_t)0x01)
+..\CANopenNode-master\stack\CO_driver.h(122): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_2"  (declared at line 475 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_2   ((uint8_t)0x02)
+..\CANopenNode-master\stack\CO_driver.c(256): warning:  #513-D: a value of type "void (*)(void *, const CO_CANrxMsg_t *)" cannot be assigned to an entity of type "void (*)(void *, CO_CANrxMsg_t *)"
+      rxBuffer->pFunct = pFunct;
+..\CANopenNode-master\stack\CO_driver.c(343): warning:  #177-D: variable "txBuff"  was declared but never referenced
+      int8_t txBuff;
+..\CANopenNode-master\stack\CO_driver.c: 5 warnings, 0 errors
+compiling CO_OD.c...
+..\CANopenNode-master\example\CO_OD.c(53): error:  #5: cannot open source input file "CO_driver.h": No such file or directory
+  #include "CO_driver.h"
+..\CANopenNode-master\example\CO_OD.c: 0 warnings, 1 error
+compiling crc16-ccitt.c...
+compiling CO_Emergency.c...
+..\CANopenNode-master\stack\CO_driver.h(120): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_0"  (declared at line 473 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_0   ((uint8_t)0x00)
+..\CANopenNode-master\stack\CO_driver.h(121): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_1"  (declared at line 474 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_1   ((uint8_t)0x01)
+..\CANopenNode-master\stack\CO_driver.h(122): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_2"  (declared at line 475 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_2   ((uint8_t)0x02)
+..\CANopenNode-master\stack\CO_Emergency.c: 3 warnings, 0 errors
+compiling CO_NMT_Heartbeat.c...
+..\CANopenNode-master\stack\CO_driver.h(120): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_0"  (declared at line 473 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_0   ((uint8_t)0x00)
+..\CANopenNode-master\stack\CO_driver.h(121): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_1"  (declared at line 474 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_1   ((uint8_t)0x01)
+..\CANopenNode-master\stack\CO_driver.h(122): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_2"  (declared at line 475 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_2   ((uint8_t)0x02)
+..\CANopenNode-master\stack\CO_NMT_Heartbeat.c(320): warning:  #188-D: enumerated type mixed with another type
+      return NMT->resetCommand;
+..\CANopenNode-master\stack\CO_NMT_Heartbeat.c: 4 warnings, 0 errors
+compiling CO_SDO.c...
+..\CANopenNode-master\stack\CO_driver.h(120): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_0"  (declared at line 473 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_0   ((uint8_t)0x00)
+..\CANopenNode-master\stack\CO_driver.h(121): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_1"  (declared at line 474 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_1   ((uint8_t)0x01)
+..\CANopenNode-master\stack\CO_driver.h(122): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_2"  (declared at line 475 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_2   ((uint8_t)0x02)
+..\CANopenNode-master\stack\CO_SDO.c: 3 warnings, 0 errors
+compiling CO_HBconsumer.c...
+..\CANopenNode-master\stack\CO_driver.h(120): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_0"  (declared at line 473 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_0   ((uint8_t)0x00)
+..\CANopenNode-master\stack\CO_driver.h(121): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_1"  (declared at line 474 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_1   ((uint8_t)0x01)
+..\CANopenNode-master\stack\CO_driver.h(122): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_2"  (declared at line 475 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_2   ((uint8_t)0x02)
+..\CANopenNode-master\stack\CO_HBconsumer.c: 3 warnings, 0 errors
+compiling CO_SDOmaster.c...
+..\CANopenNode-master\stack\CO_driver.h(120): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_0"  (declared at line 473 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_0   ((uint8_t)0x00)
+..\CANopenNode-master\stack\CO_driver.h(121): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_1"  (declared at line 474 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_1   ((uint8_t)0x01)
+..\CANopenNode-master\stack\CO_driver.h(122): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_2"  (declared at line 475 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_2   ((uint8_t)0x02)
+..\CANopenNode-master\stack\CO_SDOmaster.c: 3 warnings, 0 errors
+compiling CO_PDO.c...
+..\CANopenNode-master\stack\CO_driver.h(120): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_0"  (declared at line 473 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_0   ((uint8_t)0x00)
+..\CANopenNode-master\stack\CO_driver.h(121): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_1"  (declared at line 474 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_1   ((uint8_t)0x01)
+..\CANopenNode-master\stack\CO_driver.h(122): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_2"  (declared at line 475 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_2   ((uint8_t)0x02)
+..\CANopenNode-master\stack\CO_PDO.c(630): warning:  #188-D: enumerated type mixed with another type
+          return CO_RPDOconfigMap(RPDO, *value);
+..\CANopenNode-master\stack\CO_PDO.c(645): warning:  #188-D: enumerated type mixed with another type
+          return CO_PDOfindMap(
+..\CANopenNode-master\stack\CO_PDO.c(655): warning:  #111-D: statement is unreachable
+      return CO_SDO_AB_NONE;
+..\CANopenNode-master\stack\CO_PDO.c(696): warning:  #188-D: enumerated type mixed with another type
+          return CO_TPDOconfigMap(TPDO, *value);
+..\CANopenNode-master\stack\CO_PDO.c(711): warning:  #188-D: enumerated type mixed with another type
+          return CO_PDOfindMap(
+..\CANopenNode-master\stack\CO_PDO.c(721): warning:  #111-D: statement is unreachable
+      return CO_SDO_AB_NONE;
+..\CANopenNode-master\stack\CO_PDO.c: 9 warnings, 0 errors
+compiling CO_SYNC.c...
+..\CANopenNode-master\stack\CO_driver.h(120): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_0"  (declared at line 473 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_0   ((uint8_t)0x00)
+..\CANopenNode-master\stack\CO_driver.h(121): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_1"  (declared at line 474 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_1   ((uint8_t)0x01)
+..\CANopenNode-master\stack\CO_driver.h(122): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_2"  (declared at line 475 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_2   ((uint8_t)0x02)
+..\CANopenNode-master\stack\CO_SYNC.c: 3 warnings, 0 errors
+compiling CO_trace.c...
+..\CANopenNode-master\stack\CO_driver.h(120): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_0"  (declared at line 473 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_0   ((uint8_t)0x00)
+..\CANopenNode-master\stack\CO_driver.h(121): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_1"  (declared at line 474 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_1   ((uint8_t)0x01)
+..\CANopenNode-master\stack\CO_driver.h(122): warning:  #47-D: incompatible redefinition of macro "CAN_TXMAILBOX_2"  (declared at line 475 of "../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h")
+  #define CAN_TXMAILBOX_2   ((uint8_t)0x02)
+..\CANopenNode-master\stack\CO_trace.c: 3 warnings, 0 errors
+"STG-826\STG-826.axf" - 3 Error(s), 36 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                http://www.keil.com/pack/ARM.CMSIS.5.8.0.pack
+                ARM.CMSIS.5.8.0
+                CMSIS (Common Microcontroller Software Interface Standard)
+   * Component: CORE Version: 5.5.0
+
+Package Vendor: Keil
+                http://www.keil.com/pack/Keil.STM32F0xx_DFP.2.1.0.pack
+                Keil.STM32F0xx_DFP.2.1.0
+                STMicroelectronics STM32F0 Series Device Support, Drivers and Examples
+
+<h2>Collection of Component include folders:</h2>
+  .\RTE\_STG-826
+  C:\Users\zvdsteege\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include
+  C:\Users\zvdsteege\AppData\Local\Arm\Packs\Keil\STM32F0xx_DFP\2.1.0\Drivers\CMSIS\Device\ST\STM32F0xx\Include
+
+<h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE:5.5.0
+Target not created.
+Build Time Elapsed:  00:00:48
+</pre>
+</body>
+</html>
