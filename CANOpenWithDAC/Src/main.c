@@ -160,14 +160,14 @@ int Initialize_outputs(){
 }
 
 
-float EN1_filter(n)
+float EN1_filter(uint8_t n)
 {
-	
+	//n=1;
 	//uint16_t data[n];
 	float SUM = 0;
 	float Enc_val = 0;
 	float Enc_Val_raw;
-	long Average;
+	float Average;
 	int i = 0;
 	bool state=1;
 	while (i<=n)
@@ -179,88 +179,91 @@ float EN1_filter(n)
 			
 			
 			//data[n] = Enc_val;
-			if(state) {Enc_old = Enc_Val_raw; state =0; }
-			else {state=1;}
-			Enc_Val_raw = 90*Enc_Val_raw+(1-90)*Enc_old;//exponential filter
+//			if(state) {Enc_old = Enc_Val_raw; state =0; }
+//			else {state=1;}
+//			//Enc_Val_raw = 90*Enc_Val_raw+(1-90)*Enc_old;//exponential filter
 			SUM = SUM + Enc_Val_raw;   							//Sum for Average 
 			i = i+1;														//value counter
 			
 		}
+	Average = (long)SUM/(long)n;
 	//SUM
-	Enc_val = Enc_Val_raw - 2.917;//Subtraction
-	Enc_val = Enc_val / 0.94;      			//Division
-	Enc_val = Enc_val * 1023;           //GAIN
-	HAL_Delay(100);
-	return(Average = 1023);//(long)SUM/(long)n);
+	Average = Average - 250;//Subtraction
+	Average = Average / 1029;      			//Division
+	Average = Average * 1023;           //GAIN
+	//HAL_Delay(100);
+		
+	//Enc_Val_raw = ReadAnalogInput(ADC_IN1);
+	return(1023-(long)Average);//Enc_Val_raw);
 }
 
  int * Validaton(Enc_valid){
-	 static int Data[10]= {0};
 	 
-	 if(Enc_valid > -5 && Enc_valid < 1028) // Datavalidility check {Enc_DataVal}
+	 int ArrEnc[]= {0,0,0,0,0,0,0,0,0,0};
+	 
+	 if(Enc_valid > 0 && Enc_valid < 1028) // Datavalidility check {Enc_DataVal}
 	 {
-		 Data[0] = true;
+		 ArrEnc[0] = true;
 	 }
 	 else
 	 {
-		 Data[0] = false;
+		 ArrEnc[0] = false;
 	 }
 	 
 	 if(Enc_valid > 631 && Enc_valid < 1028) // TRACTION Pos active {TrBr_T}
 	 {
-		 Data[1] = true;
-		 if(ReadAnalogInput(ADC_IN3)>10){Data[5] = 0;}else{Data[5]=1;} //Check status of S1 {MICRO1_TrBr_Ko}
+		 ArrEnc[1] = true;
+		 if(ReadAnalogInput(ADC_IN3)>10){ArrEnc[5] = 0;}else{ArrEnc[5]=1;} //Check status of S1 {MICRO1_TrBr_Ko}
 	 }
 	 else
 	 {
-		 Data[1] = false;
-		 if(ReadAnalogInput(ADC_IN3)>10){Data[5] = 1;}else{Data[5]=0;}
+		 ArrEnc[1] = false;
+		 if(ReadAnalogInput(ADC_IN3)>10){ArrEnc[5] = 1;}else{ArrEnc[5]=0;}
 	 }
 	 
 	 if(Enc_valid > 541 && Enc_valid < 551) // IDLE Pos active {TrBr_Zero}
 	 {
-		 Data[2] = true;
-		 if(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)){Data[6] = 0;}else{Data[6]=1;} //Check status of S2 {MICRO2_TrBr_Ko}
+		 ArrEnc[2] = true;
+		 if(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)){ArrEnc[6] = 0;}else{ArrEnc[6]=1;} //Check status of S2 {MICRO2_TrBr_Ko}
 	 }
 	 else
 	 {
-		 Data[2] = false;
-		 if(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)){Data[6] = 1;}else{Data[6]=0;}
+		 ArrEnc[2] = false;
+		 if(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)){ArrEnc[6] = 1;}else{ArrEnc[6]=0;}
 	 }
 	 
 //	 if(Enc_valid > 109 && Enc_valid < 500) // BRAKE Pos active {TrBr_B}
 //	 {
-//		 Data[3] = true;
-//		 if(HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin)){Data[8] = 0;}else{Data[8]=1;} //Check status of S4 {MICRO4_TrBr_Ko}
+//		 ArrEnc[3] = true;
+//		 if(HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin)){ArrEnc[8] = 0;}else{ArrEnc[8]=1;} //Check status of S4 {MICRO4_TrBr_Ko}
 //	 }
 //	 else
 //	 {
-//		 Data[3] = false;
-//		 if(HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin)){Data[8] = 1;}else{Data[8]=0;}
+//		 ArrEnc[3] = false;
+//		 if(HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin)){ArrEnc[8] = 1;}else{ArrEnc[8]=0;}
 //	 }
 	 
-	 	 if(Enc_valid > -5 && Enc_valid < 5) // EMERGENCY Pos active {TrBr_EMG} 
+	 	 if(Enc_valid > 0 && Enc_valid <= 10) // EMERGENCY Pos active {TrBr_EMG} 
 	 {
-		 Data[4] = true;
-		 if(HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin)){Data[7] = 1;}else{Data[7]=0;} //Check status of S3 {MICRO3_TrBr_Ko}
+		 ArrEnc[4] = true;
+		 if(HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin)){ArrEnc[7] = 1;}else{ArrEnc[7]=0;} //Check status of S3 {MICRO3_TrBr_Ko}
 	 }
 	 else
 	 {
-		 Data[4] = false;
-		 if(HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin)){Data[7] = 0;}else{Data[7]=1;}
+		 ArrEnc[4] = false;
+		 if(HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin)){ArrEnc[7] = 0;}else{ArrEnc[7]=1;}
 	 }
-	 if( Data[5] || Data[6] || Data[7] || Data[8] || FAILSTATE)
+	 if( ArrEnc[5] || ArrEnc[6] || ArrEnc[7] || ArrEnc[8] || FAILSTATE)
 		{
-			Data[9] = 0;
+			ArrEnc[9] = 0;
 			FAILSTATE = true;
 		} 
 		else
 		{
-			Data[9]=1;
+			ArrEnc[9]=1;
 		}
-		Data[0] = 1;//temporary for testing
-		Data[1] = 1;
-	 return(Data);
+		
+	 return(ArrEnc);
  }
 
 
@@ -270,14 +273,14 @@ float EN1_filter(n)
 	int i;
 
 	static uint8_t dataBits[8]= {0};
-	dataBits[0] = 1;//b1;
+	dataBits[0] = b1;
 	dataBits[1] = b2;
 	dataBits[2] = b3;
 	dataBits[3] = b4;
 	dataBits[4] = b5;
 	dataBits[5] = b6;
-	dataBits[6] = 1;//b7;
-	dataBits[7] = 1;//b8;
+	dataBits[6] = b7;
+	dataBits[7] = b8;
 	
 //	//int value=0;
 	uint8_t u8 = 0;
@@ -353,7 +356,7 @@ int main(void)
       CanDisable();
 			uint8_t NodeID1 = 56; //Default set Node ID if Jumper open/FALSE
 			bool NodeID_condition = 0;
-			if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1))  //Condition is TRUE if pin 13 of register c is HIGH / TRUE
+			if (ReadAnalogInput(ADC_IN2))  //Condition for noe ID is HIGH / TRUE
 			{
 				uint8_t NodeID1 = 58; //CPU1-CAB2
 				NodeID_condition = 1;
@@ -391,11 +394,8 @@ int main(void)
 						//========================================================================
 						 
 						
-						long Enc_Val_filtered = EN1_filter(500);//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
+						long Enc_Val_filtered = EN1_filter(100);//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
 						
-						int * CAN_DATA[10] = {Validaton(Enc_Val_filtered)};//Function to validate the microswitches and encoder validility and convert them to an array
-
-									
 						
 						// LED flicker for error
 						if ( u16Timer == 0 )
@@ -466,29 +466,32 @@ int main(void)
 				else{hcan.pTxMsg->StdId = 0x000038;   //Reciever adres: 0x0038 (DMA-15)
 					} 
 				
-				hcan.pTxMsg->DLC = 8;					
-				uint16_t Enc_Val_filtered = EN1_filter(500);//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
+				hcan.pTxMsg->DLC = 4 ;					
+				uint16_t Enc_Val_filtered = EN1_filter(100);//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
 				
-				int * CAN_DATA[10] = {Validaton(Enc_Val_filtered)};//Function to validate the microswitches and encoder validility and convert them to an array
-				
+				//int * CAN_DATA[10] = {Validaton(Enc_Val_filtered)};//Function to validate the microswitches and encoder validility and convert them to an array
+				int * CAN_DATA;
+				CAN_DATA = Validaton(Enc_Val_filtered);//Function to validate the microswitches and encoder validility and convert them to an array
+
+									
 				CanMSG.u32[0] = 0;
 				CanMSG.u32[1] = 0;
 				
 				CanMSG.u8[0] = *((uint8_t*)&(Enc_Val_filtered)+1); //high byte (0x12)Enc_Val_filtered;
 				CanMSG.u8[1] = *((uint8_t*)&(Enc_Val_filtered)+0); //low byte  (0x34)Enc_Val_filtered;
-				bool Enc_Data_Val 	= CAN_DATA[0];
+				bool Enc_Data_Val 	= CAN_DATA[0];//129   10000001
 				bool TrBr_T 				= CAN_DATA[1];
-				bool TrBr_Zero			= CAN_DATA[2];
-				bool TrBr_B					= CAN_DATA[3];
-				bool TrBr_EMG				= CAN_DATA[4];
+				bool TrBr_Zero			= CAN_DATA[2];//163   10100011
+				bool TrBr_B					= CAN_DATA[3];//197   11000101
+				bool TrBr_EMG				= CAN_DATA[4];// 1    00000001
 				bool MICRO1_TrBr_Ko	= CAN_DATA[5];
 				bool MICRO2_TrBr_Ko	= CAN_DATA[6];
-				bool MICRO3_TrBr_Ko	= CAN_DATA[7];
+				bool MICRO3_TrBr_Ko	= CAN_DATA[7];//129   10000001
 				bool MICRO4_TrBr_Ko	= CAN_DATA[8];
 				bool TrBr_dataValid = CAN_DATA[9];	
 				
 				uint8_t dataset1 = Dataset(CAN_DATA[0],CAN_DATA[1],CAN_DATA[2],CAN_DATA[3],CAN_DATA[4],CAN_DATA[5],CAN_DATA[6],CAN_DATA[7]);
-				uint8_t dataset2 = Dataset(CAN_DATA[8],CAN_DATA[9],0,0,0,0,0,0);
+				uint8_t dataset2 = Dataset(0,0,0,0,0,0,CAN_DATA[8],CAN_DATA[9]);
 				CanMSG.u8[2] = dataset1;
 				CanMSG.u8[3] = dataset2;
 				// Transfer data
