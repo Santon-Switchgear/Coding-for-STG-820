@@ -60,6 +60,17 @@
 #define CAN_S_Pin GPIO_PIN_6
 #define CAN_S_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
+#define OUT5_DAC_Pin GPIO_PIN_5//added
+#define OUT5_DAC_GPIO_Port GPIOA//added
+#define CAN_1M 1
+#define CAN_500K 2
+#define CAN_250K 4
+#define CAN_125K 8
+#define CAN_100K 10
+#define CAN_50K 20
+#define ADC_IN1 1
+#define ADC_IN2 2
+#define ADC_IN3 3
 
 /* USER CODE END Private defines */
 

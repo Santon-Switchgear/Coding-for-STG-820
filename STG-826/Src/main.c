@@ -72,7 +72,7 @@
 #include "main.h"
 //#include "stm32f0xx_hal.h"
 //#include "stm32f0xx_hal_dac_ex.h"
-//#include "main_hal.h"
+#include "main_hal.h"
 #include "CANopen.h"
 #include <stdlib.h>
 #include <string.h>
@@ -92,7 +92,7 @@ int NodeID = 56;
 		volatile bool FAILSTATE = false; // added foas global FAILSTATE variable
 
 /* Private function prototypes -----------------------------------------------*/ //UNSURE OF PURPOSE
-uint8_t u8Data[16];
+//uint8_t u8Data[16];
 
 
 /* timer thread executes in constant intervals ********************************/ //UNSURE OF PURPOSE
@@ -178,11 +178,11 @@ int Initialize_outputs(){
 	
 //	SetAnalogOutput(5100);
 	//Initialize Jumper output set HIGH (24V)
-	HAL_GPIO_WritePin(Out1_HS_GPIO_Port, Out1_HS_Pin, GPIO_PIN_SET); //JUMPER Set pin 2 (OUT1) HIGH / TRUE
+	HAL_GPIO_WritePin(OUT1_HS_GPIO_Port, OUT1_HS_Pin, GPIO_PIN_SET); //JUMPER Set pin 2 (OUT1) HIGH / TRUE
 	
 	//Initialize Microswitch Status powered outputs
-	HAL_GPIO_WritePin(Out2_HS_GPIO_Port, Out2_HS_Pin, GPIO_PIN_SET); //MICROSWITCH 1 + 2 Set pin 3 (OUT2) HIGH / TRUE
-	HAL_GPIO_WritePin(Out3_HS_GPIO_Port, Out3_HS_Pin, GPIO_PIN_SET); //MICROSWITCH 3 + 4 Set pin 4 (OUT3) HIGH / TRUE
+	HAL_GPIO_WritePin(OUT2_HS_GPIO_Port, OUT2_HS_Pin, GPIO_PIN_SET); //MICROSWITCH 1 + 2 Set pin 3 (OUT2) HIGH / TRUE
+	HAL_GPIO_WritePin(OUT3_HS_GPIO_Port, OUT3_HS_Pin, GPIO_PIN_SET); //MICROSWITCH 3 + 4 Set pin 4 (OUT3) HIGH / TRUE
 	
 
 	return(true);
@@ -240,34 +240,34 @@ float EN1_filter(n)
 	 if(Enc_valid > 541 && Enc_valid < 551) // IDLE Pos active {TrBr_Zero}
 	 {
 		 Data[2] = true;
-		 if(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)){Data[6] = 0;}else{Data[6]=1;} //Check status of S2 {MICRO2_TrBr_Ko}
+		 if(HAL_GPIO_ReadPin(IN4_HS_GPIO_Port,IN4_HS_Pin)){Data[6] = 0;}else{Data[6]=1;} //Check status of S2 {MICRO2_TrBr_Ko}
 	 }
 	 else
 	 {
 		 Data[2] = false;
-		 if(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)){Data[6] = 1;}else{Data[6]=0;}
+		 if(HAL_GPIO_ReadPin(IN4_HS_GPIO_Port,IN4_HS_Pin)){Data[6] = 1;}else{Data[6]=0;}
 	 }
 	 
-//	 if(Enc_valid > 109 && Enc_valid < 500) // BRAKE Pos active {TrBr_B}
-//	 {
-//		 Data[3] = true;
-//		 if(HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin)){Data[8] = 0;}else{Data[8]=1;} //Check status of S4 {MICRO4_TrBr_Ko}
-//	 }
-//	 else
-//	 {
-//		 Data[3] = false;
-//		 if(HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin)){Data[8] = 1;}else{Data[8]=0;}
-//	 }
+	 if(Enc_valid > 109 && Enc_valid < 500) // BRAKE Pos active {TrBr_B}
+	 {
+		 Data[3] = true;
+		 if(HAL_GPIO_ReadPin(IN6_HS_GIPO_Port,IN6_Pin)){Data[8] = 0;}else{Data[8]=1;} //Check status of S4 {MICRO4_TrBr_Ko}
+	 }
+	 else
+	 {
+		 Data[3] = false;
+		 if(HAL_GPIO_ReadPin(IN6_HS_GIPO_Port,IN6_Pin)){Data[8] = 1;}else{Data[8]=0;}
+	 }
 	 
 	 	 if(Enc_valid > -5 && Enc_valid < 5) // EMERGENCY Pos active {TrBr_EMG} 
 	 {
 		 Data[4] = true;
-		 if(HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin)){Data[7] = 1;}else{Data[7]=0;} //Check status of S3 {MICRO3_TrBr_Ko}
+		 if(HAL_GPIO_ReadPin(IN5_GPIO_Port,IN5_Pin)){Data[7] = 1;}else{Data[7]=0;} //Check status of S3 {MICRO3_TrBr_Ko}
 	 }
 	 else
 	 {
 		 Data[4] = false;
-		 if(HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin)){Data[7] = 0;}else{Data[7]=1;}
+		 if(HAL_GPIO_ReadPin(IN5_GPIO_Port,IN5_Pin)){Data[7] = 0;}else{Data[7]=1;}
 	 }
 	 if( Data[5] || Data[6] || Data[7] || Data[8] || FAILSTATE)
 		{
