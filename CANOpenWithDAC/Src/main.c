@@ -2,9 +2,13 @@
   ******************************************************************************
   * File Name          : main.c
   * Description        : Main program body
+	* Company						 : Santon Switchgear
+	* Device						 : STG-826
+	* Project						 : 50MZ - Berna Project
+	* Author						 : Zander van der Steege
   ******************************************************************************
   *
-  * COPYRIGHT(c) 2016 STMicroelectronics
+  * COPYRIGHT(c) 2021 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -55,7 +59,7 @@ typedef	union
 } CAN_Variant_t;
 
 CAN_Variant_t CanMSG;
-
+/* definitions------------------------------------------------------------------*/
 #define TMR_TASK_INTERVAL   (1000)          /* Interval of tmrTask thread in microseconds */
 #define INCREMENT_1MS(var)  (var++)         /* Increment 1ms variable in tmrTask */
 
@@ -137,17 +141,15 @@ void HAL_SYSTICK_Callback(void)
 
 
 int Initialize_outputs(){
-	//STG-826 
+	/**STG-826 Details (pinout)
 	// 6 INPUTS(3X DIGITAL,3 X ANALOG 0-34VDC), 
 	// 4 OUTPUTS (3X DIGITAL, 1X ANALOG)
 	//========================================================================
+	//DAC1_CHANNEL_1_WritePin(GPIOC,GPIO_PIN_4,50); // trigger set analog OUT4 to 5V*/
 	
+	//for Rotary position sensor with DAC functionality (OUT4) analogset to 5V
+	SetAnalogOutput(5100);//initialize Analog output 5V 
 	
-	//initialize Analog output 5V 
-	//for encoder with DAC functionality (OUT4) analogset to 5V
-	//DAC1_CHANNEL_1_WritePin(GPIOC,GPIO_PIN_4,50); // trigger set analog OUT4 to 5V
-
-	SetAnalogOutput(5100);
 	//Initialize Jumper output set HIGH (24V)
 	HAL_GPIO_WritePin(Out1_HS_GPIO_Port, Out1_HS_Pin, GPIO_PIN_SET); //JUMPER Set pin 2 (OUT1) HIGH / TRUE
 	
@@ -160,68 +162,66 @@ int Initialize_outputs(){
 }
 
 
-float EN1_filter(uint8_t n)
+uint16_t EN1_filter(uint8_t n)
 {
-	//n=1;
-	//uint16_t data[n];
-	float SUM = 0;
-	float Enc_val = 0;
+	
+	//uint16_t data[n]; //data array for normalization
+	float SUM = 0;			//Sum for Average
 	float Enc_Val_raw;
-	float Average;
-	int i = 0;
-	bool state=1;
+	float Average;			//Encoder Value after Normalization from 0.25-4.08 to 0-1023
+	int i = 0;					//value counter
+	//bool state=1;
 	while (i<=n)
 		{
-		  uint8_t Enc_old; 
-			Enc_Val_raw = ReadAnalogInput(ADC_IN1);//HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_0);// READ ENCODER VALUE float value NOT digital value
-			//Normalization
-			//____________________
-			
-			
+		  //uint8_t Enc_old; 
+			Enc_Val_raw = 255;//ReadAnalogInput(ADC_IN1);//HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_0);// READ SENSOR VALUE float value NOT digital value
+			/**Normalization Exponential
+			//___________________________________________________________________________________________________
 			//data[n] = Enc_val;
-//			if(state) {Enc_old = Enc_Val_raw; state =0; }
-//			else {state=1;}
-//			//Enc_Val_raw = 90*Enc_Val_raw+(1-90)*Enc_old;//exponential filter
-			SUM = SUM + Enc_Val_raw;   							//Sum for Average 
+			//			if(state) {Enc_old = Enc_Val_raw; state =0; }
+			//			else {state=1;}
+			//			//Enc_Val_raw = 90*Enc_Val_raw+(1-90)*Enc_old;//exponential filter doesnt function properly
+			//--------------------------------------------------------------------------------------------------*/
+			SUM = SUM + Enc_Val_raw;   					//Sum for Average 
 			i = i+1;														//value counter
 			
 		}
-	Average = (long)SUM/(long)n;
-	//SUM
-	Average = Average - 250;//Subtraction
-	Average = Average / 1029;      			//Division
-	Average = Average * 1023;           //GAIN
-	//HAL_Delay(100);
+	Average = SUM/n;
+	//Normalize to 0-1023
+	Average = Average - 63;		//Subtraction
+	Average = Average / 972;   //Division
+	Average = Average * 1023;   //GAIN
 		
-	//Enc_Val_raw = ReadAnalogInput(ADC_IN1);
-	return(1023-(long)Average);//Enc_Val_raw);
+	Enc_Val_raw = ReadAnalogInput(ADC_IN1); //Raw data without filter 0-5000 mV
+		
+	return( Enc_Val_raw);//(long)Average); return value for PLC inverted 0-1023 must be output y = 1023-x
 }
 
  int * Validaton(Enc_valid){
 	 
-	 int ArrEnc[]= {0,0,0,0,0,0,0,0,0,0};
+	 int ArrEnc[]= {0,0,0,0,0,0,0,0,0,0};  // Dataset Array  for CANopen Communication default ={0}
 	 
-	 if(Enc_valid > 0 && Enc_valid < 1028) // Datavalidility check {Enc_DataVal}
+	 if(Enc_valid > 0 && Enc_valid < 1028) // Datavalidility check if range 0-1023+5 true {Enc_DataVal}
 	 {
-		 ArrEnc[0] = true;
+		 ArrEnc[0] = true; //Encoder value within range
 	 }
 	 else
 	 {
-		 ArrEnc[0] = false;
+		 ArrEnc[0] = false; //Encoder value outside range
 	 }
 	 
-	 if(Enc_valid > 631 && Enc_valid < 1028) // TRACTION Pos active {TrBr_T}
+	 if(Enc_valid > 631 && Enc_valid < 1028) // TRACTION Pos active {TrBr_T} [5]=0 => OK; [5]=1 i=> FAIL;
 	 {
-		 ArrEnc[1] = true;
+		 ArrEnc[1] = true; //Confirm if S1 is activated and change to databit of array
 		 if(ReadAnalogInput(ADC_IN3)>10){ArrEnc[5] = 0;}else{ArrEnc[5]=1;} //Check status of S1 {MICRO1_TrBr_Ko}
 	 }
 	 else
 	 {
 		 ArrEnc[1] = false;
-		 if(ReadAnalogInput(ADC_IN3)>10){ArrEnc[5] = 1;}else{ArrEnc[5]=0;}
+		 if(ReadAnalogInput(ADC_IN3)>10){ArrEnc[5] = 1;}else{ArrEnc[5]=0;} //Confirm that S1 is deactivated outside range
 	 }
 	 
-	 if(Enc_valid > 541 && Enc_valid < 551) // IDLE Pos active {TrBr_Zero}
+		if(Enc_valid > 541 && Enc_valid < 551) // IDLE Pos active {TrBr_Zero} [6]=0 => OK; [6]=1 i=> FAIL;
 	 {
 		 ArrEnc[2] = true;
 		 if(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)){ArrEnc[6] = 0;}else{ArrEnc[6]=1;} //Check status of S2 {MICRO2_TrBr_Ko}
@@ -229,9 +229,9 @@ float EN1_filter(uint8_t n)
 	 else
 	 {
 		 ArrEnc[2] = false;
-		 if(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)){ArrEnc[6] = 1;}else{ArrEnc[6]=0;}
+		 if(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)){ArrEnc[6] = 1;}else{ArrEnc[6]=0;}//Confirm that S2 is deactivated outside range
 	 }
-	 
+	 /** BRAKE Switch S4 DIN6 (does not function with STG-820)
 //	 if(Enc_valid > 109 && Enc_valid < 500) // BRAKE Pos active {TrBr_B}
 //	 {
 //		 ArrEnc[3] = true;
@@ -242,8 +242,10 @@ float EN1_filter(uint8_t n)
 //		 ArrEnc[3] = false;
 //		 if(HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin)){ArrEnc[8] = 1;}else{ArrEnc[8]=0;}
 //	 }
+	 */
 	 
-	 	 if(Enc_valid > 0 && Enc_valid <= 10) // EMERGENCY Pos active {TrBr_EMG} 
+	 	 
+		if(Enc_valid > 0 && Enc_valid <= 10) // EMERGENCY Pos active {TrBr_EMG} [7]=1 => OK; [7]=0 i=> FAIL;
 	 {
 		 ArrEnc[4] = true;
 		 if(HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin)){ArrEnc[7] = 1;}else{ArrEnc[7]=0;} //Check status of S3 {MICRO3_TrBr_Ko}
@@ -251,16 +253,16 @@ float EN1_filter(uint8_t n)
 	 else
 	 {
 		 ArrEnc[4] = false;
-		 if(HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin)){ArrEnc[7] = 0;}else{ArrEnc[7]=1;}
+		 if(HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin)){ArrEnc[7] = 0;}else{ArrEnc[7]=1;}//Confirm that S3 is activated outside range
 	 }
-	 if( ArrEnc[5] || ArrEnc[6] || ArrEnc[7] || ArrEnc[8] || FAILSTATE)
+	 if( ArrEnc[5] || ArrEnc[6] || ArrEnc[7] || ArrEnc[8] || FAILSTATE) //Check that no switches FAILED, will reset with restart
 		{
-			ArrEnc[9] = 0;
+			ArrEnc[9] = 0;//Microswitch Valid variable boolean bit in ERROR state
 			FAILSTATE = true;
 		} 
 		else
 		{
-			ArrEnc[9]=1;
+			ArrEnc[9]=1;//Microswitch Valid variable boolean bit in OK state
 		}
 		
 	 return(ArrEnc);
@@ -269,7 +271,7 @@ float EN1_filter(uint8_t n)
 
  
  uint8_t Dataset(bool b1,bool b2,bool b3,bool b4,bool b5,bool b6,bool b7,bool b8)
-{
+{ //Merge dataset boolean bits into int to transmit through CanOpen signal
 	int i;
 
 	static uint8_t dataBits[8]= {0};
@@ -288,7 +290,7 @@ float EN1_filter(uint8_t n)
 	
 	for (i=0;i<8;i++)
 	{
-		u8 += dataBits[7-i]*power;
+		u8 += dataBits[7-i]*power; //Bin to dec calculation
 		power *=2;
 	}
 	
@@ -301,7 +303,7 @@ float EN1_filter(uint8_t n)
 
 		
 		
-//	
+/**	Bitshift example
 //	u8 |= ((uint8_t)b1 << 0);
 //	u8 |= ((uint8_t)b2 << 1);
 //	u8 |= ((uint8_t)b3 << 2);
@@ -309,7 +311,7 @@ float EN1_filter(uint8_t n)
 //	u8 |= ((uint8_t)b5 << 4);
 //	u8 |= ((uint8_t)b6 << 5);
 //	u8 |= ((uint8_t)b7 << 6);
-//	u8 |= ((uint8_t)b8 << 7);
+//	u8 |= ((uint8_t)b8 << 7);*/
 	
   return u8;
 }
@@ -317,82 +319,78 @@ float EN1_filter(uint8_t n)
 
 int main(void)
 {
-	// Do not change the system clock above 16 MHz! Higher speed can lead to the destruction of the module!
+	/** Disclaimer:
+	Do not change the system clock above 16 MHz! Higher speed can lead to the destruction of the module!
+	*/
+	CO_NMT_reset_cmd_t reset = CO_RESET_NOT; //Reset CanOpen
+  
+  MainInit();// System init	
 	
-	CO_NMT_reset_cmd_t reset = CO_RESET_NOT; 
-  // System init	
-  MainInit();
-	bool STAT2 = Initialize_outputs();
-	// LED On
-	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
-	SetAnalogOutput(5100);
+	bool STAT2 = Initialize_outputs();// activate outputs and set to HIGH or 5V
+	
+	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);// Main LED On
+	SetAnalogOutput(5100);// Set analog output to 5V
 	// Start DAC output
-	HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
+	HAL_DAC_Start(&hdac, DAC_CHANNEL_2); // Start DAC channel for Digital analog read
 	
 	// =======================================================================
-	// Set up baudrate
+	// Set up baudrate to 250kb/s
 	hcan.Instance->BTR &= 0xFFFFFC00;
 	hcan.Instance->BTR |= CAN_250K;
 	// =======================================================================
-	float Enc_Val_raw = ReadAnalogInput(ADC_IN1);
+	//float Enc_Val_raw = ReadAnalogInput(ADC_IN1); //Read Sensor output with analog input
+	
 	/* increase variable each startup. Variable should be stored in EEPROM. */
 	OD_powerOnCounter++;
  	bool STAT1 = Initialize_outputs();
   /* Infinite loop */
   while (1)
   {
-		// =======================================================================
+		/** Sample code link
+		//=======================================================================
 		// CANOpen sample code
 		// Untested port of https://github.com/CANopenNode/CANopenNode
-		// =======================================================================
+		// =======================================================================*/
 		
-		while(reset != CO_RESET_APP)
+		while(reset != CO_RESET_APP) // while reset not active
 		{
-			/* CANopen communication reset - initialize CANopen objects *******************/
-			CO_ReturnError_t err;
+			/* CANopen communication reset - initialize CANopen objects */
+			CO_ReturnError_t err; // Define Error Variable
 			uint16_t timer1msPrevious;
-			//SetAnalogOutput(5100);
-			/* disable CAN and CAN interrupts */
-      CanDisable();
-			uint8_t NodeID1 = 56; //Default set Node ID if Jumper open/FALSE
-			bool NodeID_condition = 0;
+      CanDisable();/* disable CAN and CAN interrupts */
+			uint8_t NodeID1= 56; //Default set Node ID if Jumper open/FALSE
+			bool NodeID_condition = 0; //Node ID change condition
 			if (ReadAnalogInput(ADC_IN2))  //Condition for noe ID is HIGH / TRUE
 			{
-				uint8_t NodeID1 = 58; //CPU1-CAB2
+				uint8_t NodeID1 = 56; //CPU1-CAB2 = 58   CPU2-CAB2 = 59
 				NodeID_condition = 1;
 			}
 			else
 			{
-				uint8_t NodeID1 = 56; //CPU1-CAB1
+				uint8_t NodeID1 = 58; //CPU1-CAB1 = 56   CPU2-CAB1 = 57
 				NodeID_condition = 0;
 			}
-			/* initialize CANopen */
+			/* initialize CANopen and check for errors */
 			err = CO_init(0/* CAN module address */, NodeID1/* NodeID */, CAN_250K /* bit rate */);
-			if(err != CO_ERROR_NO)
+			if(err != CO_ERROR_NO) //If not in error continue to infinite loop 
 			{
-					while(1)
+					while(1)//infinite loop
 					{
-						int NodeID1 = 56; //Default set Node ID if Jumper open/FALSE
+						int NodeID1 = 0; //Default set Node ID if Jumper open/FALSE
 						bool NodeID = 0;
-						if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1))  //Condition is TRUE if pin 13 of register c is HIGH / TRUE
+						if (ReadAnalogInput(ADC_IN2))  //Condition is TRUE if pin 13 of register c is HIGH / TRUE
 						{
-							int NodeID1 = 58; //CPU1-CAB2
+							int NodeID1 = 56; //CPU1-CAB2
 							NodeID = 1;
 						}
 						else
 						{
-							int NodeID1 = 56; //CPU1-CAB1
+							int NodeID1 = 58; //CPU1-CAB1
 							NodeID = 0;
 						}
 						
 						
 						STAT1 = Initialize_outputs();
-						//========================================================================
-						//Read analog inputs and call arithmitic function for n values of encoder
-						//1. Moving average function + convert Float to LONG int 
-						//2. Switch status readout
-						//========================================================================
-						 
 						
 						long Enc_Val_filtered = EN1_filter(100);//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
 						
@@ -467,13 +465,19 @@ int main(void)
 					} 
 				
 				hcan.pTxMsg->DLC = 4 ;					
-				uint16_t Enc_Val_filtered = EN1_filter(100);//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
+				uint16_t Enc_Val_filtered = EN1_filter(10);//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
 				
 				//int * CAN_DATA[10] = {Validaton(Enc_Val_filtered)};//Function to validate the microswitches and encoder validility and convert them to an array
 				int * CAN_DATA;
 				CAN_DATA = Validaton(Enc_Val_filtered);//Function to validate the microswitches and encoder validility and convert them to an array
 
-									
+					//Debugging code:		
+				int S1 = ReadAnalogInput(ADC_IN3);
+				int S2 = HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin);
+				int S3 = HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin);
+				int S1234[3] = {S1,S2,S3};
+				
+				
 				CanMSG.u32[0] = 0;
 				CanMSG.u32[1] = 0;
 				
