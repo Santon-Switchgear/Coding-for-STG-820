@@ -160,7 +160,7 @@ int Initialize_outputs(){
 }
 
 
-float EN1_filter(uint8_t n)
+float EN1_filter(uint16_t n)
 {
 	//n=1;
 	//uint16_t data[n];
@@ -168,7 +168,7 @@ float EN1_filter(uint8_t n)
 	float Enc_val = 0;
 	float Enc_Val_raw;
 	float Average;
-	int i = 0;
+	int i = 1;
 	bool state=1;
 	while (i<=n)
 		{
@@ -186,20 +186,20 @@ float EN1_filter(uint8_t n)
 			i = i+1;														//value counter
 			
 		}
-	Average = (long)SUM/(long)n;
+	Average = (long)SUM/(long)(n);
 	//SUM
-	Average = Average - 250;//Subtraction
-	Average = Average / 1029;      			//Division
+	Average = Average - 285;//Subtraction
+	Average = Average / 940;      			//Division
 	Average = Average * 1023;           //GAIN
 	//HAL_Delay(100);
 		
 	//Enc_Val_raw = ReadAnalogInput(ADC_IN1);
-	return(1023-(long)Average);//Enc_Val_raw);
+	return((long)Average);//Enc_Val_raw);//
 }
 
- int * Validaton(Enc_valid){
+ bool * Validaton(Enc_valid){
 	 
-	 int ArrEnc[]= {0,0,0,0,0,0,0,0,0,0};
+	 bool ArrEnc[10]= {0,0,0,0,0,0,0,0,0,0};
 	 
 	 if(Enc_valid > 0 && Enc_valid < 1028) // Datavalidility check {Enc_DataVal}
 	 {
@@ -372,17 +372,17 @@ int main(void)
 			{
 					while(1)
 					{
-						int NodeID1 = 56; //Default set Node ID if Jumper open/FALSE
+						//int NodeID1 = 56; //Default set Node ID if Jumper open/FALSE
 						bool NodeID = 0;
-						if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1))  //Condition is TRUE if pin 13 of register c is HIGH / TRUE
+						if (ReadAnalogInput(ADC_IN2))  //Condition is TRUE if pin 13 of register c is HIGH / TRUE
 						{
 							int NodeID1 = 58; //CPU1-CAB2
-							NodeID = 1;
+							NodeID_condition = 1;
 						}
 						else
 						{
 							int NodeID1 = 56; //CPU1-CAB1
-							NodeID = 0;
+							NodeID_condition = 0;
 						}
 						
 						
@@ -461,19 +461,40 @@ int main(void)
 				//1. Moving average function + convert Float to LONG int 
 				//2. Switch status readout
 				//========================================================================
-				if (NodeID_condition){hcan.pTxMsg->StdId = 0x00003A;   //Reciever adres: 0x003A (DMA-15)
+				if (ReadAnalogInput(ADC_IN2))
+					{
+						hcan.pTxMsg->StdId = 0x00003A;   //Reciever adres: 0x003A (DMA-15)
 					}
-				else{hcan.pTxMsg->StdId = 0x000038;   //Reciever adres: 0x0038 (DMA-15)
+				else
+					{
+						hcan.pTxMsg->StdId = 0x000038;   //Reciever adres: 0x0038 (DMA-15)
 					} 
 				
 				hcan.pTxMsg->DLC = 4 ;					
 				uint16_t Enc_Val_filtered = EN1_filter(100);//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
 				
 				//int * CAN_DATA[10] = {Validaton(Enc_Val_filtered)};//Function to validate the microswitches and encoder validility and convert them to an array
-				int * CAN_DATA;
+				bool * CAN_DATA;
 				CAN_DATA = Validaton(Enc_Val_filtered);//Function to validate the microswitches and encoder validility and convert them to an array
-
-									
+				
+				//Debugging code-----------------------------
+			//_____________________________________________
+				
+				float JumperState = ReadAnalogInput(ADC_IN2);
+				float EncoderState = ReadAnalogInput(ADC_IN1);
+				float EncoderState21 =	EN1_filter(1);
+				float EncoderState22 =	EN1_filter(10);
+			  float EncoderState23 =	EN1_filter(100);
+				float EncoderState24 =	EN1_filter(500);
+				float EncoderState25 =	EN1_filter(1000);	
+				float EncoderState3 = (((EncoderState-285)/918)*1023);
+				bool S1 = ReadAnalogInput(ADC_IN3);
+				bool S2 = HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin);
+				bool S3 = HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin);
+				//bool S4 = HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin);
+				
+			//---------------------------------------------
+			//---------------------------------------------
 				CanMSG.u32[0] = 0;
 				CanMSG.u32[1] = 0;
 				
