@@ -283,62 +283,67 @@
         <Ww>
           <count>26</count>
           <WinNumber>1</WinNumber>
-          <ItemText>S1</ItemText>
+          <ItemText>ArrEnc</ItemText>
         </Ww>
         <Ww>
           <count>27</count>
           <WinNumber>1</WinNumber>
-          <ItemText>S2</ItemText>
+          <ItemText>EncoderState</ItemText>
         </Ww>
         <Ww>
           <count>28</count>
           <WinNumber>1</WinNumber>
-          <ItemText>S3</ItemText>
+          <ItemText>JumperState</ItemText>
         </Ww>
         <Ww>
           <count>29</count>
           <WinNumber>1</WinNumber>
-          <ItemText>ArrEnc</ItemText>
+          <ItemText>EncoderState21</ItemText>
         </Ww>
         <Ww>
           <count>30</count>
           <WinNumber>1</WinNumber>
-          <ItemText>EncoderState</ItemText>
+          <ItemText>EncoderState22</ItemText>
         </Ww>
         <Ww>
           <count>31</count>
           <WinNumber>1</WinNumber>
-          <ItemText>JumperState</ItemText>
+          <ItemText>EncoderState23</ItemText>
         </Ww>
         <Ww>
           <count>32</count>
           <WinNumber>1</WinNumber>
-          <ItemText>EncoderState21</ItemText>
+          <ItemText>EncoderState24</ItemText>
         </Ww>
         <Ww>
           <count>33</count>
           <WinNumber>1</WinNumber>
-          <ItemText>EncoderState22</ItemText>
+          <ItemText>EncoderState25</ItemText>
         </Ww>
         <Ww>
           <count>34</count>
           <WinNumber>1</WinNumber>
-          <ItemText>EncoderState23</ItemText>
+          <ItemText>EncoderState3</ItemText>
         </Ww>
         <Ww>
           <count>35</count>
           <WinNumber>1</WinNumber>
-          <ItemText>EncoderState24</ItemText>
+          <ItemText>S1</ItemText>
         </Ww>
         <Ww>
           <count>36</count>
           <WinNumber>1</WinNumber>
-          <ItemText>EncoderState25</ItemText>
+          <ItemText>S2</ItemText>
         </Ww>
         <Ww>
           <count>37</count>
           <WinNumber>1</WinNumber>
-          <ItemText>EncoderState3</ItemText>
+          <ItemText>S3</ItemText>
+        </Ww>
+        <Ww>
+          <count>38</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Jumper</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

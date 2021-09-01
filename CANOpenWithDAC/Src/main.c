@@ -220,7 +220,16 @@ float EN1_filter(uint16_t n)
 		 ArrEnc[1] = false;
 		 if(ReadAnalogInput(ADC_IN3)>10){ArrEnc[5] = 1;}else{ArrEnc[5]=0;}
 	 }
-	 
+/**	 if(Enc_valid > 631 && Enc_valid < 1028) // TRACTION Pos active {TrBr_T} inverted
+//	 {
+//		 ArrEnc[1] = false;
+//		 if(ReadAnalogInput(ADC_IN3)>10){ArrEnc[5] = 1;}else{ArrEnc[5]=0;} //Check status of S1 {MICRO1_TrBr_Ko}
+//	 }
+//	 else
+//	 {
+//		 ArrEnc[1] = true;
+//		 if(ReadAnalogInput(ADC_IN3)>10){ArrEnc[5] = 0;}else{ArrEnc[5]=1;}
+//	 }*/
 	 if(Enc_valid > 541 && Enc_valid < 551) // IDLE Pos active {TrBr_Zero}
 	 {
 		 ArrEnc[2] = true;
@@ -231,8 +240,17 @@ float EN1_filter(uint16_t n)
 		 ArrEnc[2] = false;
 		 if(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)){ArrEnc[6] = 1;}else{ArrEnc[6]=0;}
 	 }
-	 
-//	 if(Enc_valid > 109 && Enc_valid < 500) // BRAKE Pos active {TrBr_B}
+	 /**if(Enc_valid > 541 && Enc_valid < 551) // IDLE Pos active {TrBr_Zero} inverted
+	 {
+		 ArrEnc[2] = false;
+		 if(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)){ArrEnc[6] = 1;}else{ArrEnc[6]=0;} //Check status of S2 {MICRO2_TrBr_Ko}
+	 }
+	 else
+	 {
+		 ArrEnc[2] = true;
+		 if(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)){ArrEnc[6] = 0;}else{ArrEnc[6]=1;}
+	 }*/
+/**	 if(Enc_valid > 109 && Enc_valid < 500) // BRAKE Pos active {TrBr_B} 
 //	 {
 //		 ArrEnc[3] = true;
 //		 if(HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin)){ArrEnc[8] = 0;}else{ArrEnc[8]=1;} //Check status of S4 {MICRO4_TrBr_Ko}
@@ -241,7 +259,17 @@ float EN1_filter(uint16_t n)
 //	 {
 //		 ArrEnc[3] = false;
 //		 if(HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin)){ArrEnc[8] = 1;}else{ArrEnc[8]=0;}
+//	 }*/
+	 /**	 if(Enc_valid > 109 && Enc_valid < 500) // BRAKE Pos active {TrBr_B} inverted
+//	 {
+//		 ArrEnc[3] = false;
+//		 if(HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin)){ArrEnc[8] = 1;}else{ArrEnc[8]=0;} //Check status of S4 {MICRO4_TrBr_Ko}
 //	 }
+//	 else
+//	 {
+//		 ArrEnc[3] = true;
+//		 if(HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin)){ArrEnc[8] = 0;}else{ArrEnc[8]=1;}
+//	 }*/
 	 
 	 	 if(Enc_valid > 0 && Enc_valid <= 10) // EMERGENCY Pos active {TrBr_EMG} 
 	 {
@@ -253,7 +281,17 @@ float EN1_filter(uint16_t n)
 		 ArrEnc[4] = false;
 		 if(HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin)){ArrEnc[7] = 0;}else{ArrEnc[7]=1;}
 	 }
-	 if( ArrEnc[5] || ArrEnc[6] || ArrEnc[7] || ArrEnc[8] || FAILSTATE)
+	/** if(Enc_valid > 0 && Enc_valid <= 10) // EMERGENCY Pos active {TrBr_EMG} inverted
+	 {
+		 ArrEnc[4] = false;
+		 if(HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin)){ArrEnc[7] = 0;}else{ArrEnc[7]=1;} //Check status of S3 {MICRO3_TrBr_Ko}
+	 }
+	 else
+	 {
+		 ArrEnc[4] = true;
+		 if(HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin)){ArrEnc[7] = 1;}else{ArrEnc[7]=0;}
+	 }*/
+	 if((!ArrEnc[0]) || ArrEnc[5] || ArrEnc[6] || ArrEnc[7] || ArrEnc[8] || FAILSTATE)
 		{
 			ArrEnc[9] = 0;
 			FAILSTATE = true;
@@ -488,9 +526,10 @@ int main(void)
 				float EncoderState24 =	EN1_filter(500);
 				float EncoderState25 =	EN1_filter(1000);	
 				float EncoderState3 = (((EncoderState-285)/918)*1023);
-				bool S1 = ReadAnalogInput(ADC_IN3);
-				bool S2 = HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin);
-				bool S3 = HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin);
+			  bool S1 = ReadAnalogInput(ADC_IN2);//s1
+				bool S2 = ReadAnalogInput(ADC_IN3);//s2
+				bool S3 = HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin);//s3
+				bool Jumper = HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin);
 				//bool S4 = HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin);
 				
 			//---------------------------------------------
