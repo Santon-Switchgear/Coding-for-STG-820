@@ -315,6 +315,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>dataset2</ItemText>
         </Ww>
+        <Ww>
+          <count>33</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>resetbit</ItemText>
+        </Ww>
       </WatchWindow1>
       <MemoryWindow1>
         <Mm>

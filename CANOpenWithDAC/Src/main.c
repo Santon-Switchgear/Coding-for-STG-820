@@ -34,7 +34,10 @@
 #include "main.h"
 #include "stm32f0xx_hal.h"
 #include "main_hal.h"
-#include "CANopen.h" 
+#include "CANopen.h"
+#include "stdlib.h"
+
+
 
 /* Private variables ---------------------------------------------------------*/
 CanTxMsgTypeDef CAN_TX_Msg;
@@ -62,8 +65,9 @@ CAN_Variant_t CanMSG;
 /* Global variables and objects */
     volatile uint16_t   CO_timer1ms = 0U;   /* variable increments each millisecond */ 
 		volatile bool FAILSTATE = false; // added foas global FAILSTATE variable
-		volatile float Encoder_Set = 300;
-		volatile float CAN_DATA[10];
+		volatile float Encoder_Set = 300; // Encoder = position 0
+		volatile float CAN_DATA[10];//CANDATA array for data validation
+		volatile int resetbit = 5;
 /* Private function prototypes -----------------------------------------------*/
 uint8_t u8Data[32];
 
@@ -137,7 +141,29 @@ void HAL_SYSTICK_Callback(void)
 	  tmrTask_thread();
 }
 
-
+void reset_variables(void)
+	{
+		//((void (code *) (void)) 0x0000) ();
+		//exit(1);
+		MainInit();
+		HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+		resetbit = resetbit - 1;
+		SetAnalogOutput(0);
+		Encoder_Set = 300;
+		CAN_DATA[0] = 0;CAN_DATA[1] = 0;CAN_DATA[2] = 0;CAN_DATA[3] = 0;CAN_DATA[4] = 0;
+		CAN_DATA[5] = 0;CAN_DATA[6] = 0;CAN_DATA[7] = 0;CAN_DATA[8] = 0;CAN_DATA[9] = 0;
+		HAL_GPIO_WritePin(Out1_HS_GPIO_Port, Out1_HS_Pin, GPIO_PIN_RESET); //JUMPER Set pin 2 (OUT1) HIGH / TRUE
+		HAL_GPIO_WritePin(Out2_HS_GPIO_Port, Out2_HS_Pin, GPIO_PIN_RESET); //MICROSWITCH 1 + 2 Set pin 3 (OUT2) HIGH / TRUE
+		HAL_GPIO_WritePin(Out3_HS_GPIO_Port, Out3_HS_Pin, GPIO_PIN_RESET);
+		
+		if (resetbit == 0)
+			{
+				FAILSTATE =0;
+				resetbit = 5;
+			}
+		
+	}
+		
 
 bool SW1(){//s1 analog to bool conversion with threshhold 20mV
 		float IN2 = ReadAnalogInput(ADC_IN2);
@@ -665,6 +691,11 @@ int main(void)
 				hcan.pTxMsg->Data[2] = CanMSG.u8[2];
 				hcan.pTxMsg->Data[3] = CanMSG.u8[3];
 				
+				if (FAILSTATE == true)
+					{
+						reset_variables();
+						main();
+					}
 				
 //				for ( u8I=0; u8I<8; u8I++ )
 //					hcan.pTxMsg->Data[u8I] = CanMSG.u8[u8I];
