@@ -65,6 +65,7 @@ CAN_Variant_t CanMSG;
 /* Global variables and objects */
     volatile uint16_t   CO_timer1ms = 0U;   /* variable increments each millisecond */ 
 		volatile bool FAILSTATE = false; // added foas global FAILSTATE variable
+		volatile bool Mode = false;
 		volatile float Encoder_Set = 300; // Encoder = position 0
 		volatile float CAN_DATA[10];//CANDATA array for data validation
 		volatile int resetbit = 5;
@@ -143,20 +144,20 @@ void HAL_SYSTICK_Callback(void)
 
 void reset_variables(void)
 	{
-		//((void (code *) (void)) 0x0000) ();
-		//exit(1);
-		MainInit();
-		HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-		resetbit = resetbit - 1;
-		SetAnalogOutput(0);
-		Encoder_Set = 300;
-		CAN_DATA[0] = 0;CAN_DATA[1] = 0;CAN_DATA[2] = 0;CAN_DATA[3] = 0;CAN_DATA[4] = 0;
-		CAN_DATA[5] = 0;CAN_DATA[6] = 0;CAN_DATA[7] = 0;CAN_DATA[8] = 0;CAN_DATA[9] = 0;
-		HAL_GPIO_WritePin(Out1_HS_GPIO_Port, Out1_HS_Pin, GPIO_PIN_RESET); //JUMPER Set pin 2 (OUT1) HIGH / TRUE
-		HAL_GPIO_WritePin(Out2_HS_GPIO_Port, Out2_HS_Pin, GPIO_PIN_RESET); //MICROSWITCH 1 + 2 Set pin 3 (OUT2) HIGH / TRUE
-		HAL_GPIO_WritePin(Out3_HS_GPIO_Port, Out3_HS_Pin, GPIO_PIN_RESET);
+//		//((void (code *) (void)) 0x0000) ();
+//		//exit(1);
+//		MainInit();
+//		HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+//		resetbit = resetbit - 1;
+//		SetAnalogOutput(0);
+//		Encoder_Set = 300;
+//		CAN_DATA[0] = 0;CAN_DATA[1] = 0;CAN_DATA[2] = 0;CAN_DATA[3] = 0;CAN_DATA[4] = 0;
+//		CAN_DATA[5] = 0;CAN_DATA[6] = 0;CAN_DATA[7] = 0;CAN_DATA[8] = 0;CAN_DATA[9] = 0;
+//		HAL_GPIO_WritePin(Out1_HS_GPIO_Port, Out1_HS_Pin, GPIO_PIN_RESET); //JUMPER Set pin 2 (OUT1) HIGH / TRUE
+//		HAL_GPIO_WritePin(Out2_HS_GPIO_Port, Out2_HS_Pin, GPIO_PIN_RESET); //MICROSWITCH 1 + 2 Set pin 3 (OUT2) HIGH / TRUE
+//		HAL_GPIO_WritePin(Out3_HS_GPIO_Port, Out3_HS_Pin, GPIO_PIN_RESET);
 		
-		if (resetbit == 0)
+		if (resetbit < 1)
 			{
 				FAILSTATE =0;
 				resetbit = 5;
@@ -261,19 +262,26 @@ float EN1_filter()//uint16_t n)
 	
 	float Enc_Val =(((Enc_Val_raw-285)/918)*1023);
 	
-	if(__fabs(Encoder_Set-(int)Enc_Val_raw) > 8)
-		{
-			//float Enc_Val_raw = ReadAnalogInput(ADC_IN1);
-			Enc_Val =(((Enc_Val_raw-285)/918)*1023);
-			Encoder_Set = Enc_Val_raw;
-		}
-	else
-		{
-			Enc_Val =(((Encoder_Set-285)/918)*1023);
-			//float Enc_Val_raw1 = ReadAnalogInput(ADC_IN1);
-			//float Enc_Val_1 = (((Enc_Val_raw1-285)/918)*1023);
-		
-		}	
+//	if(FAILSTATE || Mode )
+//		{
+//			//float Enc_Val_raw = ReadAnalogInput(ADC_IN1);
+//			Enc_Val =(((Enc_Val_raw-300)/970)*1023);
+//			//Encoder_Set = Enc_Val_raw;
+//			if (!Mode)
+//			{
+//				FAILSTATE =0;
+//			}
+//			
+//			Mode = true;
+//			
+//		}
+//	else
+//		{
+//			Enc_Val =(((Enc_Val_raw-285)/918)*1023);
+//			//float Enc_Val_raw1 = ReadAnalogInput(ADC_IN1);
+//			//float Enc_Val_1 = (((Enc_Val_raw1-285)/918)*1023);
+//		
+//		}	
 	if ( Enc_Val < 70)//EMG
 		{
 			Enc_Val = 0;
@@ -282,7 +290,7 @@ float EN1_filter()//uint16_t n)
 		{
 			Enc_Val = 1023;
 		}
-	if ( 635 > Enc_Val && Enc_Val > 455)//IDLE
+	if ( 635 > Enc_Val && Enc_Val > 520)//IDLE
 		{
 			Enc_Val = 546;
 		}
@@ -329,6 +337,7 @@ float EN1_filter()//uint16_t n)
 				CAN_DATA[5]=0;
 			} 
 	 }
+
 	 else
 	 {
 		 CAN_DATA[1] = false;
@@ -338,18 +347,28 @@ float EN1_filter()//uint16_t n)
 			{
 				CAN_DATA[5] = 0;
 			}
+			else
+			{
+				CAN_DATA[5] = 1;
+			}
 		 
 	 }
+	
 
 	 if(Enc_valid > 455 && Enc_valid < 635) // IDLE Pos active {TrBr_Zero}
 			{
 				CAN_DATA[2] = true;
 				bool SW_2 = SW2();
-		 if(SW_2)//Check status of S2 {MICRO2_TrBr_Ko}
+		 if(SW_2 && Enc_valid > 530 && Enc_valid < 603)//Check status of S2 {MICRO2_TrBr_Ko}
 				{
 						CAN_DATA[6] = 0;
+					
 				}
- 
+		 if(!SW_2 && Enc_valid > 530 && Enc_valid < 603)//Check status of S2 {MICRO2_TrBr_Ko}
+				{
+						CAN_DATA[6] = 1;
+					bool F3=1;
+				}
 			}
 	 else
 		 {
@@ -693,8 +712,10 @@ int main(void)
 				
 				if (FAILSTATE == true)
 					{
-						reset_variables();
-						main();
+						Mode=1;
+						//HAL_NVIC_SystemReset();
+						//reset_variables();
+						//main();
 					}
 				
 //				for ( u8I=0; u8I<8; u8I++ )
