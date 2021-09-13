@@ -68,7 +68,8 @@ CAN_Variant_t CanMSG;
 		volatile bool Mode = false;
 		volatile float Encoder_Set = 300; // Encoder = position 0
 		volatile float CAN_DATA[10];//CANDATA array for data validation
-		volatile int resetbit = 5;
+		volatile int resetbit = 0;
+		volatile int Setup_complete=0;
 /* Private function prototypes -----------------------------------------------*/
 uint8_t u8Data[32];
 
@@ -157,11 +158,11 @@ void reset_variables(void)
 //		HAL_GPIO_WritePin(Out2_HS_GPIO_Port, Out2_HS_Pin, GPIO_PIN_RESET); //MICROSWITCH 1 + 2 Set pin 3 (OUT2) HIGH / TRUE
 //		HAL_GPIO_WritePin(Out3_HS_GPIO_Port, Out3_HS_Pin, GPIO_PIN_RESET);
 		
-		if (resetbit < 1)
-			{
-				FAILSTATE =0;
-				resetbit = 5;
-			}
+//		if (resetbit < 1)
+//			{
+//				FAILSTATE =0;
+//				resetbit = 5;
+//			}
 		
 	}
 		
@@ -223,6 +224,7 @@ float EN1_filter()//uint16_t n)
 {
 		/** OLD code
 	
+	
 	Enc_Val_raw = ReadAnalogInput(ADC_IN1);
 	
 	//n=1;
@@ -258,31 +260,31 @@ float EN1_filter()//uint16_t n)
 		*/
 	
 	
+	Initialize_outputs();
 	float Enc_Val_raw = ReadAnalogInput(ADC_IN1);
 	
-	float Enc_Val =(((Enc_Val_raw-285)/918)*1023);
+	float Enc_Val =(((Enc_Val_raw-300)/910)*1023);//-308)/962)*1023);//(((Enc_Val_raw-285)/918)*1023);
 	
-//	if(FAILSTATE || Mode )
+	if ( Enc_Val < 10  && Enc_Val_raw >315 )//EMG
+		{
+			Mode = 1;
+		}
+//	if(Mode)
 //		{
 //			//float Enc_Val_raw = ReadAnalogInput(ADC_IN1);
 //			Enc_Val =(((Enc_Val_raw-300)/970)*1023);
 //			//Encoder_Set = Enc_Val_raw;
-//			if (!Mode)
-//			{
-//				FAILSTATE =0;
-//			}
-//			
-//			Mode = true;
 //			
 //		}
 //	else
 //		{
-//			Enc_Val =(((Enc_Val_raw-285)/918)*1023);
+//			Enc_Val =(((Enc_Val_raw-300)/910)*1023);
 //			//float Enc_Val_raw1 = ReadAnalogInput(ADC_IN1);
 //			//float Enc_Val_1 = (((Enc_Val_raw1-285)/918)*1023);
 //		
 //		}	
-	if ( Enc_Val < 70)//EMG
+
+	if ( Enc_Val < 30)//EMG
 		{
 			Enc_Val = 0;
 		}
@@ -290,7 +292,7 @@ float EN1_filter()//uint16_t n)
 		{
 			Enc_Val = 1023;
 		}
-	if ( 635 > Enc_Val && Enc_Val > 520)//IDLE
+	if ( 570 > Enc_Val && Enc_Val > 535)//IDLE
 		{
 			Enc_Val = 546;
 		}
@@ -313,8 +315,8 @@ float EN1_filter()//uint16_t n)
  float Validaton(float Enc_valid){
 	 
 	 Enc_valid = EN1_filter();
-	 //float ArrEnc[10]= {0,0,0,0,0,0,0,0,0,0};
-	 
+	 //CAN_DATA;
+	 if(Setup_complete==1){
 	 if(Enc_valid > -1 && Enc_valid < 1024) // Datavalidility check {Enc_DataVal}
 	 {
 		 CAN_DATA[0] = true;
@@ -328,14 +330,14 @@ float EN1_filter()//uint16_t n)
 	 {
 		 CAN_DATA[1] = true;
 		 bool SW_1 = SW1();
-		 if(SW_1 && Enc_valid >= 670 && 1023 >= Enc_valid )//Check status of S1 {MICRO1_TrBr_Ko}
+		 if(SW_1 && Enc_valid >= 680 && 1023 >= Enc_valid )//Check status of S1 {MICRO1_TrBr_Ko}
 			{
 				CAN_DATA[5] = 1;
 			}
-		 else
+		 if(!SW_1 && Enc_valid >= 670 && 1023 >= Enc_valid )//Check status of S1 {MICRO1_TrBr_Ko}
 			{
-				CAN_DATA[5]=0;
-			} 
+				//CAN_DATA[5] = 0;
+			}
 	 }
 
 	 else
@@ -345,9 +347,9 @@ float EN1_filter()//uint16_t n)
 		
 		 if(SW_1 && Enc_valid >= 0 && 602 >= Enc_valid)
 			{
-				CAN_DATA[5] = 0;
+				//CAN_DATA[5] = 0;
 			}
-			else
+			if(!SW_1 && Enc_valid >= 0 && 546 >= Enc_valid)
 			{
 				CAN_DATA[5] = 1;
 			}
@@ -361,10 +363,10 @@ float EN1_filter()//uint16_t n)
 				bool SW_2 = SW2();
 		 if(SW_2 && Enc_valid > 530 && Enc_valid < 603)//Check status of S2 {MICRO2_TrBr_Ko}
 				{
-						CAN_DATA[6] = 0;
+						//CAN_DATA[6] = 0;
 					
 				}
-		 if(!SW_2 && Enc_valid > 530 && Enc_valid < 603)//Check status of S2 {MICRO2_TrBr_Ko}
+		 if(!SW_2 && Enc_valid > 535 && Enc_valid < 550)//Check status of S2 {MICRO2_TrBr_Ko}
 				{
 						CAN_DATA[6] = 1;
 					bool F3=1;
@@ -377,19 +379,19 @@ float EN1_filter()//uint16_t n)
 			 bool SW_2 = SW2();
 			 bool F1=0;
 			 bool F2=0;
-			 if(SW_2 && Enc_valid > 0 && Enc_valid < 421)
+			 if(SW_2 && Enc_valid > 0 && Enc_valid < 410)
 					{
 						CAN_DATA[6]=1;
 						F1=1;
 					}
-			 if (SW_2 && Enc_valid > 671 && Enc_valid < 1023)
+			 if (SW_2 && Enc_valid > 690 && Enc_valid < 1023)
 					{
 						CAN_DATA[6]=1;
 						F2=1;
 					}
 			 if(!F1 && !F2)
 				 {
-					 CAN_DATA[6] = 0;
+					 //CAN_DATA[6] = 0;
 				 }
 		 }
 	 
@@ -403,46 +405,32 @@ float EN1_filter()//uint16_t n)
 //		 CAN_DATA[3] = false;
 //		 if(HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin)){CAN_DATA[8] = 1;}else{CAN_DATA[8]=0;}
 //	 }*/
-	 /**	 if(Enc_valid > 109 && Enc_valid < 500) // BRAKE Pos active {TrBr_B} inverted
-//	 {
-//		 CAN_DATA[3] = false;
-//		 if(HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin)){CAN_DATA[8] = 1;}else{CAN_DATA[8]=0;} //Check status of S4 {MICRO4_TrBr_Ko}
-//	 }
-//	 else
-//	 {
-//		 CAN_DATA[3] = true;
-//		 if(HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin)){CAN_DATA[8] = 0;}else{CAN_DATA[8]=1;}
-//	 }*/
+	 
 	 
 	 if(Enc_valid >= 0 && Enc_valid <= 100) // EMERGENCY Pos active {TrBr_EMG} S3 {MICRO3_TrBr_Ko}
 	 {
 		 CAN_DATA[4] = true;
-		 if(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin) && Enc_valid >= 0 && Enc_valid <= 80)
+		 if(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin) && Enc_valid >= 0 && Enc_valid <= 40)
 				{
-					CAN_DATA[7] = 0;
+					//CAN_DATA[7] = 0;
+				}
+			if(!(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)) &&  Enc_valid <= 30)
+				{
+					CAN_DATA[7] = 1;
 				}
 			
 	 }
 	 else
 	 {
 		  CAN_DATA[4] = false;
-			if(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin) && Enc_valid >= 148 && Enc_valid <= 1023)
+			if((HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)) && Enc_valid >= 148 && Enc_valid <= 1023)
 				{
-					CAN_DATA[7] = 1;
+					CAN_DATA[7] = 2;
 				}
 		  
 	 }
-	/** if(Enc_valid > 0 && Enc_valid <= 10) // EMERGENCY Pos active {TrBr_EMG} inverted
-	 {
-		 CAN_DATA[4] = false;
-		 if(HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin)){CAN_DATA[7] = 0;}else{CAN_DATA[7]=1;} //Check status of S3 {MICRO3_TrBr_Ko}
-	 }
-	 else
-	 {
-		 CAN_DATA[4] = true;
-		 if(HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin)){CAN_DATA[7] = 1;}else{CAN_DATA[7]=0;}
-	 }*/
-	 if((!CAN_DATA[0]) || CAN_DATA[5] || CAN_DATA[6] || CAN_DATA[7] || CAN_DATA[8] || FAILSTATE)
+
+	 if(((!CAN_DATA[0]) || CAN_DATA[5] || CAN_DATA[6] || CAN_DATA[7] || CAN_DATA[8] || FAILSTATE) && Setup_complete)
 		{
 			CAN_DATA[9] = 0;
 			FAILSTATE = true;
@@ -451,9 +439,11 @@ float EN1_filter()//uint16_t n)
 		{
 			CAN_DATA[9]=1;
 		}
-		
+	}
+		else{
+			Setup_complete =1;
 	 //return(CAN_DATA);
- }
+ }}
 
 
  
@@ -627,7 +617,7 @@ int main(void)
 			// Enable timer
 			u8TmrCallbackEnabled = 1;
 
-			while(reset == CO_RESET_NOT)
+			while(reset == CO_RESET_NOT || 1)
 			{
 				/* loop for normal program execution ******************************************/
 				uint16_t timer1msCopy, timer1msDiff;
@@ -668,8 +658,9 @@ int main(void)
 				float JumperState = HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin);//ReadAnalogInput(ADC_IN2);
 				float EncoderState = ReadAnalogInput(ADC_IN1);
 				float EncoderState21 =	EN1_filter();
-				float EncoderState3 = (((EncoderState-300)/970)*1023);
-				float EncoderState4 = (((EncoderState-285)/918)*1023);
+				Encoder_Set = EN1_filter();
+				float EncoderState3 = (((EncoderState-300)/910)*1023);
+				float EncoderState4 = (((EncoderState-308)/962)*1023);
 				bool S1 = SW1();
 			  bool S2 = SW2();//ReadAnalogInput(ADC_IN3);//s2
 				bool S3 = HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin);//s3
@@ -681,8 +672,9 @@ int main(void)
 				float Enc_Val_filtered = EN1_filter();//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
 				long Enc_Val_filtered1 = (long)Enc_Val_filtered;
 				//int * CAN_DATA[10] = {Validaton(Enc_Val_filtered)};//Function to validate the microswitches and encoder validility and convert them to an array
-				
+
 				Validaton(Enc_Val_filtered);//Function to validate the microswitches and encoder validility and convert them to an array
+
 //CAN_DATA[10] = 
 				CanMSG.u32[0] = 0;
 				CanMSG.u32[1] = 0;
@@ -710,9 +702,12 @@ int main(void)
 				hcan.pTxMsg->Data[2] = CanMSG.u8[2];
 				hcan.pTxMsg->Data[3] = CanMSG.u8[3];
 				
-				if (FAILSTATE == true)
+				if (FAILSTATE == true || Setup_complete ==0)
 					{
-						Mode=1;
+						FAILSTATE=0;
+						CAN_DATA[9]=1;
+						Setup_complete =1;
+						//Mode=1;
 						//HAL_NVIC_SystemReset();
 						//reset_variables();
 						//main();
@@ -734,6 +729,16 @@ int main(void)
 					{
 						u16Timer = 1000;
 						HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+						if (FAILSTATE)
+							{
+								resetbit++;
+							}
+						if (resetbit==200)
+							{
+								resetbit=0;
+								HAL_NVIC_SystemReset();
+							}
+
 					}
 				}
 								/* CANopen process */
