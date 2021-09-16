@@ -505,9 +505,9 @@ int main(void)
 	bool STAT2 = Initialize_outputs();
 	// LED On
 	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
-	SetAnalogOutput(5100);
 	// Start DAC output
 	HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
+	SetAnalogOutput(5100);
 	
 	// =======================================================================
 	// Set up baudrate
@@ -669,7 +669,7 @@ int main(void)
 				
 			//---------------------------------------------
 			//---------------------------------------------
-				float Enc_Val_filtered = EN1_filter();//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
+				float Enc_Val_filtered = EncoderState;//EN1_filter();//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
 				long Enc_Val_filtered1 = (long)Enc_Val_filtered;
 				//int * CAN_DATA[10] = {Validaton(Enc_Val_filtered)};//Function to validate the microswitches and encoder validility and convert them to an array
 
@@ -681,6 +681,9 @@ int main(void)
 				
 				CanMSG.u8[0] = *((uint8_t*)&(Enc_Val_filtered1)+1); //high byte (0x12)Enc_Val_filtered;
 				CanMSG.u8[1] = *((uint8_t*)&(Enc_Val_filtered1)+0); //low byte  (0x34)Enc_Val_filtered;
+				
+				//((CAN_Variant_t*)&CanMSG)->u16[0] = Enc_Val_filtered1;
+				
 				bool Enc_Data_Val 	= (bool)CAN_DATA[0];//129   10000001
 				bool TrBr_T 				= (bool)CAN_DATA[1];
 				bool TrBr_Zero			= (bool)CAN_DATA[2];//163   10100011
