@@ -47,6 +47,15 @@ __IO uint8_t u8TmrCallbackEnabled = 0;
 uint16_t u16Voltage = 0;
 uint8_t u8I = 0;
 
+/* EEPROM declared Private variables ---------------------------------------------------------*/
+uint8_t u8WrSetup;//Setup_Complete
+uint8_t u8WrSetupOld;//Setup_Complete_Old
+uint8_t u8RdSetup;
+uint8_t FAILSTATE = false;
+uint8_t FAILSTATEold;
+
+
+/* CANOPEN declared Private variables ---------------------------------------------------------*/
 typedef	union
 {
 	uint32_t u32[2];
@@ -64,12 +73,10 @@ CAN_Variant_t CanMSG;
 
 /* Global variables and objects */
     volatile uint16_t   CO_timer1ms = 0U;   /* variable increments each millisecond */ 
-		volatile bool FAILSTATE = false; // added foas global FAILSTATE variable
 		volatile bool Mode = false;
 		volatile float Encoder_Set = 300; // Encoder = position 0
 		volatile float CAN_DATA[10];//CANDATA array for data validation
 		volatile int resetbit = 0;
-		volatile int Setup_complete=0;
 /* Private function prototypes -----------------------------------------------*/
 uint8_t u8Data[32];
 
@@ -143,28 +150,7 @@ void HAL_SYSTICK_Callback(void)
 	  tmrTask_thread();
 }
 
-void reset_variables(void)
-	{
-//		//((void (code *) (void)) 0x0000) ();
-//		//exit(1);
-//		MainInit();
-//		HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-//		resetbit = resetbit - 1;
-//		SetAnalogOutput(0);
-//		Encoder_Set = 300;
-//		CAN_DATA[0] = 0;CAN_DATA[1] = 0;CAN_DATA[2] = 0;CAN_DATA[3] = 0;CAN_DATA[4] = 0;
-//		CAN_DATA[5] = 0;CAN_DATA[6] = 0;CAN_DATA[7] = 0;CAN_DATA[8] = 0;CAN_DATA[9] = 0;
-//		HAL_GPIO_WritePin(Out1_HS_GPIO_Port, Out1_HS_Pin, GPIO_PIN_RESET); //JUMPER Set pin 2 (OUT1) HIGH / TRUE
-//		HAL_GPIO_WritePin(Out2_HS_GPIO_Port, Out2_HS_Pin, GPIO_PIN_RESET); //MICROSWITCH 1 + 2 Set pin 3 (OUT2) HIGH / TRUE
-//		HAL_GPIO_WritePin(Out3_HS_GPIO_Port, Out3_HS_Pin, GPIO_PIN_RESET);
-		
-//		if (resetbit < 1)
-//			{
-//				FAILSTATE =0;
-//				resetbit = 5;
-//			}
-		
-	}
+
 		
 
 bool SW1(){//s1 analog to bool conversion with threshhold 20mV
@@ -201,12 +187,8 @@ int Initialize_outputs(){
 	// 6 INPUTS(3X DIGITAL,3 X ANALOG 0-34VDC), 
 	// 4 OUTPUTS (3X DIGITAL, 1X ANALOG)
 	//========================================================================
-	
-	
-	//initialize Analog output 5V 
-	//for encoder with DAC functionality (OUT4) analogset to 5V
-	//DAC1_CHANNEL_1_WritePin(GPIOC,GPIO_PIN_4,50); // trigger set analog OUT4 to 5V
 
+	//initialize Analog output 5V //for encoder with DAC functionality (OUT4) analogset to 5V
 	SetAnalogOutput(5100);
 	//Initialize Jumper output set HIGH (24V)
 	HAL_GPIO_WritePin(Out1_HS_GPIO_Port, Out1_HS_Pin, GPIO_PIN_SET); //JUMPER Set pin 2 (OUT1) HIGH / TRUE
@@ -260,29 +242,11 @@ float EN1_filter()//uint16_t n)
 		*/
 	
 	
-	Initialize_outputs();
+	
 	float Enc_Val_raw = ReadAnalogInput(ADC_IN1);
 	
 	float Enc_Val =(((Enc_Val_raw-300)/910)*1023);//-308)/962)*1023);//(((Enc_Val_raw-285)/918)*1023);
-	
-	if ( Enc_Val < 10  && Enc_Val_raw >315 )//EMG
-		{
-			Mode = 1;
-		}
-//	if(Mode)
-//		{
-//			//float Enc_Val_raw = ReadAnalogInput(ADC_IN1);
-//			Enc_Val =(((Enc_Val_raw-300)/970)*1023);
-//			//Encoder_Set = Enc_Val_raw;
-//			
-//		}
-//	else
-//		{
-//			Enc_Val =(((Enc_Val_raw-300)/910)*1023);
-//			//float Enc_Val_raw1 = ReadAnalogInput(ADC_IN1);
-//			//float Enc_Val_1 = (((Enc_Val_raw1-285)/918)*1023);
-//		
-//		}	
+
 
 	if ( Enc_Val < 30)//EMG
 		{
@@ -312,11 +276,11 @@ float EN1_filter()//uint16_t n)
 	return((long)Enc_Val);//Enc_Val_raw);//
 }
 
- float Validaton(float Enc_valid){
+ float Validaton(){
 	 
-	 Enc_valid = EN1_filter();
+	 float Enc_valid = EN1_filter();
 	 //CAN_DATA;
-	 if(Setup_complete==1){
+	 
 	 if(Enc_valid > -1 && Enc_valid < 1024) // Datavalidility check {Enc_DataVal}
 	 {
 		 CAN_DATA[0] = true;
@@ -395,7 +359,7 @@ float EN1_filter()//uint16_t n)
 				 }
 		 }
 	 
-/**	 if(Enc_valid >= 100 && Enc_valid < 500) // BRAKE Pos active {TrBr_B} 
+/**	 if(Enc_valid >= 100 && Enc_valid < 500) // BRAKE Pos active {TrBr_B} STG-826
 //	 {
 //		 CAN_DATA[3] = true;
 //		 if(HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin)){CAN_DATA[8] = 0;}else{CAN_DATA[8]=1;} //Check status of S4 {MICRO4_TrBr_Ko}
@@ -430,7 +394,7 @@ float EN1_filter()//uint16_t n)
 		  
 	 }
 
-	 if(((!CAN_DATA[0]) || CAN_DATA[5] || CAN_DATA[6] || CAN_DATA[7] || CAN_DATA[8] || FAILSTATE) && Setup_complete)
+	 if(((!CAN_DATA[0]) || CAN_DATA[5] || CAN_DATA[6] || CAN_DATA[7] || CAN_DATA[8] || FAILSTATE) )
 		{
 			CAN_DATA[9] = 0;
 			FAILSTATE = true;
@@ -439,11 +403,10 @@ float EN1_filter()//uint16_t n)
 		{
 			CAN_DATA[9]=1;
 		}
-	}
-		else{
-			Setup_complete =1;
-	 //return(CAN_DATA);
- }}
+	
+		
+	 
+ }
 
 
  
@@ -499,26 +462,41 @@ int main(void)
 {
 	// Do not change the system clock above 16 MHz! Higher speed can lead to the destruction of the module!
 	
+	
+	//Can open reset init()
 	CO_NMT_reset_cmd_t reset = CO_RESET_NOT; 
+	
   // System init	
   MainInit();
-	bool STAT2 = Initialize_outputs();
-	// LED On
-	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
-	SetAnalogOutput(5100);
+	
+	HAL_Delay(100);
+	
+	//EEPROM definitions
+	EEPROM_Read(0x0000, &u8RdSetup, 1); //Read value from EEPROM and store it in "u8Rd"
+	EEPROM_Read(0x0001, &FAILSTATEold, 1);
+	u8WrSetup = u8RdSetup; //Set u8Wr to value of u8Rd after a reset, read and written value are identical
+	u8WrSetupOld = u8RdSetup; //Set u8WrOld = u8Rd, so that no value will be written until u8Wr changes
+	
 	// Start DAC output
 	HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
+	
+	//Initialize Digital and Analog OUTPUTS as HIGH or 5V/5000mV
+	bool STAT1 = Initialize_outputs();
+	
+	// LED On
+	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
 	
 	// =======================================================================
 	// Set up baudrate
 	hcan.Instance->BTR &= 0xFFFFFC00;
 	hcan.Instance->BTR |= CAN_250K;
 	// =======================================================================
-	float Enc_Val_raw = ReadAnalogInput(ADC_IN1);
-	/* increase variable each startup. Variable should be stored in EEPROM. */
-	OD_powerOnCounter++;
- 	bool STAT1 = Initialize_outputs();
+	
+	/* increase powerOnCounter variable each startup. Variable is stored in EEPROM. */
+	//OD_powerOnCounter++;
+
   /* Infinite loop */
+	
   while (1)
   {
 		// =======================================================================
@@ -531,7 +509,7 @@ int main(void)
 			/* CANopen communication reset - initialize CANopen objects *******************/
 			CO_ReturnError_t err;
 			uint16_t timer1msPrevious;
-			//SetAnalogOutput(5100);
+			
 			/* disable CAN and CAN interrupts */
       CanDisable();
 			uint8_t NodeID1 = 56; //Default set Node ID if Jumper open/FALSE
@@ -567,15 +545,7 @@ int main(void)
 						
 						
 						STAT1 = Initialize_outputs();
-						//========================================================================
-						//Read analog inputs and call arithmitic function for n values of encoder
-						//1. Moving average function + convert Float to LONG int 
-						//2. Switch status readout
-						//========================================================================
-						 
-						
-						//long Enc_Val_filtered = EN1_filter(100);//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
-						
+
 						
 						// LED flicker for error
 						if ( u16Timer == 0 )
@@ -583,22 +553,6 @@ int main(void)
 							u16Timer = 100;
 							HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 
-
-							// =======================================================================
-							// Analog Output sample code
-							// Increment Output voltage every one ms by 50 mV
-							// If Output voltage overstepped 5100 mV it starts with 0
-							// =======================================================================
-							
-//							u16Voltage = u16Voltage + 50;
-//							if ( u16Voltage >= 5100 )
-//								u16Voltage = 0;
-						
-
-						}
-					}
-					/* CO_errorReport(CO->em, CO_EM_MEMORY_ALLOCATION_ERROR, CO_EMC_SOFTWARE_INTERNAL, err); */
-			}
 
 
 			/* Configure Timer interrupt function for execution every 1 millisecond */
@@ -636,11 +590,7 @@ int main(void)
 				
 				// Send it by CAN
 				hcan.pTxMsg->IDE = CAN_ID_STD;
-				//========================================================================
-				//Read analog inputs and call arithmitic function for n values of encoder
-				//1. Moving average function + convert Float to LONG int 
-				//2. Switch status readout
-				//========================================================================
+
 				if (HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin))//)
 					{
 						hcan.pTxMsg->StdId = 0x00003A;   //Reciever adres: 0x003A (DMA-15)
@@ -669,13 +619,34 @@ int main(void)
 				
 			//---------------------------------------------
 			//---------------------------------------------
+					
+				EEPROM_Read(0x0000, &u8WrSetup, 1); //Read value from EEPROM and store it in "u8Rd"
+				EEPROM_Read(0x0001, &FAILSTATEold, 1);
+				
+				
+				
+				if ( u8WrSetup == 0x00) // Write data to EEPROM if not run ( One time run )
+				{
+					u8WrSetup = 0x01;//Set Setup to 0x01
+					FAILSTATEold = 0x00;//Set FAILSTATE to 0x00
+					EEPROM_Write(0x0000, &u8WrSetup, 1);//Set Setup to 0x01 and write to EEPROM
+					EEPROM_Write(0x0001, &FAILSTATEold, 1);//Set FAILSTATE to 0x00 and write to EEPROM
+					HAL_Delay(1000);
+					HAL_NVIC_SystemReset();
+				}
+				if ( FAILSTATE != FAILSTATEold) // Write data to EEPROM if changed
+				{
+					FAILSTATEold = FAILSTATE;
+					EEPROM_Write(0x0001, &FAILSTATE, 1);
+					HAL_Delay(500);
+				}
+				
 				float Enc_Val_filtered = EN1_filter();//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
+				
+				Validaton();//Function to validate the microswitches and encoder validility and convert them to an array
+				
 				long Enc_Val_filtered1 = (long)Enc_Val_filtered;
-				//int * CAN_DATA[10] = {Validaton(Enc_Val_filtered)};//Function to validate the microswitches and encoder validility and convert them to an array
 
-				Validaton(Enc_Val_filtered);//Function to validate the microswitches and encoder validility and convert them to an array
-
-//CAN_DATA[10] = 
 				CanMSG.u32[0] = 0;
 				CanMSG.u32[1] = 0;
 				
@@ -702,16 +673,6 @@ int main(void)
 				hcan.pTxMsg->Data[2] = CanMSG.u8[2];
 				hcan.pTxMsg->Data[3] = CanMSG.u8[3];
 				
-				if (FAILSTATE == true || Setup_complete ==0)
-					{
-						FAILSTATE=0;
-						CAN_DATA[9]=1;
-						Setup_complete =1;
-						//Mode=1;
-						//HAL_NVIC_SystemReset();
-						//reset_variables();
-						//main();
-					}
 				
 //				for ( u8I=0; u8I<8; u8I++ )
 //					hcan.pTxMsg->Data[u8I] = CanMSG.u8[u8I];
@@ -721,9 +682,7 @@ int main(void)
 				HAL_CAN_Transmit(&hcan, 25);
 				
 				{
-					//	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-					//	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);	
-					//	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);	
+
 				
 					if ( u16Timer == 0 )
 					{
@@ -733,7 +692,7 @@ int main(void)
 							{
 								resetbit++;
 							}
-						if (resetbit==200)
+						if (resetbit==3600)
 							{
 								resetbit=0;
 								HAL_NVIC_SystemReset();
@@ -763,6 +722,6 @@ int main(void)
 		
   }
 }
-
+}}}
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
