@@ -40,18 +40,20 @@ compiling main.c...
   							int NodeID1 = 58; //CPU1-CAB2
 ../Src/main.c(543): warning:  #177-D: variable "NodeID1"  was declared but never referenced
   							int NodeID1 = 56; //CPU1-CAB1
-../Src/main.c(712): warning:  #1215-D: #warning directive: Debug version without watch dog! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+../Src/main.c(720): warning:  #1215-D: #warning directive: Debug version without watch dog! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   					#warning Debug version without watch dog! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+../Src/main.c(578): warning:  #550-D: variable "timer1msDiff"  was set but never used
+  				uint16_t timer1msCopy, timer1msDiff;
 ../Src/main.c(535): warning:  #177-D: variable "NodeID"  was declared but never referenced
   						bool NodeID = 0;
 ../Src/main.c(511): warning:  #550-D: variable "err"  was set but never used
   			CO_ReturnError_t err;
 ../Src/main.c(517): warning:  #550-D: variable "NodeID_condition"  was set but never used
   			bool NodeID_condition = 0;
-../Src/main.c: 10 warnings, 0 errors
+../Src/main.c: 11 warnings, 0 errors
 linking...
-Program Size: Code=39220 RO-data=2456 RW-data=1076 ZI-data=9964  
-".\out\out.axf" - 0 Error(s), 10 Warning(s).
+Program Size: Code=33988 RO-data=1944 RW-data=1076 ZI-data=9964  
+".\out\out.axf" - 0 Error(s), 11 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -74,7 +76,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.5.0
-Build Time Elapsed:  00:00:09
+Build Time Elapsed:  00:00:07
 </pre>
 </body>
 </html>

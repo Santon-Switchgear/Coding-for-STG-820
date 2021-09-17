@@ -246,7 +246,7 @@ float EN1_filter()//uint16_t n)
 	HAL_Delay(5);
 	float Enc_Val_raw = ReadAnalogInput(ADC_IN1);
 	
-	float Enc_Val =(((Enc_Val_raw-293)/962)*1023);//300)/910)*1023);//-308)/962)*1023);//(((Enc_Val_raw-285)/918)*1023);
+	float Enc_Val =1023-(((Enc_Val_raw-3052)/978)*1023);//1023-(((Enc_Val_raw-293)/962)*1023);//300)/910)*1023);//-308)/962)*1023);//(((Enc_Val_raw-285)/918)*1023);
 
 
 	if ( Enc_Val < 30)//EMG
@@ -583,7 +583,7 @@ int main(void)
 
 				
 				/* CANopen process */
-				reset = CO_process(CO, timer1msDiff, NULL);
+			//	reset = CO_process(CO, timer1msDiff, NULL);
 
 				/* Nonblocking application code may go here. */
 				// LED handling:
@@ -621,9 +621,10 @@ int main(void)
 				
 			//---------------------------------------------
 			//---------------------------------------------
-					
+				HAL_Delay(10);	
 				EEPROM_Read(0x0000, &u8WrSetup, 1); //Read value from EEPROM and store it in "u8Rd"
 				EEPROM_Read(0x0001, &FAILSTATEold, 1);
+				
 				
 				
 				
@@ -646,6 +647,13 @@ int main(void)
 				float Enc_Val_filtered = EN1_filter();//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
 				
 				Validaton();//Function to validate the microswitches and encoder validility and convert them to an array
+				
+				if ( FAILSTATE != FAILSTATEold) // Write data to EEPROM if changed
+				{
+					FAILSTATEold = FAILSTATE;
+					EEPROM_Write(0x0001, &FAILSTATE, 1);
+					HAL_Delay(500);
+				}
 				
 				long Enc_Val_filtered1 = (long)Enc_Val_filtered;
 
@@ -697,13 +705,13 @@ int main(void)
 						if (resetbit==3600)
 							{
 								resetbit=0;
-								HAL_NVIC_SystemReset();
+								//HAL_NVIC_SystemReset();
 							}
 
 					}
 				}
 								/* CANopen process */
-				reset = CO_process(CO, timer1msDiff, NULL);
+				//reset = CO_process(CO, timer1msDiff, NULL);
 				// Watchdog refresh
 				#if ( PRODUCTION_VERSION == 1 )
 					HAL_IWDG_Refresh(&hiwdg);
