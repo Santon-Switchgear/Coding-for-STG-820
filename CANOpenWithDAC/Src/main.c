@@ -243,9 +243,10 @@ float EN1_filter()//uint16_t n)
 	
 	
 	
+	HAL_Delay(5);
 	float Enc_Val_raw = ReadAnalogInput(ADC_IN1);
 	
-	float Enc_Val =(((Enc_Val_raw-300)/910)*1023);//-308)/962)*1023);//(((Enc_Val_raw-285)/918)*1023);
+	float Enc_Val =(((Enc_Val_raw-293)/962)*1023);//300)/910)*1023);//-308)/962)*1023);//(((Enc_Val_raw-285)/918)*1023);
 
 
 	if ( Enc_Val < 30)//EMG
@@ -504,7 +505,7 @@ int main(void)
 		// Untested port of https://github.com/CANopenNode/CANopenNode
 		// =======================================================================
 		
-		while(reset != CO_RESET_APP)
+		while(1)//reset != CO_RESET_APP)
 		{
 			/* CANopen communication reset - initialize CANopen objects *******************/
 			CO_ReturnError_t err;
@@ -526,7 +527,7 @@ int main(void)
 			}
 			/* initialize CANopen */
 			err = CO_init(0/* CAN module address */, NodeID1/* NodeID */, CAN_250K /* bit rate */);
-			if(err != CO_ERROR_NO)
+			if(1)//err != CO_ERROR_NO)
 			{
 					while(1)
 					{
@@ -606,9 +607,10 @@ int main(void)
 			//_____________________________________________
 				
 				float JumperState = HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin);//ReadAnalogInput(ADC_IN2);
+				
 				float EncoderState = ReadAnalogInput(ADC_IN1);
 				float EncoderState21 =	EN1_filter();
-				Encoder_Set = EN1_filter();
+				Encoder_Set = EncoderState+0;
 				float EncoderState3 = (((EncoderState-300)/910)*1023);
 				float EncoderState4 = (((EncoderState-308)/962)*1023);
 				bool S1 = SW1();
