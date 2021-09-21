@@ -312,11 +312,11 @@ float EN1_filter()//uint16_t n)
 		
 		 if(SW_1 && Enc_valid >= 0 && 602 >= Enc_valid)
 			{
-				//CAN_DATA[5] = 0;
+				//CAN_DATA[5] = 1;
 			}
 			if(!SW_1 && Enc_valid >= 0 && 546 >= Enc_valid)
 			{
-				CAN_DATA[5] = 1;
+				CAN_DATA[5] = 1;//PLC1
 			}
 		 
 	 }
@@ -344,7 +344,7 @@ float EN1_filter()//uint16_t n)
 			 bool SW_2 = SW2();
 			 bool F1=0;
 			 bool F2=0;
-			 if(SW_2 && Enc_valid > 0 && Enc_valid < 410)
+			 if(SW_2 && Enc_valid >= 0 && Enc_valid < 410)
 					{
 						CAN_DATA[6]=1;
 						F1=1;
