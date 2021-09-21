@@ -53,6 +53,8 @@ uint8_t u8WrSetupOld;//Setup_Complete_Old
 uint8_t u8RdSetup;
 uint8_t FAILSTATE = false;
 uint8_t FAILSTATEold;
+uint16_t MAX = 4030;
+uint16_t MIN = 3052;
 
 
 /* CANOPEN declared Private variables ---------------------------------------------------------*/
@@ -182,6 +184,12 @@ bool SW2(){//s2 analog to bool conversion with threshhold 20mV
 		
 		return Sw2;
 }
+
+ int Calibration_protocol()
+	 {
+		 EEPROM_Read(0x0003, &MAX, 2 );
+		 EEPROM_Read(0x0003, &MIN, 1);
+	 }
 int Initialize_outputs(){
 	//STG-826 
 	// 6 INPUTS(3X DIGITAL,3 X ANALOG 0-34VDC), 
