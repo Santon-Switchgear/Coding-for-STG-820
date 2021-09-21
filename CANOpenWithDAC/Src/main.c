@@ -46,6 +46,11 @@ __IO uint16_t u16Timer = 0;
 __IO uint8_t u8TmrCallbackEnabled = 0;
 uint16_t u16Voltage = 0;
 uint8_t u8I = 0;
+bool Calibration=0;
+int Calibrationcounter0=2;
+int Calibrationcounter1=2;
+int Calibrationcounter2=2;
+int Calibrationcounter3=2;
 
 /* EEPROM declared Private variables ---------------------------------------------------------*/
 uint8_t u8WrSetup;//Setup_Complete
@@ -53,9 +58,20 @@ uint8_t u8WrSetupOld;//Setup_Complete_Old
 uint8_t u8RdSetup;
 uint8_t FAILSTATE = false;
 uint8_t FAILSTATEold;
-uint16_t MAX = 4030;
-uint16_t MIN = 3052;
-
+uint8_t MAX1 = 15;//4030 separated in 2x 8 bit numbers
+uint8_t MAX2 = 190;
+uint16_t MAX;
+uint8_t MIN1 = 11;//3052
+uint8_t MIN2 = 236;
+uint16_t MIN;
+uint8_t MAX1old;//4030 separated in 2x 8 bit numbers
+uint8_t MAX2old;
+uint16_t MAXold;
+uint8_t MIN1old;//3052
+uint8_t MIN2old;
+uint16_t MINold;
+uint8_t Calibrated;
+bool jumperold;
 
 /* CANOPEN declared Private variables ---------------------------------------------------------*/
 typedef	union
@@ -78,7 +94,7 @@ CAN_Variant_t CanMSG;
 		volatile bool Mode = false;
 		volatile float Encoder_Set = 300; // Encoder = position 0
 		volatile float CAN_DATA[10];//CANDATA array for data validation
-		volatile int resetbit = 0;
+		
 /* Private function prototypes -----------------------------------------------*/
 uint8_t u8Data[32];
 
@@ -185,11 +201,7 @@ bool SW2(){//s2 analog to bool conversion with threshhold 20mV
 		return Sw2;
 }
 
- int Calibration_protocol()
-	 {
-		 EEPROM_Read(0x0003, &MAX, 2 );
-		 EEPROM_Read(0x0003, &MIN, 1);
-	 }
+ 
 int Initialize_outputs(){
 	//STG-826 
 	// 6 INPUTS(3X DIGITAL,3 X ANALOG 0-34VDC), 
@@ -254,7 +266,7 @@ float EN1_filter()//uint16_t n)
 	HAL_Delay(5);
 	float Enc_Val_raw = ReadAnalogInput(ADC_IN1);
 	
-	float Enc_Val =1023-(((Enc_Val_raw-3052)/978)*1023);//1023-(((Enc_Val_raw-293)/962)*1023);//300)/910)*1023);//-308)/962)*1023);//(((Enc_Val_raw-285)/918)*1023);
+	float Enc_Val =1023-(((Enc_Val_raw-MIN)/(MAX-MIN))*1023);//1023-(((Enc_Val_raw-293)/962)*1023);//300)/910)*1023);//-308)/962)*1023);//(((Enc_Val_raw-285)/918)*1023);
 
 
 	if ( Enc_Val < 30)//EMG
@@ -284,6 +296,39 @@ float EN1_filter()//uint16_t n)
 		
 	return((long)Enc_Val);//Enc_Val_raw);//
 }
+
+int Calibration_protocol()
+	 {
+		 EEPROM_Read(0x0003, &MAX1old, 1 );
+		 EEPROM_Read(0x0004, &MAX2old, 1 );
+		 EEPROM_Read(0x0005, &MIN1old, 1);
+		 EEPROM_Read(0x0006, &MIN2old, 1);
+		 EEPROM_Read(0x0007, &Calibrated, 1);
+		 
+		 MAXold = (MAX1old << 8 ) | (MAX2old & 0xff);
+		 MINold = (MIN1old << 8 ) | (MIN2old & 0xff);
+		 
+		 if (Calibrated == 0x00)
+			 {
+				 if(MAXold != MAX || MINold != MIN)
+				 {
+					 EEPROM_Write(0x0003, &MAX1, 1 );
+					 EEPROM_Write(0x0004, &MAX2, 1 );
+					 EEPROM_Write(0x0005, &MIN1, 1);
+					 EEPROM_Write(0x0006, &MIN2, 1);
+				 }
+				 if (Calibration)
+				 {
+						MIN=EN1_filter();
+					  if (1){}
+					 
+				 }
+			 }
+			
+
+		
+		 
+	 }
 
  float Validaton(){
 	 
@@ -479,7 +524,7 @@ int main(void)
   MainInit();
 	
 	HAL_Delay(100);
-	
+	Calibration_protocol();
 	//EEPROM definitions
 	EEPROM_Read(0x0000, &u8RdSetup, 1); //Read value from EEPROM and store it in "u8Rd"
 	EEPROM_Read(0x0001, &FAILSTATEold, 1);
@@ -706,16 +751,34 @@ int main(void)
 					{
 						u16Timer = 1000;
 						HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-						if (FAILSTATE)
+						if (HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin) && HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin) && Calibrationcounter0 == 2 && Calibrationcounter2 == 2 )
 							{
-								resetbit++;
+								Calibrationcounter1--;
 							}
-						if (resetbit==3600)
+						if (!(HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin)) && (HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)) && Calibrationcounter2 == 2)//JUMPER IN5 -> IN6
 							{
-								resetbit=0;
-								//HAL_NVIC_SystemReset();
+								Calibrationcounter0--;
 							}
-
+						if (HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin) && Calibrationcounter0 == 0 && Calibrationcounter1 == 0 )
+							{
+								Calibrationcounter2--;							
+							}
+						if (HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin) && Calibrationcounter0 == 0 && Calibrationcounter1 == 0 && Calibrationcounter2 == 0)
+							{
+								Calibrationcounter3--;
+								if (Calibrationcounter3 ==0)
+									{
+										Calibration= true;
+									}
+							}
+						if (Calibrationcounter0 < 0 ||Calibrationcounter1 < 0 ||Calibrationcounter1 < 0 ||Calibrationcounter2 < 0)
+							{
+								Calibrationcounter0 = 2;
+								Calibrationcounter1 = 2;
+								Calibrationcounter2 = 2;
+								Calibrationcounter3 = 2;
+								
+							}
 					}
 				}
 								/* CANopen process */

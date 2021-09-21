@@ -28,32 +28,34 @@ Project File Date:  09/17/2021
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'BARTH'
 compiling main.c...
-../Src/main.c(337): warning:  #177-D: variable "F3"  was declared but never referenced
+../Src/main.c(232): warning:  #940-D: missing return statement at end of non-void function "Calibration_protocol" 
+  	 }
+../Src/main.c(385): warning:  #177-D: variable "F3"  was declared but never referenced
   					bool F3=1;
-../Src/main.c(410): warning:  #940-D: missing return statement at end of non-void function "Validaton" 
+../Src/main.c(458): warning:  #940-D: missing return statement at end of non-void function "Validaton" 
    }
-../Src/main.c(520): warning:  #177-D: variable "NodeID1"  was declared but never referenced
+../Src/main.c(568): warning:  #177-D: variable "NodeID1"  was declared but never referenced
   				uint8_t NodeID1 = 58; //CPU1-CAB2
-../Src/main.c(525): warning:  #177-D: variable "NodeID1"  was declared but never referenced
+../Src/main.c(573): warning:  #177-D: variable "NodeID1"  was declared but never referenced
   				uint8_t NodeID1 = 56; //CPU1-CAB1
-../Src/main.c(538): warning:  #177-D: variable "NodeID1"  was declared but never referenced
+../Src/main.c(586): warning:  #177-D: variable "NodeID1"  was declared but never referenced
   							int NodeID1 = 58; //CPU1-CAB2
-../Src/main.c(543): warning:  #177-D: variable "NodeID1"  was declared but never referenced
+../Src/main.c(591): warning:  #177-D: variable "NodeID1"  was declared but never referenced
   							int NodeID1 = 56; //CPU1-CAB1
-../Src/main.c(720): warning:  #1215-D: #warning directive: Debug version without watch dog! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+../Src/main.c(778): warning:  #1215-D: #warning directive: Debug version without watch dog! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   					#warning Debug version without watch dog! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-../Src/main.c(578): warning:  #550-D: variable "timer1msDiff"  was set but never used
+../Src/main.c(626): warning:  #550-D: variable "timer1msDiff"  was set but never used
   				uint16_t timer1msCopy, timer1msDiff;
-../Src/main.c(535): warning:  #177-D: variable "NodeID"  was declared but never referenced
+../Src/main.c(583): warning:  #177-D: variable "NodeID"  was declared but never referenced
   						bool NodeID = 0;
-../Src/main.c(511): warning:  #550-D: variable "err"  was set but never used
+../Src/main.c(559): warning:  #550-D: variable "err"  was set but never used
   			CO_ReturnError_t err;
-../Src/main.c(517): warning:  #550-D: variable "NodeID_condition"  was set but never used
+../Src/main.c(565): warning:  #550-D: variable "NodeID_condition"  was set but never used
   			bool NodeID_condition = 0;
-../Src/main.c: 11 warnings, 0 errors
+../Src/main.c: 12 warnings, 0 errors
 linking...
-Program Size: Code=33956 RO-data=1944 RW-data=1076 ZI-data=9964  
-".\out\out.axf" - 0 Error(s), 11 Warning(s).
+Program Size: Code=34388 RO-data=1944 RW-data=1108 ZI-data=9964  
+".\out\out.axf" - 0 Error(s), 12 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -76,7 +78,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.5.0
-Build Time Elapsed:  00:00:11
+Build Time Elapsed:  00:00:10
 </pre>
 </body>
 </html>
