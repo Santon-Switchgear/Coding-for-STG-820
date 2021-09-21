@@ -633,14 +633,14 @@ int main(void)
 					u8WrSetup = 0x01;//Set Setup to 0x01
 					FAILSTATEold = 0x00;//Set FAILSTATE to 0x00
 					EEPROM_Write(0x0000, &u8WrSetup, 1);//Set Setup to 0x01 and write to EEPROM
-					EEPROM_Write(0x0001, &FAILSTATEold, 1);//Set FAILSTATE to 0x00 and write to EEPROM
+					//EEPROM_Write(0x0001, &FAILSTATEold, 1);//Set FAILSTATE to 0x00 and write to EEPROM
 					HAL_Delay(1000);
 					HAL_NVIC_SystemReset();
 				}
 				if ( FAILSTATE != FAILSTATEold) // Write data to EEPROM if changed
 				{
 					FAILSTATEold = FAILSTATE;
-					EEPROM_Write(0x0001, &FAILSTATE, 1);
+					//EEPROM_Write(0x0001, &FAILSTATE, 1);
 					HAL_Delay(500);
 				}
 				
@@ -651,7 +651,7 @@ int main(void)
 				if ( FAILSTATE != FAILSTATEold) // Write data to EEPROM if changed
 				{
 					FAILSTATEold = FAILSTATE;
-					EEPROM_Write(0x0001, &FAILSTATE, 1);
+				//	EEPROM_Write(0x0001, &FAILSTATE, 1);
 					HAL_Delay(500);
 				}
 				
