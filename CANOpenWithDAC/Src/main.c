@@ -51,6 +51,7 @@ int Calibrationcounter0=2;
 int Calibrationcounter1=2;
 int Calibrationcounter2=2;
 int Calibrationcounter3=2;
+int limitcounter = 0;
 
 /* EEPROM declared Private variables ---------------------------------------------------------*/
 uint8_t u8WrSetup;//Setup_Complete
@@ -201,6 +202,11 @@ bool SW2(){//s2 analog to bool conversion with threshhold 20mV
 		return Sw2;
 }
 
+bool Jumper()
+	{
+		bool a = HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin);
+		return(a);
+	}
  
 int Initialize_outputs(){
 	//STG-826 
@@ -316,15 +322,39 @@ int Calibration_protocol()
 					 EEPROM_Write(0x0004, &MAX2, 1 );
 					 EEPROM_Write(0x0005, &MIN1, 1);
 					 EEPROM_Write(0x0006, &MIN2, 1);
+					 HAL_Delay(50);
 				 }
 				 if (Calibration)
 				 {
 						MIN=EN1_filter();
-					  if (1){}
+						long MINtemp =(long)MIN; 
+					  if (MINold != MIN && (Jumper()) )
+							{
+								uint8_t tempMinL = *((uint8_t*)&(MINtemp)+1);
+								uint8_t tempMinH = *((uint8_t*)&(MINtemp)+0);
+								EEPROM_Write(0x0005,&tempMinL,1);
+								EEPROM_Write(0x0006,&tempMinH,1);
+								HAL_Delay(50);
+								
+							}
+					  if (MAXold != MAX && !(Jumper()) )
+							{}
+								uint8_t tempMinL = *((uint8_t*)&(MINtemp)+1);
+								uint8_t tempMinH = *((uint8_t*)&(MINtemp)+0);
+								EEPROM_Write(0x0005,&tempMinL,1);
+								EEPROM_Write(0x0006,&tempMinH,1);
+								uint8_t Calibrated_temp= 0x01;
+								EEPROM_Write(0x0007,&Calibrated_temp , 1);
+								Calibrated = true;
+							}
 					 
 				 }
 			 }
-			
+			if(Calibrated)
+				{
+						MAX = (MAX1old << 8 ) | (MAX2old & 0xff);
+						MIN = (MIN1old << 8 ) | (MIN2old & 0xff);
+				}
 
 		
 		 
@@ -497,7 +527,7 @@ int Calibration_protocol()
 
 		
 		
-//	
+/*	
 //	u8 |= ((uint8_t)b1 << 0);
 //	u8 |= ((uint8_t)b2 << 1);
 //	u8 |= ((uint8_t)b3 << 2);
@@ -505,7 +535,7 @@ int Calibration_protocol()
 //	u8 |= ((uint8_t)b5 << 4);
 //	u8 |= ((uint8_t)b6 << 5);
 //	u8 |= ((uint8_t)b7 << 6);
-//	u8 |= ((uint8_t)b8 << 7);
+//	u8 |= ((uint8_t)b8 << 7);*/
 	
   return u8;
 }
@@ -568,7 +598,7 @@ int main(void)
       CanDisable();
 			uint8_t NodeID1 = 56; //Default set Node ID if Jumper open/FALSE
 			bool NodeID_condition = 0;
-			if (HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin))//ReadAnalogInput(ADC_IN2))  //Condition for noe ID is HIGH / TRUE
+			if (Jumper())//ReadAnalogInput(ADC_IN2))  //Condition for noe ID is HIGH / TRUE
 			{
 				uint8_t NodeID1 = 58; //CPU1-CAB2
 				NodeID_condition = 1;
@@ -586,7 +616,7 @@ int main(void)
 					{
 						//int NodeID1 = 56; //Default set Node ID if Jumper open/FALSE
 						bool NodeID = 0;
-						if (HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin))//ReadAnalogInput(ADC_IN2))  //Condition is TRUE if pin 13 of register c is HIGH / TRUE
+						if (Jumper())//ReadAnalogInput(ADC_IN2))  //Condition is TRUE if pin 13 of register c is HIGH / TRUE
 						{
 							int NodeID1 = 58; //CPU1-CAB2
 							NodeID_condition = 1;
@@ -669,7 +699,7 @@ int main(void)
 				bool S1 = SW1();
 			  bool S2 = SW2();//ReadAnalogInput(ADC_IN3);//s2
 				bool S3 = HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin);//s3
-				bool Jumper = HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin);
+				bool Jumpers = Jumper();
 				//bool S4 = HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin);
 				
 			//---------------------------------------------
@@ -700,6 +730,8 @@ int main(void)
 				float Enc_Val_filtered = EN1_filter();//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
 				
 				Validaton();//Function to validate the microswitches and encoder validility and convert them to an array
+				
+				Calibration_protocol();
 				
 				if ( FAILSTATE != FAILSTATEold) // Write data to EEPROM if changed
 				{
@@ -751,19 +783,19 @@ int main(void)
 					{
 						u16Timer = 1000;
 						HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-						if (HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin) && HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin) && Calibrationcounter0 == 2 && Calibrationcounter2 == 2 )
+						if (Jumper() && HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin) && Calibrationcounter0 == 2 && Calibrationcounter2 == 2 )
 							{
 								Calibrationcounter1--;
 							}
-						if (!(HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin)) && (HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)) && Calibrationcounter2 == 2)//JUMPER IN5 -> IN6
+						if (!(Jumper()) && (HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)) && Calibrationcounter1 == 0 && Calibrationcounter2 == 2)//JUMPER IN5 -> IN6
 							{
 								Calibrationcounter0--;
 							}
-						if (HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin) && Calibrationcounter0 == 0 && Calibrationcounter1 == 0 )
+						if (Jumper() && Calibrationcounter0 == 0 && Calibrationcounter1 == 0 && Calibrationcounter3 == 2 )
 							{
 								Calibrationcounter2--;							
 							}
-						if (HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin) && Calibrationcounter0 == 0 && Calibrationcounter1 == 0 && Calibrationcounter2 == 0)
+						if (Jumper() && Calibrationcounter0 == 0 && Calibrationcounter1 == 0 && Calibrationcounter2 == 0)
 							{
 								Calibrationcounter3--;
 								if (Calibrationcounter3 ==0)
@@ -771,13 +803,24 @@ int main(void)
 										Calibration= true;
 									}
 							}
-						if (Calibrationcounter0 < 0 ||Calibrationcounter1 < 0 ||Calibrationcounter1 < 0 ||Calibrationcounter2 < 0)
+						if (Calibrationcounter0 < -1 ||Calibrationcounter1 < -1 ||Calibrationcounter1 < -1 ||Calibrationcounter2 < -1)
 							{
 								Calibrationcounter0 = 2;
 								Calibrationcounter1 = 2;
 								Calibrationcounter2 = 2;
 								Calibrationcounter3 = 2;
 								
+							}
+						if (Calibrationcounter0 == 0 || Calibrationcounter1 == 0 || Calibrationcounter2 == 0 || Calibrationcounter3 == 0)
+							{
+								limitcounter++;
+								if (limitcounter >13)
+									{
+										Calibrationcounter0 = 2;
+										Calibrationcounter1 = 2;
+										Calibrationcounter2 = 2;
+										Calibrationcounter3 = 2;
+									}
 							}
 					}
 				}
