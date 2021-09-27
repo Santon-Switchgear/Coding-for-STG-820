@@ -59,11 +59,11 @@ uint8_t u8WrSetupOld;//Setup_Complete_Old
 uint8_t u8RdSetup;
 uint8_t FAILSTATE = false;
 uint8_t FAILSTATEold;
-uint8_t MAX1 = 15;//4030 separated in 2x 8 bit numbers
-uint8_t MAX2 = 190;
+uint8_t MAX1 = 11; //15;//4030 separated in 2x 8 bit numbers
+uint8_t MAX2 = 236; //190;
 uint16_t MAX;
-uint8_t MIN1 = 11;//3052
-uint8_t MIN2 = 236;
+uint8_t MIN1 = 15;//11;//3052
+uint8_t MIN2 = 190; //236;
 uint16_t MIN;
 uint8_t MAX1old;//4030 separated in 2x 8 bit numbers
 uint8_t MAX2old;
@@ -71,8 +71,12 @@ uint16_t MAXold;
 uint8_t MIN1old;//3052
 uint8_t MIN2old;
 uint16_t MINold;
-uint8_t Calibrated;
+uint8_t Calibrated = 0;
 bool jumperold;
+
+//DEBUG variables
+float MAXTEST;
+float MINTEST;
 
 /* CANOPEN declared Private variables ---------------------------------------------------------*/
 typedef	union
@@ -269,10 +273,22 @@ float EN1_filter()//uint16_t n)
 	
 	
 	
-	HAL_Delay(5);
+	
 	float Enc_Val_raw = ReadAnalogInput(ADC_IN1);
 	
-	float Enc_Val =1023-(((Enc_Val_raw-MIN)/(MAX-MIN))*1023);//1023-(((Enc_Val_raw-293)/962)*1023);//300)/910)*1023);//-308)/962)*1023);//(((Enc_Val_raw-285)/918)*1023);
+	if (!Calibrated) 
+		{
+			MAX = (MAX1 << 8 ) | (MAX2 & 0xff);
+			MIN = (MIN1 << 8 ) | (MIN2 & 0xff);
+		}
+	else
+		{
+				MAX = (MAX1old << 8 ) | (MAX2old & 0xff);
+				MIN = (MIN1old << 8 ) | (MIN2old & 0xff);
+		}
+	MAXTEST = MAX;
+	MINTEST= MIN;
+	float Enc_Val =(((Enc_Val_raw-MIN)/(MAX-MIN))*1023);//1023-(((Enc_Val_raw-293)/962)*1023);//300)/910)*1023);//-308)/962)*1023);//(((Enc_Val_raw-285)/918)*1023);
 
 
 	if ( Enc_Val < 30)//EMG
@@ -305,17 +321,21 @@ float EN1_filter()//uint16_t n)
 
 int Calibration_protocol()
 	 {
-		 EEPROM_Read(0x0003, &MAX1old, 1 );
-		 EEPROM_Read(0x0004, &MAX2old, 1 );
-		 EEPROM_Read(0x0005, &MIN1old, 1);
-		 EEPROM_Read(0x0006, &MIN2old, 1);
-		 EEPROM_Read(0x0007, &Calibrated, 1);
 		 
-		 MAXold = (MAX1old << 8 ) | (MAX2old & 0xff);
-		 MINold = (MIN1old << 8 ) | (MIN2old & 0xff);
+		 HAL_Delay(5);
+		 EEPROM_Read(0x00010, &Calibrated, 1);
+		 
+
 		 
 		 if (Calibrated == 0x00)
 			 {
+				 	EEPROM_Read(0x0003, &MAX1old, 1 );
+					EEPROM_Read(0x0004, &MAX2old, 1 );
+					EEPROM_Read(0x0005, &MIN1old, 1);
+					EEPROM_Read(0x0006, &MIN2old, 1);
+				  MAXold = (MAX1old << 8 ) | (MAX2old & 0xff);
+					MINold = (MIN1old << 8 ) | (MIN2old & 0xff);
+				 
 				 if(MAXold != MAX || MINold != MIN)
 				 {
 					 EEPROM_Write(0x0003, &MAX1, 1 );
@@ -326,7 +346,7 @@ int Calibration_protocol()
 				 }
 				 if (Calibration)
 				 {
-						MIN=EN1_filter();
+						MIN= ReadAnalogInput(ADC_IN1);
 						long MINtemp =(long)MIN; 
 					  if (MINold != MIN && (Jumper()) )
 							{
@@ -337,23 +357,34 @@ int Calibration_protocol()
 								HAL_Delay(50);
 								
 							}
-					  if (MAXold != MAX && !(Jumper()) )
-							{}
-								uint8_t tempMinL = *((uint8_t*)&(MINtemp)+1);
-								uint8_t tempMinH = *((uint8_t*)&(MINtemp)+0);
-								EEPROM_Write(0x0005,&tempMinL,1);
-								EEPROM_Write(0x0006,&tempMinH,1);
-								uint8_t Calibrated_temp= 0x01;
-								EEPROM_Write(0x0007,&Calibrated_temp , 1);
-								Calibrated = true;
-							}
+						if (!Jumper())
+							{
+							MAX= ReadAnalogInput(ADC_IN1);
+							if (MAXold != MAX && !(Jumper()) )
+								{ 
+									uint8_t tempMaxL = *((uint8_t*)&(MAX)+1);
+									uint8_t tempMaxH = *((uint8_t*)&(MAX)+0);
+									EEPROM_Write(0x0003,&tempMaxL,1);
+									EEPROM_Write(0x0004,&tempMaxH,1);
+									uint8_t Calibrated_temp= 1;
+									EEPROM_Write(0x0010,&Calibrated_temp , 1);
+									Calibrated = true;
+									Calibration = false;
+								}
+						}
 					 
 				 }
 			 }
 			if(Calibrated)
 				{
-						MAX = (MAX1old << 8 ) | (MAX2old & 0xff);
-						MIN = (MIN1old << 8 ) | (MIN2old & 0xff);
+					
+					//HAL_Delay(10);
+
+					MAX = (MAX1old << 8 ) | (MAX2old & 0xff);
+					MIN = (MIN1old << 8 ) | (MIN2old & 0xff);
+					
+					MAXTEST=MAX;
+					MINTEST=MIN;
 				}
 
 		
@@ -554,6 +585,8 @@ int main(void)
   MainInit();
 	
 	HAL_Delay(100);
+	uint8_t test =0;
+	EEPROM_Write(0x00010,&test , 1);
 	Calibration_protocol();
 	//EEPROM definitions
 	EEPROM_Read(0x0000, &u8RdSetup, 1); //Read value from EEPROM and store it in "u8Rd"
@@ -713,10 +746,14 @@ int main(void)
 				
 				if ( u8WrSetup == 0x00) // Write data to EEPROM if not run ( One time run )
 				{
-					u8WrSetup = 0x01;//Set Setup to 0x01
+					u8WrSetup = 1;//Set Setup to 0x01
 					FAILSTATEold = 0x00;//Set FAILSTATE to 0x00
 					EEPROM_Write(0x0000, &u8WrSetup, 1);//Set Setup to 0x01 and write to EEPROM
 					//EEPROM_Write(0x0001, &FAILSTATEold, 1);//Set FAILSTATE to 0x00 and write to EEPROM
+					EEPROM_Write(0x0003, &MAX1, 1 );
+					EEPROM_Write(0x0004, &MAX2, 1 );
+					EEPROM_Write(0x0005, &MIN1, 1);
+					EEPROM_Write(0x0006, &MIN2, 1);
 					HAL_Delay(1000);
 					HAL_NVIC_SystemReset();
 				}
@@ -801,6 +838,7 @@ int main(void)
 								if (Calibrationcounter3 ==0)
 									{
 										Calibration= true;
+										Calibrated = false;
 									}
 							}
 						if (Calibrationcounter0 < -1 ||Calibrationcounter1 < -1 ||Calibrationcounter1 < -1 ||Calibrationcounter2 < -1)
@@ -814,7 +852,7 @@ int main(void)
 						if (Calibrationcounter0 == 0 || Calibrationcounter1 == 0 || Calibrationcounter2 == 0 || Calibrationcounter3 == 0)
 							{
 								limitcounter++;
-								if (limitcounter >13)
+								if (limitcounter >30)
 									{
 										Calibrationcounter0 = 2;
 										Calibrationcounter1 = 2;
