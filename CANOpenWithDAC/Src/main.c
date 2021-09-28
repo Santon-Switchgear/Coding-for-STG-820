@@ -299,7 +299,7 @@ float EN1_filter()//uint16_t n)
 		{
 			Enc_Val = 1023;
 		}
-	if ( 570 > Enc_Val && Enc_Val > 535)//IDLE
+	if ( 570 > Enc_Val && Enc_Val > 514)//IDLE
 		{
 			Enc_Val = 546;
 		}
@@ -327,7 +327,7 @@ int Calibration_protocol()
 		 
 
 		 
-		 if (Calibrated == 0x00)
+		 if (Calibrated == 0x00 || u8WrSetup == 0x00)
 			 {
 				 	EEPROM_Read(0x0003, &MAX1old, 1 );
 					EEPROM_Read(0x0004, &MAX2old, 1 );
@@ -740,20 +740,22 @@ int main(void)
 				//HAL_Delay(1);	
 				EEPROM_Read(0x0000, &u8WrSetup, 1); //Read value from EEPROM and store it in "u8Rd"
 				EEPROM_Read(0x0001, &FAILSTATEold, 1);
-				
-				
+//				uint8_t NotCalibrated = false;
+//				EEPROM_Write(0x0010, &NotCalibrated, 1);
 				
 				
 				if ( u8WrSetup == 0) // Write data to EEPROM if not run ( One time run )
 				{
 					u8WrSetup = 1;//Set Setup to 0x01
 					FAILSTATEold = 0x00;//Set FAILSTATE to 0x00
+					uint8_t NotCalibrated = false;
 					EEPROM_Write(0x0000, &u8WrSetup, 1);//Set Setup to 0x01 and write to EEPROM
 					//EEPROM_Write(0x0001, &FAILSTATEold, 1);//Set FAILSTATE to 0x00 and write to EEPROM
 					EEPROM_Write(0x0003, &MAX1, 1 );
 					EEPROM_Write(0x0004, &MAX2, 1 );
 					EEPROM_Write(0x0005, &MIN1, 1);
 					EEPROM_Write(0x0006, &MIN2, 1);
+					EEPROM_Write(0x0010, &NotCalibrated, 1);
 					Calibration_protocol();
 					HAL_Delay(1000);
 					HAL_NVIC_SystemReset();
@@ -823,7 +825,7 @@ int main(void)
 						HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 						EEPROM_Read(0x0000, &u8WrSetup, 1); //Read value from EEPROM and store it in "u8Rd"
 				    EEPROM_Read(0x0001, &FAILSTATEold, 1);
-						Calibration_protocol();
+						
 						if (Jumper() && HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin) && Calibrationcounter0 == 2 && Calibrationcounter2 == 2 )
 							{
 								Calibrationcounter1--;
@@ -864,6 +866,7 @@ int main(void)
 										Calibrationcounter3 = 2;
 									}
 							}
+						Calibration_protocol();
 					}
 				}
 								/* CANopen process */
