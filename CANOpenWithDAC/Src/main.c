@@ -584,13 +584,13 @@ int main(void)
   // System init	
   MainInit();
 	
-	HAL_Delay(100);
+	//HAL_Delay(100);
 	uint8_t test =0;
-	EEPROM_Write(0x00010,&test , 1);
-	Calibration_protocol();
+	//EEPROM_Write(0x00010,&test , 1);
+	
 	//EEPROM definitions
-	EEPROM_Read(0x0000, &u8RdSetup, 1); //Read value from EEPROM and store it in "u8Rd"
-	EEPROM_Read(0x0001, &FAILSTATEold, 1);
+	//EEPROM_Read(0x0000, &u8RdSetup, 1); //Read value from EEPROM and store it in "u8Rd"
+	//EEPROM_Read(0x0001, &FAILSTATEold, 1);
 	u8WrSetup = u8RdSetup; //Set u8Wr to value of u8Rd after a reset, read and written value are identical
 	u8WrSetupOld = u8RdSetup; //Set u8WrOld = u8Rd, so that no value will be written until u8Wr changes
 	
@@ -621,7 +621,7 @@ int main(void)
 		// Untested port of https://github.com/CANopenNode/CANopenNode
 		// =======================================================================
 		
-		while(1)//reset != CO_RESET_APP)
+		while(reset != CO_RESET_APP)
 		{
 			/* CANopen communication reset - initialize CANopen objects *******************/
 			CO_ReturnError_t err;
@@ -688,7 +688,7 @@ int main(void)
 			// Enable timer
 			u8TmrCallbackEnabled = 1;
 
-			while(reset == CO_RESET_NOT || 1)
+			while(reset == CO_RESET_NOT )//|| 1)
 			{
 				/* loop for normal program execution ******************************************/
 				uint16_t timer1msCopy, timer1msDiff;
@@ -762,7 +762,7 @@ int main(void)
 				{
 					FAILSTATEold = FAILSTATE;
 					//EEPROM_Write(0x0001, &FAILSTATE, 1);
-					HAL_Delay(500);
+					HAL_Delay(50);
 				}
 				
 				float Enc_Val_filtered = EN1_filter();//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
@@ -775,7 +775,7 @@ int main(void)
 				{
 					FAILSTATEold = FAILSTATE;
 				//	EEPROM_Write(0x0001, &FAILSTATE, 1);
-					HAL_Delay(500);
+					HAL_Delay(50);
 				}
 				
 				long Enc_Val_filtered1 = (long)Enc_Val_filtered;
@@ -821,6 +821,8 @@ int main(void)
 					{
 						u16Timer = 1000;
 						HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+						EEPROM_Read(0x0000, &u8WrSetup, 1); //Read value from EEPROM and store it in "u8Rd"
+				    EEPROM_Read(0x0001, &FAILSTATEold, 1);
 						Calibration_protocol();
 						if (Jumper() && HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin) && Calibrationcounter0 == 2 && Calibrationcounter2 == 2 )
 							{
@@ -865,7 +867,7 @@ int main(void)
 					}
 				}
 								/* CANopen process */
-				//reset = CO_process(CO, timer1msDiff, NULL);
+				reset = CO_process(CO, timer1msDiff, NULL);
 				// Watchdog refresh
 				#if ( PRODUCTION_VERSION == 1 )
 					HAL_IWDG_Refresh(&hiwdg);
