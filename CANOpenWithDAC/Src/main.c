@@ -322,7 +322,7 @@ float EN1_filter()//uint16_t n)
 int Calibration_protocol()
 	 {
 		 
-		 HAL_Delay(5);
+		 //HAL_Delay(5);
 		 EEPROM_Read(0x00010, &Calibrated, 1);
 		 
 
@@ -629,16 +629,16 @@ int main(void)
 			
 			/* disable CAN and CAN interrupts */
       CanDisable();
-			uint8_t NodeID1 = 56; //Default set Node ID if Jumper open/FALSE
+			uint8_t NodeID1 = 57; //Default set Node ID if Jumper open/FALSE
 			bool NodeID_condition = 0;
 			if (Jumper())//ReadAnalogInput(ADC_IN2))  //Condition for noe ID is HIGH / TRUE
 			{
-				uint8_t NodeID1 = 58; //CPU1-CAB2
+				uint8_t NodeID1 = 59; //CPU1-CAB2
 				NodeID_condition = 1;
 			}
 			else
 			{
-				uint8_t NodeID1 = 56; //CPU1-CAB1
+				uint8_t NodeID1 = 57; //CPU1-CAB1
 				NodeID_condition = 0;
 			}
 			/* initialize CANopen */
@@ -651,12 +651,12 @@ int main(void)
 						bool NodeID = 0;
 						if (Jumper())//ReadAnalogInput(ADC_IN2))  //Condition is TRUE if pin 13 of register c is HIGH / TRUE
 						{
-							int NodeID1 = 58; //CPU1-CAB2
+							int NodeID1 = 59;//CPU2_CAB2//58; //CPU1-CAB2
 							NodeID_condition = 1;
 						}
 						else
 						{
-							int NodeID1 = 56; //CPU1-CAB1
+							int NodeID1 = 57;//CPU2_CAB1////56; //CPU1-CAB1
 							NodeID_condition = 0;
 						}
 						
@@ -710,11 +710,11 @@ int main(void)
 
 				if (HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin))//)
 					{
-						hcan.pTxMsg->StdId = 0x00003A;   //Reciever adres: 0x003A (DMA-15)
+						hcan.pTxMsg->StdId = 0x00003B;//0x00003A;   //Reciever adres: 0x003A (DMA-15)
 					}
 				else
 					{
-						hcan.pTxMsg->StdId = 0x000038;   //Reciever adres: 0x0038 (DMA-15)
+						hcan.pTxMsg->StdId = 0x000039;//0x000038;   //Reciever adres: 0x0038 (DMA-15)
 					} 
 				
 				hcan.pTxMsg->DLC = 4 ;					
@@ -737,14 +737,14 @@ int main(void)
 				
 			//---------------------------------------------
 			//---------------------------------------------
-				HAL_Delay(10);	
+				//HAL_Delay(1);	
 				EEPROM_Read(0x0000, &u8WrSetup, 1); //Read value from EEPROM and store it in "u8Rd"
 				EEPROM_Read(0x0001, &FAILSTATEold, 1);
 				
 				
 				
 				
-				if ( u8WrSetup == 0x00) // Write data to EEPROM if not run ( One time run )
+				if ( u8WrSetup == 0) // Write data to EEPROM if not run ( One time run )
 				{
 					u8WrSetup = 1;//Set Setup to 0x01
 					FAILSTATEold = 0x00;//Set FAILSTATE to 0x00
@@ -754,6 +754,7 @@ int main(void)
 					EEPROM_Write(0x0004, &MAX2, 1 );
 					EEPROM_Write(0x0005, &MIN1, 1);
 					EEPROM_Write(0x0006, &MIN2, 1);
+					Calibration_protocol();
 					HAL_Delay(1000);
 					HAL_NVIC_SystemReset();
 				}
@@ -768,7 +769,7 @@ int main(void)
 				
 				Validaton();//Function to validate the microswitches and encoder validility and convert them to an array
 				
-				Calibration_protocol();
+				
 				
 				if ( FAILSTATE != FAILSTATEold) // Write data to EEPROM if changed
 				{
@@ -820,6 +821,7 @@ int main(void)
 					{
 						u16Timer = 1000;
 						HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+						Calibration_protocol();
 						if (Jumper() && HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin) && Calibrationcounter0 == 2 && Calibrationcounter2 == 2 )
 							{
 								Calibrationcounter1--;
