@@ -56,9 +56,9 @@ int limitcounter = 0;
 /* EEPROM declared Private variables ---------------------------------------------------------*/
 uint8_t u8WrSetup;//Setup_Complete
 uint8_t u8WrSetupOld;//Setup_Complete_Old
-uint8_t u8RdSetup;
+uint8_t u8RdSetup =0;
 uint8_t FAILSTATE = false;
-uint8_t FAILSTATEold;
+uint8_t FAILSTATEold =0;
 uint8_t MAX1 = 11; //15;//4030 separated in 2x 8 bit numbers
 uint8_t MAX2 = 236; //190;
 uint16_t MAX;
@@ -73,6 +73,7 @@ uint8_t MIN2old;
 uint16_t MINold;
 uint8_t Calibrated = 0;
 bool jumperold;
+bool START = 0;
 
 //DEBUG variables
 float MAXTEST;
@@ -303,7 +304,7 @@ float EN1_filter()//uint16_t n)
 		{
 			Enc_Val = 546;
 		}
-	if ( 152 > Enc_Val && Enc_Val > 114)//BMAX
+	if ( 152 > Enc_Val && Enc_Val > 101)//BMAX
 		{
 			Enc_Val = 114;
 		}
@@ -513,6 +514,7 @@ int Calibration_protocol()
 		{
 			CAN_DATA[9] = 0;
 			FAILSTATE = true;
+			
 		} 
 		else
 		{
@@ -583,7 +585,8 @@ int main(void)
 	
   // System init	
   MainInit();
-	
+	u8WrSetup = 0;
+	FAILSTATEold = 0;
 	//HAL_Delay(100);
 	uint8_t test =0;
 	//EEPROM_Write(0x00010,&test , 1);
@@ -660,7 +663,14 @@ int main(void)
 							NodeID_condition = 0;
 						}
 						
-						
+						if (Jumper())//)
+							{
+								hcan.pTxMsg->StdId = 0x00003B;//0x00003A;   //Reciever adres: 0x003A (DMA-15)
+							}
+						else
+							{
+								hcan.pTxMsg->StdId = 0x000039;//0x000038;   //Reciever adres: 0x0038 (DMA-15)
+							} 
 						STAT1 = Initialize_outputs();
 
 						
@@ -708,7 +718,7 @@ int main(void)
 				// Send it by CAN
 				hcan.pTxMsg->IDE = CAN_ID_STD;
 
-				if (HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin))//)
+				if (Jumper())//)
 					{
 						hcan.pTxMsg->StdId = 0x00003B;//0x00003A;   //Reciever adres: 0x003A (DMA-15)
 					}
@@ -737,7 +747,10 @@ int main(void)
 				
 			//---------------------------------------------
 			//---------------------------------------------
-				//HAL_Delay(1);	
+				//HAL_Delay(5);
+				
+//				EEPROM_Write(0x0000, &u8WrSetup, 1);
+//				EEPROM_Write(0x0001, &FAILSTATEold, 1);
 				EEPROM_Read(0x0000, &u8WrSetup, 1); //Read value from EEPROM and store it in "u8Rd"
 				EEPROM_Read(0x0001, &FAILSTATEold, 1);
 //				uint8_t NotCalibrated = false;
@@ -747,10 +760,10 @@ int main(void)
 				if ( u8WrSetup == 0) // Write data to EEPROM if not run ( One time run )
 				{
 					u8WrSetup = 1;//Set Setup to 0x01
-					FAILSTATEold = 0x00;//Set FAILSTATE to 0x00
+					FAILSTATEold = 0;//Set FAILSTATE to 0x00
 					uint8_t NotCalibrated = false;
 					EEPROM_Write(0x0000, &u8WrSetup, 1);//Set Setup to 0x01 and write to EEPROM
-					//EEPROM_Write(0x0001, &FAILSTATEold, 1);//Set FAILSTATE to 0x00 and write to EEPROM
+					EEPROM_Write(0x0001, &FAILSTATEold, 1);//Set FAILSTATE to 0x00 and write to EEPROM
 					EEPROM_Write(0x0003, &MAX1, 1 );
 					EEPROM_Write(0x0004, &MAX2, 1 );
 					EEPROM_Write(0x0005, &MIN1, 1);
@@ -760,23 +773,25 @@ int main(void)
 					HAL_Delay(1000);
 					HAL_NVIC_SystemReset();
 				}
-				if ( FAILSTATE != FAILSTATEold) // Write data to EEPROM if changed
+				if ( FAILSTATE != FAILSTATEold )//&& FAILSTATE ==0) // Write data to EEPROM if changed
 				{
 					FAILSTATEold = FAILSTATE;
-					//EEPROM_Write(0x0001, &FAILSTATE, 1);
-					HAL_Delay(50);
+
 				}
 				
 				float Enc_Val_filtered = EN1_filter();//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
 				
+				if (START){
 				Validaton();//Function to validate the microswitches and encoder validility and convert them to an array
 				
 				
 				
-				if ( FAILSTATE != FAILSTATEold) // Write data to EEPROM if changed
+				if ( FAILSTATE != FAILSTATEold && START )//&& FAILSTATE ==1) // Write data to EEPROM if changed
 				{
 					FAILSTATEold = FAILSTATE;
-				//	EEPROM_Write(0x0001, &FAILSTATE, 1);
+					EEPROM_Write(0x0001, &FAILSTATEold, 1);
+//					uint8_t temp = 0;
+//					EEPROM_Write(0x0001, &temp, 1);
 					HAL_Delay(50);
 				}
 				
@@ -815,13 +830,14 @@ int main(void)
 				
 				
 				HAL_CAN_Transmit(&hcan, 25);
-				
+				}
 				{
 
 				
 					if ( u16Timer == 0 )
 					{
 						u16Timer = 1000;
+						START = true;
 						HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 						EEPROM_Read(0x0000, &u8WrSetup, 1); //Read value from EEPROM and store it in "u8Rd"
 				    EEPROM_Read(0x0001, &FAILSTATEold, 1);
