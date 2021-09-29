@@ -574,6 +574,27 @@ int Calibration_protocol()
 }
  
 
+int FACTORY_RESET()
+	{
+		FAILSTATE = false;
+		FAILSTATEold = false;
+		Calibrated = false;
+		Calibration = false;
+		MAX1old = MAX1;
+		MAX2old = MAX2;
+		MIN1old = MIN1;
+		MIN2old = MIN2;
+		HAL_Delay(500);
+		EEPROM_Write(0x0000, &u8WrSetup, 1);//Set Setup to 0x01 and write to EEPROM
+		EEPROM_Write(0x0001, &FAILSTATEold, 1);//Set FAILSTATE to 0x00 and write to EEPROM
+		EEPROM_Write(0x0003, &MAX1, 1 );
+		EEPROM_Write(0x0004, &MAX2, 1 );
+		EEPROM_Write(0x0005, &MIN1, 1);
+		EEPROM_Write(0x0006, &MIN2, 1);
+		EEPROM_Write(0x0010, &Calibrated, 1);
+		HAL_Delay(500);
+		
+	}
 
 int main(void)
 {
@@ -862,6 +883,10 @@ int main(void)
 										Calibration= true;
 										Calibrated = false;
 									}
+							}
+						if (!Jumper() && Calibrationcounter0 == 0 && Calibrationcounter1 == 0 && Calibrationcounter3 == 5 )
+							{
+								FACTORY_RESET();							
 							}
 						if (Calibrationcounter0 < -1 ||Calibrationcounter1 < -1 ||Calibrationcounter1 < -1 ||Calibrationcounter2 < -1)
 							{
