@@ -37,12 +37,20 @@
 #include "CANopen.h"
 #include "stdlib.h"
 
-
+typedef enum
+{
+  eTmr_LED,
+  eTmr_Reset,
+	eTmr_Calibration,
+	eTmr_CanSend,
+	eTmr_Jumper,
+  SW_TIMER_CNT
+} eSwTimer_t;
 
 /* Private variables ---------------------------------------------------------*/
 CanTxMsgTypeDef CAN_TX_Msg;
 CanRxMsgTypeDef CAN_RX_Msg;
-__IO uint16_t u16Timer = 0;
+__IO uint16_t au16Timer[SW_TIMER_CNT];
 __IO uint8_t u8TmrCallbackEnabled = 0;
 uint16_t u16Voltage = 0;
 uint8_t u8I = 0;
@@ -51,29 +59,33 @@ int Calibrationcounter0=2;
 int Calibrationcounter1=2;
 int Calibrationcounter2=2;
 int Calibrationcounter3=2;
+int CalibratedMIN=0;
+int CalibratedMAX=0;
 int limitcounter = 0;
+bool jumper = 0;
+
 
 /* EEPROM declared Private variables ---------------------------------------------------------*/
 uint8_t u8WrSetup;//Setup_Complete
 uint8_t u8WrSetupOld;//Setup_Complete_Old
-uint8_t u8RdSetup =0;
+uint8_t u8RdSetup;
 uint8_t FAILSTATE = false;
-uint8_t FAILSTATEold =0;
-uint8_t MAX1 = 11; //15;//4030 separated in 2x 8 bit numbers
-uint8_t MAX2 = 236; //190;
-uint16_t MAX;
-uint8_t MIN1 = 15;//11;//3052
-uint8_t MIN2 = 190; //236;
-uint16_t MIN;
-uint8_t MAX1old;//4030 separated in 2x 8 bit numbers
-uint8_t MAX2old;
+uint8_t FAILSTATEold;
+//uint8_t MAX1 = 12;//11; //15;//4030 separated in 2x 8 bit numbers
+//uint8_t MAX2 = 48;//236; //190;
+uint16_t MAX=3120;
+//uint8_t MIN1 = 15;//11;//3052
+//uint8_t MIN2 = 220;//190; //236;
+uint16_t MIN=4060;
+//uint8_t MAX1old;//4030 separated in 2x 8 bit numbers
+//uint8_t MAX2old;
 uint16_t MAXold;
-uint8_t MIN1old;//3052
-uint8_t MIN2old;
+//uint8_t MIN1old;//3052
+//uint8_t MIN2old;
 uint16_t MINold;
 uint8_t Calibrated = 0;
 bool jumperold;
-bool START = 0;
+
 
 //DEBUG variables
 float MAXTEST;
@@ -146,6 +158,81 @@ void /* interrupt */ CO_CAN1InterruptHandler(void)
 } 
 
 
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+
+void vReset ( void )
+{
+
+}
+
+void vCalibration ( void )
+{
+	// jumper ___|---|___|---|___
+	// state     1   2   3   4
+  static uint8_t u8State = 0;
+	
+	switch ( u8State )
+	{
+		case 0: // waiting for "Calibration triggered When in Reset/EMERGENCY position of controller"
+			if ( true /*"Calibration triggered When in Reset/EMERGENCY position of controller"*/ )
+				u8State++;
+			break;
+		case 1: // waiting for start " Jumper =0x01 for duration of 2 seconds"
+			if ( jumper )
+			{ // ____|------> 1. raise edge
+			  au16Timer[eTmr_Calibration] = 2000; // 2000 ms = 2s
+				u8State++;
+			}
+			break;
+		case 2: // waiting for end " Jumper =0x01 for duration of 2 seconds"
+			if ( !jumper )
+			{ // ------|_____> 1. falling edge 
+			  if ( au16Timer[eTmr_Calibration] == 0 ) // more as 2000 ms = 2s
+				{
+					// start waiting 2 s for Jumper = 0
+					au16Timer[eTmr_Calibration] = 2000; // 2000 ms = 2s
+				  u8State++;
+				}
+				else
+					u8State = 0; // sequence not completetd
+			}
+			break;
+		case 3: // waiting for start " Jumper =0x01 for duration of 2 seconds"
+			if ( jumper )
+			{ // ____|------> 2. raise edge
+			  if ( au16Timer[eTmr_Calibration] == 0 ) // more as 2000 ms = 2s
+				{
+					// start waiting 2 s for Jumper = 1
+					au16Timer[eTmr_Calibration] = 2000; // 2000 ms = 2s
+				  u8State++;
+				}
+				else
+					u8State = 0; // sequence not completetd
+			}
+			break;
+		case 4: // waiting for end " Jumper =0x01 for duration of 2 seconds"
+			if ( !jumper )
+			{ // ------|_____> 2. falling edge 
+			  if ( au16Timer[eTmr_Calibration] == 0 ) // more as 2000 ms = 2s
+				{
+					// start waiting 2 s for Jumper = 0
+					au16Timer[eTmr_Calibration] = 2000; // 2000 ms = 2s
+				  u8State++;
+				}
+				else
+					u8State = 0; // sequence not completetd
+			}
+			break;
+		case 5:
+      //  implement some things
+		  u8State = 0; // reset state machine
+		break;
+	}
+}
+
+/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
+
+
 /**
   * @brief  Transmission  complete callback in non blocking mode 
   * @param  hcan: pointer to a CAN_HandleTypeDef structure that contains
@@ -166,9 +253,11 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* hcan)
   */
 void HAL_SYSTICK_Callback(void)
 {
+	uint8_t u8I;
 	// Decrement u16Timer every 1 ms down to 0
-  if ( u16Timer > 0 )
-		u16Timer--;
+	for (u8I=0; u8I<SW_TIMER_CNT; u8I++ )
+		if ( au16Timer[u8I] > 0 )
+			au16Timer[u8I]--;
 	
 	if ( u8TmrCallbackEnabled )
 	  tmrTask_thread();
@@ -207,11 +296,21 @@ bool SW2(){//s2 analog to bool conversion with threshhold 20mV
 		return Sw2;
 }
 
-bool Jumper()
+void vReadJumper ( void )
+{
+	static uint8_t u8Laststate = 0;
+	uint8_t u8State = 0;
+	
+	if ( au16Timer[eTmr_Jumper] == 0 )
 	{
-		bool a = HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin);
-		return(a);
+		au16Timer[eTmr_Jumper] = 5;
+		u8State = HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin);
+		if ( u8Laststate == u8State )
+			jumper = u8State;
+    u8Laststate = u8State;
 	}
+}
+
  
 int Initialize_outputs(){
 	//STG-826 
@@ -279,13 +378,13 @@ float EN1_filter()//uint16_t n)
 	
 	if (!Calibrated) 
 		{
-			MAX = (MAX1 << 8 ) | (MAX2 & 0xff);
-			MIN = (MIN1 << 8 ) | (MIN2 & 0xff);
+			MAX = MAX;//MAX;
+			MIN = MIN;//MIN;
 		}
 	else
 		{
-				MAX = (MAX1old << 8 ) | (MAX2old & 0xff);
-				MIN = (MIN1old << 8 ) | (MIN2old & 0xff);
+				MAX = MAXold; //(MAX1old << 8 ) | (MAX2old & 0xff);
+				MIN = MINold; //(MIN1old << 8 ) | (MIN2old & 0xff);
 		}
 	MAXTEST = MAX;
 	MINTEST= MIN;
@@ -300,11 +399,11 @@ float EN1_filter()//uint16_t n)
 		{
 			Enc_Val = 1023;
 		}
-	if ( 570 > Enc_Val && Enc_Val > 514)//IDLE
+	if ( 570 > Enc_Val && Enc_Val > 535)//IDLE
 		{
 			Enc_Val = 546;
 		}
-	if ( 152 > Enc_Val && Enc_Val > 101)//BMAX
+	if ( 152 > Enc_Val && Enc_Val > 114)//BMAX
 		{
 			Enc_Val = 114;
 		}
@@ -324,32 +423,41 @@ int Calibration_protocol()
 	 {
 		 
 		 //HAL_Delay(5);
-		 EEPROM_Read(0x00010, &Calibrated, 1);
+		 EEPROM_Read(0x0010, &Calibrated, 1);
 		 
 
 		 
-		 if (Calibrated == 0x00 || u8WrSetup == 0x00)
+		 if (Calibrated == 0x00)
 			 {
-				 	EEPROM_Read(0x0003, &MAX1old, 1 );
-					EEPROM_Read(0x0004, &MAX2old, 1 );
-					EEPROM_Read(0x0005, &MIN1old, 1);
-					EEPROM_Read(0x0006, &MIN2old, 1);
-				  MAXold = (MAX1old << 8 ) | (MAX2old & 0xff);
-					MINold = (MIN1old << 8 ) | (MIN2old & 0xff);
+//				 	EEPROM_Read(0x0003, &MAX1old, 1 );
+//					EEPROM_Read(0x0004, &MAX2old, 1 );
+//					EEPROM_Read(0x0005, &MIN1old, 1);
+//					EEPROM_Read(0x0006, &MIN2old, 1);
+				 EEPROM_Read(0x0003, (uint8_t*)&MAXold, 2 );
+				 EEPROM_Read(0x0005, (uint8_t*)&MINold, 2 );
+//				  MAXold = (MAX1old << 8 ) | (MAX2old & 0xff);
+//					MINold = (MIN1old << 8 ) | (MIN2old & 0xff);
 				 
 				 if(MAXold != MAX || MINold != MIN)
 				 {
-					 EEPROM_Write(0x0003, &MAX1, 1 );
-					 EEPROM_Write(0x0004, &MAX2, 1 );
-					 EEPROM_Write(0x0005, &MIN1, 1);
-					 EEPROM_Write(0x0006, &MIN2, 1);
+					 EEPROM_Write(0x0003, (uint8_t*)&MAX, 2);
+//					 EEPROM_Write(0x0004, &MAX2, 1 );
+					 EEPROM_Write(0x0005, (uint8_t*)&MIN, 2);
+//					 EEPROM_Write(0x0006, &MIN2, 1);
 					 HAL_Delay(50);
 				 }
 				 if (Calibration)
 				 {
-						MIN= ReadAnalogInput(ADC_IN1);
+						
+					 if (CalibratedMIN==0x00 )
+						 {
+							 MIN= ReadAnalogInput(ADC_IN1);
+							 CalibratedMIN=0x01;
+							 
+						 }
+						 
 						long MINtemp =(long)MIN; 
-					  if (MINold != MIN && (Jumper()) )
+					  if (MINold != MIN && (jumper) )
 							{
 								uint8_t tempMinL = *((uint8_t*)&(MINtemp)+1);
 								uint8_t tempMinH = *((uint8_t*)&(MINtemp)+0);
@@ -358,10 +466,14 @@ int Calibration_protocol()
 								HAL_Delay(50);
 								
 							}
-						if (!Jumper())
+						if (!jumper)
 							{
-							MAX= ReadAnalogInput(ADC_IN1);
-							if (MAXold != MAX && !(Jumper()) )
+							if (CalibratedMAX==0x00 )
+						  {
+								MAX= ReadAnalogInput(ADC_IN1);
+								CalibratedMAX=0x01;
+							}
+							if (MAXold != MAX && !(jumper) )
 								{ 
 									uint8_t tempMaxL = *((uint8_t*)&(MAX)+1);
 									uint8_t tempMaxH = *((uint8_t*)&(MAX)+0);
@@ -381,8 +493,8 @@ int Calibration_protocol()
 					
 					//HAL_Delay(10);
 
-					MAX = (MAX1old << 8 ) | (MAX2old & 0xff);
-					MIN = (MIN1old << 8 ) | (MIN2old & 0xff);
+					MAX = MAXold;//(MAX1old << 8 ) | (MAX2old & 0xff);
+					MIN = MINold;//(MIN1old << 8 ) | (MIN2old & 0xff);
 					
 					MAXTEST=MAX;
 					MINTEST=MIN;
@@ -514,7 +626,6 @@ int Calibration_protocol()
 		{
 			CAN_DATA[9] = 0;
 			FAILSTATE = true;
-			
 		} 
 		else
 		{
@@ -574,27 +685,6 @@ int Calibration_protocol()
 }
  
 
-int FACTORY_RESET()
-	{
-		FAILSTATE = false;
-		FAILSTATEold = false;
-		Calibrated = false;
-		Calibration = false;
-		MAX1old = MAX1;
-		MAX2old = MAX2;
-		MIN1old = MIN1;
-		MIN2old = MIN2;
-		HAL_Delay(500);
-		EEPROM_Write(0x0000, &u8WrSetup, 1);//Set Setup to 0x01 and write to EEPROM
-		EEPROM_Write(0x0001, &FAILSTATEold, 1);//Set FAILSTATE to 0x00 and write to EEPROM
-		EEPROM_Write(0x0003, &MAX1, 1 );
-		EEPROM_Write(0x0004, &MAX2, 1 );
-		EEPROM_Write(0x0005, &MIN1, 1);
-		EEPROM_Write(0x0006, &MIN2, 1);
-		EEPROM_Write(0x0010, &Calibrated, 1);
-		HAL_Delay(500);
-		
-	}
 
 int main(void)
 {
@@ -606,9 +696,26 @@ int main(void)
 	
   // System init	
   MainInit();
-	u8WrSetup = 0;
-	FAILSTATEold = 0;
-	//HAL_Delay(100);
+	
+	HAL_Delay(100);
+	{
+		uint8_t u8Temp, u8I;
+		//uint16_t u16a = 0x5555;
+		EEPROM_Read(0x0000, &u8Temp, 1);
+		
+	  if ( u8Temp == 0xFF )
+		{
+		  // first init of EEPROM
+			u8Temp = 0;
+			for ( u8I=0; u8I<20; u8I++ )
+			  EEPROM_Write((uint16_t)u8I, &u8Temp , 1);
+		}
+		
+//		EEPROM_Write(0x0003, (uint8_t*)&u16a, 2 );
+//		EEPROM_Read(0x0003, (uint8_t*)&u16a, 2 );
+//		u16a = u16a;
+	}
+	uint8_t Start= 0;
 	uint8_t test =0;
 	//EEPROM_Write(0x00010,&test , 1);
 	
@@ -655,7 +762,10 @@ int main(void)
       CanDisable();
 			uint8_t NodeID1 = 57; //Default set Node ID if Jumper open/FALSE
 			bool NodeID_condition = 0;
-			if (Jumper())//ReadAnalogInput(ADC_IN2))  //Condition for noe ID is HIGH / TRUE
+			
+			vReadJumper();
+
+			if (jumper)//ReadAnalogInput(ADC_IN2))  //Condition for noe ID is HIGH / TRUE
 			{
 				uint8_t NodeID1 = 59; //CPU1-CAB2
 				NodeID_condition = 1;
@@ -671,9 +781,10 @@ int main(void)
 			{
 					while(1)
 					{
+    				vReadJumper();
 						//int NodeID1 = 56; //Default set Node ID if Jumper open/FALSE
 						bool NodeID = 0;
-						if (Jumper())//ReadAnalogInput(ADC_IN2))  //Condition is TRUE if pin 13 of register c is HIGH / TRUE
+						if (jumper)//ReadAnalogInput(ADC_IN2))  //Condition is TRUE if pin 13 of register c is HIGH / TRUE
 						{
 							int NodeID1 = 59;//CPU2_CAB2//58; //CPU1-CAB2
 							NodeID_condition = 1;
@@ -684,23 +795,16 @@ int main(void)
 							NodeID_condition = 0;
 						}
 						
-						if (Jumper())//)
-							{
-								hcan.pTxMsg->StdId = 0x00003B;//0x00003A;   //Reciever adres: 0x003A (DMA-15)
-							}
-						else
-							{
-								hcan.pTxMsg->StdId = 0x000039;//0x000038;   //Reciever adres: 0x0038 (DMA-15)
-							} 
+						
 						STAT1 = Initialize_outputs();
 
 						
 						// LED flicker for error
-						if ( u16Timer == 0 )
+						if ( au16Timer[eTmr_LED] == 0 )
 						{
-							u16Timer = 100;
+							au16Timer[eTmr_LED] = 100;
 							HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-
+						}
 
 
 			/* Configure Timer interrupt function for execution every 1 millisecond */
@@ -728,6 +832,9 @@ int main(void)
 				timer1msDiff = timer1msCopy - timer1msPrevious;
 				timer1msPrevious = timer1msCopy;
 
+				vReadJumper();
+				
+				vCalibration();
 				
 				/* CANopen process */
 			//	reset = CO_process(CO, timer1msDiff, NULL);
@@ -739,7 +846,7 @@ int main(void)
 				// Send it by CAN
 				hcan.pTxMsg->IDE = CAN_ID_STD;
 
-				if (Jumper())//)
+				if (HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin))//)
 					{
 						hcan.pTxMsg->StdId = 0x00003B;//0x00003A;   //Reciever adres: 0x003A (DMA-15)
 					}
@@ -763,56 +870,56 @@ int main(void)
 				bool S1 = SW1();
 			  bool S2 = SW2();//ReadAnalogInput(ADC_IN3);//s2
 				bool S3 = HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin);//s3
-				bool Jumpers = Jumper();
+				bool Jumpers = jumper;
 				//bool S4 = HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin);
 				
 			//---------------------------------------------
 			//---------------------------------------------
-				//HAL_Delay(5);
-				
-//				EEPROM_Write(0x0000, &u8WrSetup, 1);
-//				EEPROM_Write(0x0001, &FAILSTATEold, 1);
+				//HAL_Delay(1);	
 				EEPROM_Read(0x0000, &u8WrSetup, 1); //Read value from EEPROM and store it in "u8Rd"
 				EEPROM_Read(0x0001, &FAILSTATEold, 1);
-				uint8_t NotCalibrated = false;
-				EEPROM_Write(0x0010, &NotCalibrated, 1);
+				
+				
 				
 				
 				if ( u8WrSetup == 0) // Write data to EEPROM if not run ( One time run )
 				{
 					u8WrSetup = 1;//Set Setup to 0x01
-					FAILSTATEold = 0;//Set FAILSTATE to 0x00
-					uint8_t NotCalibrated = false;
+					FAILSTATEold = 0x00;//Set FAILSTATE to 0x00
 					EEPROM_Write(0x0000, &u8WrSetup, 1);//Set Setup to 0x01 and write to EEPROM
-					EEPROM_Write(0x0001, &FAILSTATEold, 1);//Set FAILSTATE to 0x00 and write to EEPROM
-					EEPROM_Write(0x0003, &MAX1, 1 );
-					EEPROM_Write(0x0004, &MAX2, 1 );
-					EEPROM_Write(0x0005, &MIN1, 1);
-					EEPROM_Write(0x0006, &MIN2, 1);
-					EEPROM_Write(0x0010, &NotCalibrated, 1);
-					Calibration_protocol();
+					//EEPROM_Write(0x0001, &FAILSTATEold, 1);//Set FAILSTATE to 0x00 and write to EEPROM
+//					EEPROM_Write(0x0003, &MAX1, 1 );
+//					EEPROM_Write(0x0004, &MAX2, 1 );
+					EEPROM_Write(0x0003, (uint8_t*)&MAX, 2 );
+//					EEPROM_Write(0x0005, &MIN1, 1);
+//					EEPROM_Write(0x0006, &MIN2, 1);
+					EEPROM_Write(0x0005, (uint8_t*)&MIN, 2 );
+					//Calibration_protocol();
 					HAL_Delay(1000);
 					HAL_NVIC_SystemReset();
 				}
-				if ( FAILSTATE != FAILSTATEold )//&& FAILSTATE ==0) // Write data to EEPROM if changed
+				if ( FAILSTATE != FAILSTATEold) // Write data to EEPROM if changed
 				{
-					FAILSTATEold = FAILSTATE;
-
+					FAILSTATE = FAILSTATEold;
+					//EEPROM_Write(0x0001, &FAILSTATE, 1);
+					//HAL_Delay(50);
 				}
 				
 				float Enc_Val_filtered = EN1_filter();//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
 				
-				if (START){
-				Validaton();//Function to validate the microswitches and encoder validility and convert them to an array
+				if (Start == 2)
+				{
+					Validaton();//Function to validate the microswitches and encoder validility and convert them to an array
+				}
 				
-				
-				
-				if ( FAILSTATE != FAILSTATEold && START )//&& FAILSTATE ==1) // Write data to EEPROM if changed
+				if (Start<3)
+				{
+					Start++;
+				}
+				if ( FAILSTATE != FAILSTATEold) // Write data to EEPROM if changed
 				{
 					FAILSTATEold = FAILSTATE;
-					EEPROM_Write(0x0001, &FAILSTATEold, 1);
-//					uint8_t temp = 0;
-//					EEPROM_Write(0x0001, &temp, 1);
+					EEPROM_Write(0x0001, &FAILSTATE, 1);
 					HAL_Delay(50);
 				}
 				
@@ -849,44 +956,44 @@ int main(void)
 //					hcan.pTxMsg->Data[u8I] = CanMSG.u8[u8I];
 				// Send it by CAN
 				
-				
-				HAL_CAN_Transmit(&hcan, 25);
+				if ( au16Timer[eTmr_CanSend] == 0 )
+				{
+				  HAL_CAN_Transmit(&hcan, 25); //XXXXXXXX you are sending the CAN message all the time - is this right???? Have you PCAN for monitoring????
+					au16Timer[eTmr_CanSend] = 25;
 				}
+				
 				{
 
 				
-					if ( u16Timer == 0 )
+					if ( au16Timer[eTmr_LED] == 0 )
 					{
-						u16Timer = 1000;
-						START = true;
+						au16Timer[eTmr_LED] = 1000;
 						HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 						EEPROM_Read(0x0000, &u8WrSetup, 1); //Read value from EEPROM and store it in "u8Rd"
 				    EEPROM_Read(0x0001, &FAILSTATEold, 1);
 						
-						if (Jumper() && HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin) && Calibrationcounter0 == 2 && Calibrationcounter2 == 2 )
+						if (jumper && HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin) && Calibrationcounter0 == 2 && Calibrationcounter2 == 2 )
 							{
 								Calibrationcounter1--;
 							}
-						if (!(Jumper()) && (HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)) && Calibrationcounter1 == 0 && Calibrationcounter2 == 2)//JUMPER IN5 -> IN6
+						if (!(jumper) && (HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)) && Calibrationcounter1 == 0 && Calibrationcounter2 == 2)//JUMPER IN5 -> IN6
 							{
 								Calibrationcounter0--;
 							}
-						if (Jumper() && Calibrationcounter0 == 0 && Calibrationcounter1 == 0 && Calibrationcounter3 == 2 )
+						if (jumper && Calibrationcounter0 == 0 && Calibrationcounter1 == 0 && Calibrationcounter3 == 2 )
 							{
 								Calibrationcounter2--;							
 							}
-						if (Jumper() && Calibrationcounter0 == 0 && Calibrationcounter1 == 0 && Calibrationcounter2 == 0)
+						if (jumper && Calibrationcounter0 == 0 && Calibrationcounter1 == 0 && Calibrationcounter2 == 0)
 							{
 								Calibrationcounter3--;
 								if (Calibrationcounter3 ==0)
 									{
 										Calibration= true;
 										Calibrated = false;
+										CalibratedMIN = false;
+										CalibratedMAX = false;
 									}
-							}
-						if (!Jumper() && Calibrationcounter0 == 0 && Calibrationcounter1 == 0 && Calibrationcounter3 == 5 )
-							{
-								FACTORY_RESET();							
 							}
 						if (Calibrationcounter0 < -1 ||Calibrationcounter1 < -1 ||Calibrationcounter1 < -1 ||Calibrationcounter2 < -1)
 							{
@@ -899,7 +1006,7 @@ int main(void)
 						if (Calibrationcounter0 == 0 || Calibrationcounter1 == 0 || Calibrationcounter2 == 0 || Calibrationcounter3 == 0)
 							{
 								limitcounter++;
-								if (limitcounter >30)
+								if (limitcounter >300)
 									{
 										Calibrationcounter0 = 2;
 										Calibrationcounter1 = 2;
@@ -932,6 +1039,6 @@ int main(void)
 		
   }
 }
-}}}
+}}
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
