@@ -774,8 +774,8 @@ int main(void)
 //				EEPROM_Write(0x0001, &FAILSTATEold, 1);
 				EEPROM_Read(0x0000, &u8WrSetup, 1); //Read value from EEPROM and store it in "u8Rd"
 				EEPROM_Read(0x0001, &FAILSTATEold, 1);
-//				uint8_t NotCalibrated = false;
-//				EEPROM_Write(0x0010, &NotCalibrated, 1);
+				uint8_t NotCalibrated = false;
+				EEPROM_Write(0x0010, &NotCalibrated, 1);
 				
 				
 				if ( u8WrSetup == 0) // Write data to EEPROM if not run ( One time run )
