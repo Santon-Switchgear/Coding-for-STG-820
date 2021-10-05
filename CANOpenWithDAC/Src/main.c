@@ -66,6 +66,7 @@ bool jumper = 0;
 bool factory_reset = 0;
 uint16_t MINtemp;
 uint16_t MAXtemp;
+bool write_to_failstate_memory = 0;
 
 /* EEPROM declared Private variables ---------------------------------------------------------*/
 uint8_t u8WrSetup;//Setup_Complete
@@ -224,6 +225,7 @@ void vCalibration ( void )
 					Calibrated = false;
 					CalibratedMIN = false;
 					CalibratedMAX = false;
+					//Calibration_protocol();
 					u8State++;
 					
 				}
@@ -232,22 +234,13 @@ void vCalibration ( void )
 			}
 			break;
 		case 5:
-      if ( jumper )
+      if ( jumper && (HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)) )//FACTORY RESET VARIABLES & EEPROM
 			{ // ____|------> 2. raise edge
-			  if ( au16Timer[eTmr_Calibration] == 0 ) // more as 2000 ms = 2s
+			  if ( au16Timer[eTmr_Calibration] == 0  ) // more as 2000 ms = 2s
 				{
 					// start waiting 5 s for Jumper = 1
 					au16Timer[eTmr_Calibration] = 2000; // 2000 ms = 2s
-				  u8State++;
-				}
-				else
-					u8State = 0; // sequence not completetd
-			}
-		break;
-		case 6:
-			if (!jumper)//FACTORY RESET VARIABLES & EEPROM
-				{
-						uint8_t u8Temp, u8I;
+				  uint8_t u8Temp, u8I;
 						//uint16_t u16a = 0x5555;
 						u8Temp = 0xFF;
 						
@@ -270,12 +263,20 @@ void vCalibration ( void )
 						}
 						MAX=3120;
 						MIN=4060;
+						u8State = 0;
 						HAL_NVIC_SystemReset();
-
-					
 				}
-			u8State = 0;
+				else
+					u8State = 0; // sequence not completetd
+			}
+			else
+//				if ( au16Timer[eTmr_Calibration] == 0  )
+//				{
+//					u8State = 0;
+//				}
 		break;
+
+		
 	}
 }
 
@@ -999,8 +1000,8 @@ int main(void)
 				if ( FAILSTATE != FAILSTATEold) // Write data to EEPROM if changed
 				{
 					FAILSTATEold = FAILSTATE;
-					EEPROM_Write(0x0001, &FAILSTATE, 1);
-					HAL_Delay(50);
+					write_to_failstate_memory = 1;
+
 				}
 				
 				long Enc_Val_filtered1 = (long)Enc_Val_filtered;
@@ -1022,7 +1023,7 @@ int main(void)
 				bool TrBr_dataValid = (bool)CAN_DATA[9];	
 				
 				uint8_t dataset1 = Dataset(CAN_DATA[0],CAN_DATA[1],CAN_DATA[2],CAN_DATA[3],CAN_DATA[4],CAN_DATA[5],CAN_DATA[6],CAN_DATA[7]);
-				uint8_t dataset2 = Dataset(0,0,0,0,0,0,CAN_DATA[8],CAN_DATA[9]);
+				uint8_t dataset2 = Dataset(0,0,0,0,0,Calibration,CAN_DATA[8],CAN_DATA[9]);
 				CanMSG.u8[2] = dataset1;
 				CanMSG.u8[3] = dataset2;
 				// Transfer data
@@ -1051,7 +1052,12 @@ int main(void)
 						HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 						EEPROM_Read(0x0000, &u8WrSetup, 1); //Read value from EEPROM and store it in "u8Rd"
 				    EEPROM_Read(0x0001, &FAILSTATEold, 1);
-						
+						if (write_to_failstate_memory)
+							{
+								EEPROM_Write(0x0001, &FAILSTATE, 1);
+								HAL_Delay(50);
+								write_to_failstate_memory = 0;
+							}
 						Calibration_protocol();
 						
 						if (jumper && HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin) && Calibrationcounter0 == 2 && Calibrationcounter2 == 2 )
@@ -1071,10 +1077,10 @@ int main(void)
 								Calibrationcounter3--;
 								if (Calibrationcounter3 ==0)
 									{
-										Calibration= true;
-										Calibrated = false;
-										CalibratedMIN = false;
-										CalibratedMAX = false;
+										//Calibration= true;
+										//Calibrated = false;
+										//CalibratedMIN = false;
+									//	CalibratedMAX = false;
 									}
 							}
 						if (Calibrationcounter0 < -1 ||Calibrationcounter1 < -1 ||Calibrationcounter1 < -1 ||Calibrationcounter2 < -1)
