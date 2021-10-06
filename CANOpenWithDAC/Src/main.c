@@ -170,9 +170,9 @@ void vReset ( void )
 
 void vCalibration ( void )
 {
-	// jumper ___|---|___|---|___|-----|___
-	// state     1   2   3   4	 5		 6
-	//Event				Calibration^	       ^FACTORY RESET
+	// jumper ___|---|___|---|___|---|___|
+	// state     1   2   3   4	 5	 6		7
+	//Event				Calibration^	       		^FACTORY RESET
   static uint8_t u8State = 0;
 	
 	switch ( u8State )
@@ -234,7 +234,35 @@ void vCalibration ( void )
 			}
 			break;
 		case 5:
-      if ( jumper && (HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)) )//FACTORY RESET VARIABLES & EEPROM
+			if ( jumper )
+			{ // ____|------> 2. raise edge
+			  if ( au16Timer[eTmr_Calibration] == 0 ) // more as 2000 ms = 2s
+				{
+					// start waiting 2 s for Jumper = 1
+					au16Timer[eTmr_Calibration] = 2000; // 2000 ms = 2s
+				  u8State++;
+				}
+				else
+					u8State = 0; // sequence not completetd
+			}
+      
+		break;
+		case 6:
+			if ( !jumper )
+			{ // ____|------> 2. raise edge
+			  if ( au16Timer[eTmr_Calibration] == 0 ) // more as 2000 ms = 2s
+				{
+					// start waiting 2 s for Jumper = 1
+					au16Timer[eTmr_Calibration] = 2000; // 2000 ms = 2s
+				  u8State++;
+				}
+				else
+					u8State = 0; // sequence not completetd
+			}
+      
+		break;
+		case 7:
+			if ( jumper && (HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)) )//FACTORY RESET VARIABLES & EEPROM
 			{ // ____|------> 2. raise edge
 			  if ( au16Timer[eTmr_Calibration] == 0  ) // more as 2000 ms = 2s
 				{
@@ -275,8 +303,6 @@ void vCalibration ( void )
 //					u8State = 0;
 //				}
 		break;
-
-		
 	}
 }
 
@@ -499,7 +525,7 @@ int Calibration_protocol()
 				 if (Calibration)
 				 {
 						
-					 if (CalibratedMIN==0x00 && !jumper)
+					 if (CalibratedMIN==0x00 && jumper)
 						 {
 							 //MIN= ReadAnalogInput(ADC_IN1);
 							 
@@ -511,9 +537,9 @@ int Calibration_protocol()
 						 }
 						 
 
-						if (jumper)
+						if (!jumper && CalibratedMIN ==0x01)
 							{
-							if (CalibratedMAX==0x00 )
+							if (CalibratedMAX==0x00 && !(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)))
 						  {
 								uint16_t MAXtemp = ReadAnalogInput(ADC_IN1);
 								
@@ -521,9 +547,14 @@ int Calibration_protocol()
 								HAL_Delay(50);
 								uint8_t Calibrated_temp= 1;
 								EEPROM_Write(0x0010,&Calibrated_temp , 1);
+								FAILSTATE = 0;
+								FAILSTATEold = 0;
+								EEPROM_Write(0x0001, &FAILSTATE, 1);
+								HAL_Delay(50);
 								Calibrated = true;
 								Calibration = false;
 								CalibratedMAX=0x01;
+								HAL_NVIC_SystemReset();
 								
 							}
 							
@@ -988,6 +1019,10 @@ int main(void)
 				
 				float Enc_Val_filtered = EN1_filter();//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
 				
+				if (Calibration)
+				{
+					Enc_Val_filtered = ReadAnalogInput(ADC_IN1);
+				}
 				if (Start > 2)
 				{
 					Validaton();//Function to validate the microswitches and encoder validility and convert them to an array
