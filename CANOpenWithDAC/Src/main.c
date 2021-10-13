@@ -887,19 +887,19 @@ int main(void)
 			
 			/* disable CAN and CAN interrupts */
       CanDisable();
-			uint8_t NodeID1 = 57; //Default set Node ID if Jumper open/FALSE
+			uint8_t NodeID1 = 56;//57; //Default set Node ID if Jumper open/FALSE
 			bool NodeID_condition = 0;
 			
 			vReadJumper();
 
 			if (jumper)//ReadAnalogInput(ADC_IN2))  //Condition for noe ID is HIGH / TRUE
 			{
-				uint8_t NodeID1 = 59; //CPU1-CAB2
+				uint8_t NodeID1 = 58;//59; //CPU1-CAB2
 				NodeID_condition = 1;
 			}
 			else
 			{
-				uint8_t NodeID1 = 57; //CPU1-CAB1
+				uint8_t NodeID1 = 56;//57; //CPU1-CAB1
 				NodeID_condition = 0;
 			}
 			/* initialize CANopen */
@@ -913,12 +913,12 @@ int main(void)
 						bool NodeID = 0;
 						if (jumper)//ReadAnalogInput(ADC_IN2))  //Condition is TRUE if pin 13 of register c is HIGH / TRUE
 						{
-							int NodeID1 = 59;//CPU2_CAB2//58; //CPU1-CAB2
+							int NodeID1 = 58;//59;//CPU2_CAB2//58; //CPU1-CAB2
 							NodeID_condition = 1;
 						}
 						else
 						{
-							int NodeID1 = 57;//CPU2_CAB1////56; //CPU1-CAB1
+							int NodeID1 = 56;//57;//CPU2_CAB1////56; //CPU1-CAB1
 							NodeID_condition = 0;
 						}
 						
@@ -975,11 +975,11 @@ int main(void)
 
 				if (jumper)//)
 					{
-						hcan.pTxMsg->StdId = 0x00003B;//0x00003A;   //Reciever adres: 0x003A (DMA-15)
+						hcan.pTxMsg->StdId = 0x00003A;//0x00003B;   //Reciever adres: 0x003A (DMA-15)
 					}
 				else
 					{
-						hcan.pTxMsg->StdId = 0x000039;//0x000038;   //Reciever adres: 0x0038 (DMA-15)
+						hcan.pTxMsg->StdId = 0x000038;//  0x000039; //Reciever adres: 0x0038 (DMA-15)
 					} 
 				
 				hcan.pTxMsg->DLC = 4 ;					
