@@ -50,16 +50,16 @@
 #define ADC_IN2 2
 #define ADC_IN3 3
 
-#define Out1_HS_Pin GPIO_PIN_13
+//#define Out1_HS_Pin GPIO_PIN_13
+//#define Out1_HS_GPIO_Port GPIOC
+#define Out1_HS_Pin GPIO_PIN_14
 #define Out1_HS_GPIO_Port GPIOC
-#define Out2_HS_Pin GPIO_PIN_14
+#define Out2_HS_Pin GPIO_PIN_15
 #define Out2_HS_GPIO_Port GPIOC
-#define Out3_HS_Pin GPIO_PIN_15
-#define Out3_HS_GPIO_Port GPIOC
-#define Out4_HS_Pin GPIO_PIN_4
-#define Out4_HS_GPIO_Port GPIOA
-#define OUT5_DAC_Pin GPIO_PIN_5
-#define OUT5_DAC_GPIO_Port GPIOA
+#define Out3_HS_Pin GPIO_PIN_4
+#define Out3_HS_GPIO_Port GPIOA
+#define OUT4_DAC_Pin GPIO_PIN_5
+#define OUT4_DAC_GPIO_Port GPIOA
 #define LED_Pin GPIO_PIN_8
 #define LED_GPIO_Port GPIOA
 #define CAN_S_Pin GPIO_PIN_6
@@ -73,6 +73,8 @@
 #define DIN4_Port GPIOA
 #define DIN5_Pin GPIO_PIN_15
 #define DIN5_Port GPIOA
+#define DIN6_HS_Pin GPIO_PIN_13
+#define DIN6_Port GPIOC
 
 #define EEPROM_ADDRESS			0xA0
 #define EEPROM_BUFFER_SIZE	32  // Page size

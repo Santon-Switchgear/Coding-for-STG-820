@@ -193,10 +193,10 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac)
     /**DAC GPIO Configuration    
     PA5     ------> DAC_OUT2 
     */
-    GPIO_InitStruct.Pin = OUT5_DAC_Pin;
+    GPIO_InitStruct.Pin = OUT4_DAC_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(OUT5_DAC_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(OUT4_DAC_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN DAC_MspInit 1 */
 
@@ -219,7 +219,7 @@ void HAL_DAC_MspDeInit(DAC_HandleTypeDef* hdac)
     /**DAC GPIO Configuration    
     PA5     ------> DAC_OUT2 
     */
-    HAL_GPIO_DeInit(OUT5_DAC_GPIO_Port, OUT5_DAC_Pin);
+    HAL_GPIO_DeInit(OUT4_DAC_GPIO_Port, OUT4_DAC_Pin);
 
   }
   /* USER CODE BEGIN DAC_MspDeInit 1 */

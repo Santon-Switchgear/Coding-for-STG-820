@@ -76,10 +76,10 @@ uint8_t FAILSTATE = false;
 uint8_t FAILSTATEold;
 //uint8_t MAX1 = 12;//11; //15;//4030 separated in 2x 8 bit numbers
 //uint8_t MAX2 = 48;//236; //190;
-uint16_t MAX=3120;
+uint16_t MAX=1188;
 //uint8_t MIN1 = 15;//11;//3052
 //uint8_t MIN2 = 220;//190; //236;
-uint16_t MIN=4060;
+uint16_t MIN=90;//225;
 //uint8_t MAX1old;//4030 separated in 2x 8 bit numbers
 //uint8_t MAX2old;
 uint16_t MAXold;
@@ -354,7 +354,7 @@ bool SW1(){//s1 analog to bool conversion with threshhold 20mV
 				Sw1=1;
 			}
 		
-		return Sw1;
+		return !Sw1;
 }
 
 bool SW2(){//s2 analog to bool conversion with threshhold 20mV
@@ -369,7 +369,20 @@ bool SW2(){//s2 analog to bool conversion with threshhold 20mV
 				Sw2=1;
 			}
 		
-		return Sw2;
+		return !Sw2;
+}
+
+bool SW3(){//s2 analog to bool conversion with threshhold 20mV
+		
+	  bool Sw3 = HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin);
+	
+		return !Sw3;
+}
+bool SW4(){//s2 analog to bool conversion with threshhold 20mV
+		
+	  bool Sw4 = HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin);
+	
+		return !Sw4;
 }
 
 void vReadJumper ( void )
@@ -380,7 +393,7 @@ void vReadJumper ( void )
 	if ( au16Timer[eTmr_Jumper] == 0 )
 	{
 		au16Timer[eTmr_Jumper] = 5;
-		u8State = HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin);
+		u8State = HAL_GPIO_ReadPin(DIN6_Port,DIN6_HS_Pin);
 		if ( u8Laststate == u8State )
 			jumper = u8State;
     u8Laststate = u8State;
@@ -471,7 +484,7 @@ float EN1_filter()//uint16_t n)
 		{
 			Enc_Val = 0;
 		}
-	if ( Enc_Val > 1020)//TMAX
+	if ( Enc_Val >= 1014)//TMAX
 		{
 			Enc_Val = 1023;
 		}
@@ -525,21 +538,22 @@ int Calibration_protocol()
 				 if (Calibration)
 				 {
 						
-					 if (CalibratedMIN==0x00 && jumper)
+					 if (CalibratedMIN==0x00 && jumper && !SW3())//(CalibratedMIN==0x00 && jumper && SW3())
 						 {
 							 //MIN= ReadAnalogInput(ADC_IN1);
 							 
 							 uint16_t MINtemp =ReadAnalogInput(ADC_IN1);
-							 CalibratedMIN=0x01;
+							 MIN = MINtemp;
 							 EEPROM_Write(0x0005,(uint8_t*)&MINtemp, 2 );
 							 HAL_Delay(50);
+							 CalibratedMIN=0x01;
 							 
 						 }
 						 
 
 						if (!jumper && CalibratedMIN ==0x01)
 							{
-							if (CalibratedMAX==0x00 && !(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)))
+							if (CalibratedMAX==0x00 && (SW3()))//(CalibratedMAX==0x00 && (!SW3()))
 						  {
 								uint16_t MAXtemp = ReadAnalogInput(ADC_IN1);
 								
@@ -551,9 +565,6 @@ int Calibration_protocol()
 								FAILSTATEold = 0;
 								EEPROM_Write(0x0001, &FAILSTATE, 1);
 								HAL_Delay(50);
-								Calibrated = true;
-								Calibration = false;
-								CalibratedMAX=0x01;
 								HAL_NVIC_SystemReset();
 								
 							}
@@ -626,9 +637,9 @@ bool FACTORYRESET()
 	 {
 		 CAN_DATA[1] = true;
 		 bool SW_1 = SW1();
-		 if(SW_1 && Enc_valid >= 680 && 1023 >= Enc_valid )//Check status of S1 {MICRO1_TrBr_Ko}
+		 if(!SW_1 && Enc_valid >= 680 && 1023 >= Enc_valid )//(SW_1 && Enc_valid >= 680 && 1023 >= Enc_valid )
 			{
-				CAN_DATA[5] = 1;
+				CAN_DATA[5] = 1;//Check status of S1 {MICRO1_TrBr_Ko}
 			}
 		 if(!SW_1 && Enc_valid >= 670 && 1023 >= Enc_valid )//Check status of S1 {MICRO1_TrBr_Ko}
 			{
@@ -645,7 +656,7 @@ bool FACTORYRESET()
 			{
 				//CAN_DATA[5] = 1;
 			}
-			if(!SW_1 && Enc_valid >= 0 && 546 >= Enc_valid)
+			if(SW_1 && Enc_valid >= 0 && 546 >= Enc_valid)//(!SW_1 && Enc_valid >= 0 && 546 >= Enc_valid)
 			{
 				CAN_DATA[5] = 1;//PLC1
 			}
@@ -662,9 +673,9 @@ bool FACTORYRESET()
 						//CAN_DATA[6] = 0;
 					
 				}
-		 if(!SW_2 && Enc_valid > 535 && Enc_valid < 550)//Check status of S2 {MICRO2_TrBr_Ko}
+		 if(SW_2 && Enc_valid > 535 && Enc_valid < 550)//(!SW_2 && Enc_valid > 535 && Enc_valid < 550)
 				{
-						CAN_DATA[6] = 1;
+						CAN_DATA[6] = 1;//Check status of S2 {MICRO2_TrBr_Ko}
 					bool F3=1;
 				}
 			}
@@ -675,12 +686,12 @@ bool FACTORYRESET()
 			 bool SW_2 = SW2();
 			 bool F1=0;
 			 bool F2=0;
-			 if(SW_2 && Enc_valid >= 0 && Enc_valid < 410)
+			 if(!SW_2 && Enc_valid >= 0 && Enc_valid < 410)//(SW_2 && Enc_valid >= 0 && Enc_valid < 410)
 					{
 						CAN_DATA[6]=1;
 						F1=1;
 					}
-			 if (SW_2 && Enc_valid > 690 && Enc_valid < 1023)
+			 if (!SW_2 && Enc_valid > 690 && Enc_valid < 1023)//(SW_2 && Enc_valid > 690 && Enc_valid < 1023)
 					{
 						CAN_DATA[6]=1;
 						F2=1;
@@ -691,26 +702,33 @@ bool FACTORYRESET()
 				 }
 		 }
 	 
-/**	 if(Enc_valid >= 100 && Enc_valid < 500) // BRAKE Pos active {TrBr_B} STG-826
-//	 {
-//		 CAN_DATA[3] = true;
-//		 if(HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin)){CAN_DATA[8] = 0;}else{CAN_DATA[8]=1;} //Check status of S4 {MICRO4_TrBr_Ko}
-//	 }
-//	 else
-//	 {
-//		 CAN_DATA[3] = false;
-//		 if(HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin)){CAN_DATA[8] = 1;}else{CAN_DATA[8]=0;}
-//	 }*/
+   if(Enc_valid >= 0 && Enc_valid < 500) // BRAKE Pos active {TrBr_B} STG-826
+	 {
+		 CAN_DATA[3] = true;
+		 if(!SW4()&& Enc_valid < 370)//(SW4()&& Enc_valid < 400)
+				{
+					CAN_DATA[8] = 1;
+				}
+			else
+				{
+					//CAN_DATA[8]=;
+				} //Check status of S4 {MICRO4_TrBr_Ko}
+	 }
+	 else
+	 {
+		 CAN_DATA[3] = false;
+		 if(SW4()){CAN_DATA[8] = 1;}else{CAN_DATA[8]=0;}
+	 }
 	 
 	 
 	 if(Enc_valid >= 0 && Enc_valid <= 100) // EMERGENCY Pos active {TrBr_EMG} S3 {MICRO3_TrBr_Ko}
 	 {
 		 CAN_DATA[4] = true;
-		 if(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin) && Enc_valid >= 0 && Enc_valid <= 40)
+		 if(SW3() && Enc_valid >= 0 && Enc_valid <= 40)
 				{
 					//CAN_DATA[7] = 0;
 				}
-			if(!(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)) &&  Enc_valid <= 30)
+			if((SW3()) &&  Enc_valid <= 30)//(!(SW3()) &&  Enc_valid <= 30)
 				{
 					CAN_DATA[7] = 1;
 				}
@@ -719,7 +737,7 @@ bool FACTORYRESET()
 	 else
 	 {
 		  CAN_DATA[4] = false;
-			if((HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)) && Enc_valid >= 148 && Enc_valid <= 1023)
+			if(!(SW3()) && Enc_valid >= 148 && Enc_valid <= 1023)//((SW3()) && Enc_valid >= 148 && Enc_valid <= 1023)
 				{
 					CAN_DATA[7] = 2;
 				}
@@ -955,7 +973,7 @@ int main(void)
 				// Send it by CAN
 				hcan.pTxMsg->IDE = CAN_ID_STD;
 
-				if (HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin))//)
+				if (jumper)//)
 					{
 						hcan.pTxMsg->StdId = 0x00003B;//0x00003A;   //Reciever adres: 0x003A (DMA-15)
 					}
@@ -969,7 +987,7 @@ int main(void)
 				//Debugging code-----------------------------
 			//_____________________________________________
 				
-				float JumperState = HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin);//ReadAnalogInput(ADC_IN2);
+				float JumperState = HAL_GPIO_ReadPin(DIN6_Port,DIN6_HS_Pin);//ReadAnalogInput(ADC_IN2);
 				
 				float EncoderState = ReadAnalogInput(ADC_IN1);
 				float EncoderState21 =	EN1_filter();
@@ -978,9 +996,9 @@ int main(void)
 				float EncoderState4 = (((EncoderState-308)/962)*1023);
 				bool S1 = SW1();
 			  bool S2 = SW2();//ReadAnalogInput(ADC_IN3);//s2
-				bool S3 = HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin);//s3
+				bool S3 = SW3();//s3
 				bool Jumpers = jumper;
-				//bool S4 = HAL_GPIO_ReadPin(DIN6_Port,DIN6_Pin);
+				bool S4 = SW4();
 				
 			//---------------------------------------------
 			//---------------------------------------------
