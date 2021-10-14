@@ -479,8 +479,7 @@ float EN1_filter()//uint16_t n)
 	MINTEST= MIN;
 	float Enc_Val =(((Enc_Val_raw-MIN)/(MAX-MIN))*1023);//1023-(((Enc_Val_raw-293)/962)*1023);//300)/910)*1023);//-308)/962)*1023);//(((Enc_Val_raw-285)/918)*1023);
 
-
-	if ( Enc_Val < 30)//EMG
+if ( Enc_Val < 30)//EMG
 		{
 			Enc_Val = 0;
 		}
@@ -707,7 +706,7 @@ bool FACTORYRESET()
    if(Enc_valid >= 0 && Enc_valid < 500) // BRAKE Pos active {TrBr_B} STG-826
 	 {
 		 CAN_DATA[3] = true;
-		 if(!SW4()&& Enc_valid < 370)//(SW4()&& Enc_valid < 400)
+		 if(!SW4()&& Enc_valid < 365)//(SW4()&& Enc_valid < 400)
 				{
 					CAN_DATA[8] = 1;
 				}
@@ -719,9 +718,11 @@ bool FACTORYRESET()
 	 else
 	 {
 		 CAN_DATA[3] = false;
-		 if(SW4()){CAN_DATA[8] = 1;}else{CAN_DATA[8]=0;}
+		 if(SW4()&& Enc_valid >= 546)
+				{
+					CAN_DATA[8] = 1;
+				}
 	 }
-	 
 	 
 	 if(Enc_valid >= 0 && Enc_valid <= 100) // EMERGENCY Pos active {TrBr_EMG} S3 {MICRO3_TrBr_Ko}
 	 {
