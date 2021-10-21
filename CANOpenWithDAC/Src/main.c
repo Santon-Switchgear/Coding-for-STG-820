@@ -1100,7 +1100,7 @@ int main(void)
 								au16Timer[eTmr_CanSend] = 25;
 							}
 							
-							{
+							
 
 							
 								if ( au16Timer[eTmr_LED] == 0 )
@@ -1160,8 +1160,8 @@ int main(void)
 												}
 										}
 									Calibration_protocol();
+								
 								}
-							}
 											/* CANopen process */
 							reset = CO_process(CO, timer1msDiff, NULL);
 							// Watchdog refresh
