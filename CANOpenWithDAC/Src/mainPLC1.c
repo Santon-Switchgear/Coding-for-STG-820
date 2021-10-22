@@ -1,7 +1,10 @@
 /**
-  ******************************************************************************
+ ******************************************************************************
   * File Name          : main.c
   * Description        : Main program body
+	* Version						 : 20.0
+	* Author						 : Zander van der Steege
+	* PLC 1
   ******************************************************************************
   *
   * COPYRIGHT(c) 2016 STMicroelectronics
@@ -1065,8 +1068,8 @@ int main(void)
 				CanMSG.u32[0] = 0;
 				CanMSG.u32[1] = 0;
 				
-				CanMSG.u8[0] = *((uint8_t*)&(Enc_Val_filtered1)+1); //high byte (0x12)Enc_Val_filtered;
-				CanMSG.u8[1] = *((uint8_t*)&(Enc_Val_filtered1)+0); //low byte  (0x34)Enc_Val_filtered;
+				CanMSG.u8[0] = *((uint8_t*)&(Enc_Val_filtered1)+0); //high byte (0x12)Enc_Val_filtered;
+				CanMSG.u8[1] = *((uint8_t*)&(Enc_Val_filtered1)+1); //low byte  (0x34)Enc_Val_filtered;
 				bool Enc_Data_Val 	= (bool)CAN_DATA[0];//129   10000001
 				bool TrBr_T 				= (bool)CAN_DATA[1];
 				bool TrBr_Zero			= (bool)CAN_DATA[2];//163   10100011
@@ -1079,7 +1082,7 @@ int main(void)
 				bool TrBr_dataValid = (bool)CAN_DATA[9];	
 				
 				uint8_t dataset1 = Dataset(CAN_DATA[0],CAN_DATA[1],CAN_DATA[2],CAN_DATA[3],CAN_DATA[4],CAN_DATA[5],CAN_DATA[6],CAN_DATA[7]);
-				uint8_t dataset2 = Dataset(0,0,0,0,0,Calibration,CAN_DATA[8],CAN_DATA[9]);
+				uint8_t dataset2 = Dataset(CAN_DATA[8],CAN_DATA[9],Calibration,0,0,0,0,0);
 				CanMSG.u8[2] = dataset1;
 				CanMSG.u8[3] = dataset2;
 				// Transfer data
@@ -1162,7 +1165,7 @@ int main(void)
 					}
 				}
 								/* CANopen process */
-				reset = CO_process(CO, timer1msDiff, NULL);
+				//reset = CO_process(CO, timer1msDiff, NULL);
 				// Watchdog refresh
 				#if ( PRODUCTION_VERSION == 1 )
 					HAL_IWDG_Refresh(&hiwdg);

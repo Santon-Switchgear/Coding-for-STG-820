@@ -1,7 +1,11 @@
 /**
-  ******************************************************************************
+  /**
+ ******************************************************************************
   * File Name          : main.c
   * Description        : Main program body
+	* Version						 : 20.0
+	* Author						 : Zander van der Steege
+	* PLC 2
   ******************************************************************************
   *
   * COPYRIGHT(c) 2016 STMicroelectronics
@@ -1162,7 +1166,7 @@ int main(void)
 					}
 				}
 								/* CANopen process */
-				reset = CO_process(CO, timer1msDiff, NULL);
+				//reset = CO_process(CO, timer1msDiff, NULL);
 				// Watchdog refresh
 				#if ( PRODUCTION_VERSION == 1 )
 					HAL_IWDG_Refresh(&hiwdg);
