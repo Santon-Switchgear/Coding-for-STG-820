@@ -1,0 +1,4 @@
+load STM32F091CC 
+project name STCubeGenerated 
+project toolchain "MDK-ARM V5" 
+project path "Y:\BARTH softwar\9045-0014-A\Coding-for-50MZ\CANOpen\MDK-ARM\RTE\Device\STM32F091CC\" 

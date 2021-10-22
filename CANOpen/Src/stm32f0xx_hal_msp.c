@@ -33,7 +33,7 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f0xx_hal.h"
-
+#include "stm32f0xx_hal_dac.h"
 extern void Error_Handler(void);
 /* USER CODE BEGIN 0 */
 
@@ -177,6 +177,57 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef* hcan)
   /* USER CODE END CAN_MspDeInit 1 */
 
 }
+
+void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac)
+{
+
+  GPIO_InitTypeDef GPIO_InitStruct;
+  if(hdac->Instance==DAC)
+  {
+  /* USER CODE BEGIN DAC_MspInit 0 */
+
+  /* USER CODE END DAC_MspInit 0 */
+    /* Peripheral clock enable */
+    __HAL_RCC_DAC1_CLK_ENABLE();
+  
+    /**DAC GPIO Configuration    
+    PA5     ------> DAC_OUT2 
+    */
+    GPIO_InitStruct.Pin = OUT5_DAC_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(OUT5_DAC_GPIO_Port, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN DAC_MspInit 1 */
+
+  /* USER CODE END DAC_MspInit 1 */
+  }
+
+}
+
+void HAL_DAC_MspDeInit(DAC_HandleTypeDef* hdac)
+{
+
+  if(hdac->Instance==DAC)
+  {
+  /* USER CODE BEGIN DAC_MspDeInit 0 */
+
+  /* USER CODE END DAC_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_DAC1_CLK_DISABLE();
+  
+    /**DAC GPIO Configuration    
+    PA5     ------> DAC_OUT2 
+    */
+    HAL_GPIO_DeInit(OUT5_DAC_GPIO_Port, OUT5_DAC_Pin);
+
+  }
+  /* USER CODE BEGIN DAC_MspDeInit 1 */
+
+  /* USER CODE END DAC_MspDeInit 1 */
+
+}
+
 
 void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c)
 {
