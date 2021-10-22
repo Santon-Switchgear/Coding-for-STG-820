@@ -1166,7 +1166,7 @@ int main(void)
 					}
 				}
 								/* CANopen process */
-				reset = CO_process(CO, timer1msDiff, NULL);
+				//reset = CO_process(CO, timer1msDiff, NULL);
 				// Watchdog refresh
 				#if ( PRODUCTION_VERSION == 1 )
 					HAL_IWDG_Refresh(&hiwdg);
