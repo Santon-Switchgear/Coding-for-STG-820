@@ -1,10 +1,11 @@
 /**
+ ##UPLOAD TO TEST S1 ERROR in IDLE 26-10-2021
  ******************************************************************************
   * File Name          : main.c
   * Description        : Main program body
 	* Version						 : 20.0
 	* Author						 : Zander van der Steege
-	* PLC 1
+	* PLC 2
   ******************************************************************************
   *
   * COPYRIGHT(c) 2016 STMicroelectronics
@@ -79,10 +80,10 @@ uint8_t FAILSTATE = false;
 uint8_t FAILSTATEold;
 //uint8_t MAX1 = 12;//11; //15;//4030 separated in 2x 8 bit numbers
 //uint8_t MAX2 = 48;//236; //190;
-uint16_t MAX=1188;
+uint16_t MAX=3150;
 //uint8_t MIN1 = 15;//11;//3052
 //uint8_t MIN2 = 220;//190; //236;
-uint16_t MIN=204;//225;
+uint16_t MIN=4105;
 //uint8_t MAX1old;//4030 separated in 2x 8 bit numbers
 //uint8_t MAX2old;
 uint16_t MAXold;
@@ -346,18 +347,23 @@ void HAL_SYSTICK_Callback(void)
 		
 
 bool SW1(){//s1 analog to bool conversion with threshhold 20mV
-		float IN2 = ReadAnalogInput(ADC_IN2);
-	  bool Sw1 = 0;
-		if(IN2 < 20)
-			{
-				Sw1=0;
-			} 
-		else 
-			{
-				Sw1=1;
-			}
+		bool Sw1 = 0;
+		for(u8I=0; u8I<3; u8I++)
+		{
+			float IN2 = ReadAnalogInput(ADC_IN2);
+			HAL_Delay(1);
+			if(IN2 < 500)
+				{
+					Sw1=0;
+				} 
+			if(IN2 > 1000) 
+				{
+					Sw1=1;
+					break;
+				}
+		}
 		
-		return !Sw1;
+		return Sw1;
 }
 
 bool SW2(){//s2 analog to bool conversion with threshhold 20mV
@@ -372,20 +378,20 @@ bool SW2(){//s2 analog to bool conversion with threshhold 20mV
 				Sw2=1;
 			}
 		
-		return !Sw2;
+		return Sw2;
 }
 
 bool SW3(){//s2 analog to bool conversion with threshhold 20mV
 		
 	  bool Sw3 = HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin);
 	
-		return !Sw3;
+		return Sw3;
 }
 bool SW4(){//s2 analog to bool conversion with threshhold 20mV
 		
 	  bool Sw4 = HAL_GPIO_ReadPin(DIN5_Port,DIN5_Pin);
 	
-		return !Sw4;
+		return Sw4;
 }
 
 void vReadJumper ( void )
@@ -482,8 +488,7 @@ float EN1_filter()//uint16_t n)
 	MINTEST= MIN;
 	float Enc_Val =(((Enc_Val_raw-MIN)/(MAX-MIN))*1023);//1023-(((Enc_Val_raw-293)/962)*1023);//300)/910)*1023);//-308)/962)*1023);//(((Enc_Val_raw-285)/918)*1023);
 
-
-	if ( Enc_Val < 30)//EMG
+if ( Enc_Val < 30)//EMG
 		{
 			Enc_Val = 0;
 		}
@@ -546,10 +551,9 @@ int Calibration_protocol()
 							 //MIN= ReadAnalogInput(ADC_IN1);
 							 
 							 uint16_t MINtemp =ReadAnalogInput(ADC_IN1);
-							 MIN = MINtemp;
+							 CalibratedMIN=0x01;
 							 EEPROM_Write(0x0005,(uint8_t*)&MINtemp, 2 );
 							 HAL_Delay(50);
-							 CalibratedMIN=0x01;
 							 
 						 }
 						 
@@ -568,6 +572,9 @@ int Calibration_protocol()
 								FAILSTATEold = 0;
 								EEPROM_Write(0x0001, &FAILSTATE, 1);
 								HAL_Delay(50);
+								Calibrated = true;
+								Calibration = false;
+								CalibratedMAX=0x01;
 								HAL_NVIC_SystemReset();
 								
 							}
@@ -640,7 +647,7 @@ bool FACTORYRESET()
 	 {
 		 CAN_DATA[1] = true;
 		 bool SW_1 = SW1();
-		 if(!SW_1 && Enc_valid >= 680 && 1023 >= Enc_valid )//(SW_1 && Enc_valid >= 680 && 1023 >= Enc_valid )
+		 if(!SW_1 && Enc_valid >= 695 && 1023 >= Enc_valid )//(SW_1 && Enc_valid >= 680 && 1023 >= Enc_valid )
 			{
 				CAN_DATA[5] = 1;//Check status of S1 {MICRO1_TrBr_Ko}
 			}
@@ -725,7 +732,6 @@ bool FACTORYRESET()
 					CAN_DATA[8] = 1;
 				}
 	 }
-	 
 	 
 	 if(Enc_valid >= 0 && Enc_valid <= 100) // EMERGENCY Pos active {TrBr_EMG} S3 {MICRO3_TrBr_Ko}
 	 {
@@ -893,19 +899,19 @@ int main(void)
 			
 			/* disable CAN and CAN interrupts */
       CanDisable();
-			uint8_t NodeID1 = 56;//57; //Default set Node ID if Jumper open/FALSE
+			uint8_t NodeID1 = 57; //Default set Node ID if Jumper open/FALSE
 			bool NodeID_condition = 0;
 			
 			vReadJumper();
 
 			if (jumper)//ReadAnalogInput(ADC_IN2))  //Condition for noe ID is HIGH / TRUE
 			{
-				uint8_t NodeID1 = 58;//59; //CPU1-CAB2
+				uint8_t NodeID1 = 59; //CPU1-CAB2
 				NodeID_condition = 1;
 			}
 			else
 			{
-				uint8_t NodeID1 = 56;//57; //CPU1-CAB1
+				uint8_t NodeID1 = 57; //CPU1-CAB1
 				NodeID_condition = 0;
 			}
 			/* initialize CANopen */
@@ -919,12 +925,12 @@ int main(void)
 						bool NodeID = 0;
 						if (jumper)//ReadAnalogInput(ADC_IN2))  //Condition is TRUE if pin 13 of register c is HIGH / TRUE
 						{
-							int NodeID1 = 58;//59;//CPU2_CAB2//58; //CPU1-CAB2
+							int NodeID1 = 59;//CPU2_CAB2//58; //CPU1-CAB2
 							NodeID_condition = 1;
 						}
 						else
 						{
-							int NodeID1 = 56;//57;//CPU2_CAB1////56; //CPU1-CAB1
+							int NodeID1 = 57;//CPU2_CAB1////56; //CPU1-CAB1
 							NodeID_condition = 0;
 						}
 						
@@ -981,11 +987,11 @@ int main(void)
 
 				if (jumper)//)
 					{
-						hcan.pTxMsg->StdId = 0x00003A;//0x00003B;   //Reciever adres: 0x003A (DMA-15)
+						hcan.pTxMsg->StdId = 0x00003B;//0x00003A;   //Reciever adres: 0x003A (DMA-15)
 					}
 				else
 					{
-						hcan.pTxMsg->StdId = 0x000038;//  0x000039; //Reciever adres: 0x0038 (DMA-15)
+						hcan.pTxMsg->StdId = 0x000039;//0x000038;   //Reciever adres: 0x0038 (DMA-15)
 					} 
 				
 				hcan.pTxMsg->DLC = 4 ;					
