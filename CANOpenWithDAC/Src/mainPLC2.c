@@ -1,5 +1,4 @@
 /**
- ##UPLOAD TO TEST S1 ERROR in IDLE 26-10-2021
  ******************************************************************************
   * File Name          : main.c
   * Description        : Main program body
@@ -351,7 +350,7 @@ bool SW1(){//s1 analog to bool conversion with threshhold 20mV
 		for(u8I=0; u8I<3; u8I++)
 		{
 			float IN2 = ReadAnalogInput(ADC_IN2);
-			HAL_Delay(1);
+			//HAL_Delay(1);
 			if(IN2 < 500)
 				{
 					Sw1=0;
@@ -1105,7 +1104,7 @@ int main(void)
 				if ( au16Timer[eTmr_CanSend] == 0 )
 				{
 				  HAL_CAN_Transmit(&hcan, 25); //XXXXXXXX you are sending the CAN message all the time - is this right???? Have you PCAN for monitoring????
-					au16Timer[eTmr_CanSend] = 25;
+					au16Timer[eTmr_CanSend] = 24;
 				}
 				
 				{
