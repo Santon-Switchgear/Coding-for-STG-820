@@ -361,17 +361,23 @@ bool SW1(){//s1 analog to bool conversion with threshhold 20mV
 }
 
 bool SW2(){//s2 analog to bool conversion with threshhold 20mV
+	float IN3;
+	bool Sw2 = 0;
+	for(u8I=0; u8I<3; u8I++)
+	{
 		float IN3 = ReadAnalogInput(ADC_IN3);
-	  bool Sw2 = 0;
-		if(IN3 < 20)
+		HAL_Delay(1);
+		if(IN3 < 500)
 			{
 				Sw2=0;
 			} 
-		else 
+		if(IN3 > 1000) 
 			{
 				Sw2=1;
+				break;
 			}
-		
+	}
+
 		return !Sw2;
 }
 
@@ -491,7 +497,7 @@ float EN1_filter()//uint16_t n)
 		{
 			Enc_Val = 1023;
 		}
-	if ( 570 > Enc_Val && Enc_Val > 530)//IDLE
+	if ( 570 > Enc_Val && Enc_Val > 510)//IDLE
 		{
 			Enc_Val = 546;
 		}
@@ -671,12 +677,12 @@ bool FACTORYRESET()
 			{
 				CAN_DATA[2] = true;
 				bool SW_2 = SW2();
-		 if(SW_2 && Enc_valid > 530 && Enc_valid < 603)//Check status of S2 {MICRO2_TrBr_Ko}
-				{
-						//CAN_DATA[6] = 0;
-					
-				}
-		 if(SW_2 && Enc_valid > 535 && Enc_valid < 550)//(!SW_2 && Enc_valid > 535 && Enc_valid < 550)
+//		 if(SW_2 && Enc_valid > 546 && Enc_valid < 603)//Check status of S2 {MICRO2_TrBr_Ko}
+//				{
+//						//CAN_DATA[6] = 0;
+//					
+//				}
+		 if(SW_2 && Enc_valid > 540 && Enc_valid < 550)//(!SW_2 && Enc_valid > 535 && Enc_valid < 550)
 				{
 						CAN_DATA[6] = 1;//Check status of S2 {MICRO2_TrBr_Ko}
 					bool F3=1;
@@ -686,13 +692,16 @@ bool FACTORYRESET()
 		 {
 			 
 			 CAN_DATA[2] = false;
+			 HAL_Delay(2);
 			 bool SW_2 = SW2();
 			 bool F1=0;
 			 bool F2=0;
-			 if(!SW_2 && Enc_valid >= 0 && Enc_valid < 410)//(SW_2 && Enc_valid >= 0 && Enc_valid < 410)
+			 if(!SW_2 && Enc_valid >= 0 && Enc_valid < 400)//(SW_2 && Enc_valid >= 0 && Enc_valid < 410)
 					{
-						CAN_DATA[6]=1;
-						F1=1;
+						if (!SW2()){
+							CAN_DATA[6]=1;
+							F1=1;
+						}
 					}
 			 if (!SW_2 && Enc_valid > 690 && Enc_valid < 1023)//(SW_2 && Enc_valid > 690 && Enc_valid < 1023)
 					{

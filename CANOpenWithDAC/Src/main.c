@@ -1,4 +1,5 @@
-  /**
+/**
+ ##UPLOAD TO TEST S1 ERROR in IDLE 26-10-2021
  ******************************************************************************
   * File Name          : main.c
   * Description        : Main program body
@@ -346,16 +347,21 @@ void HAL_SYSTICK_Callback(void)
 		
 
 bool SW1(){//s1 analog to bool conversion with threshhold 20mV
-		float IN2 = ReadAnalogInput(ADC_IN2);
-	  bool Sw1 = 0;
-		if(IN2 < 20)
-			{
-				Sw1=0;
-			} 
-		else 
-			{
-				Sw1=1;
-			}
+		bool Sw1 = 0;
+		for(u8I=0; u8I<3; u8I++)
+		{
+			float IN2 = ReadAnalogInput(ADC_IN2);
+			HAL_Delay(1);
+			if(IN2 < 500)
+				{
+					Sw1=0;
+				} 
+			if(IN2 > 1000) 
+				{
+					Sw1=1;
+					break;
+				}
+		}
 		
 		return Sw1;
 }
@@ -641,7 +647,7 @@ bool FACTORYRESET()
 	 {
 		 CAN_DATA[1] = true;
 		 bool SW_1 = SW1();
-		 if(!SW_1 && Enc_valid >= 680 && 1023 >= Enc_valid )//(SW_1 && Enc_valid >= 680 && 1023 >= Enc_valid )
+		 if(!SW_1 && Enc_valid >= 695 && 1023 >= Enc_valid )//(SW_1 && Enc_valid >= 680 && 1023 >= Enc_valid )
 			{
 				CAN_DATA[5] = 1;//Check status of S1 {MICRO1_TrBr_Ko}
 			}
@@ -1068,8 +1074,8 @@ int main(void)
 				CanMSG.u32[0] = 0;
 				CanMSG.u32[1] = 0;
 				
-				CanMSG.u8[0] = *((uint8_t*)&(Enc_Val_filtered1)+1); //high byte (0x12)Enc_Val_filtered;
-				CanMSG.u8[1] = *((uint8_t*)&(Enc_Val_filtered1)+0); //low byte  (0x34)Enc_Val_filtered;
+				CanMSG.u8[0] = *((uint8_t*)&(Enc_Val_filtered1)+0); //high byte (0x12)Enc_Val_filtered;
+				CanMSG.u8[1] = *((uint8_t*)&(Enc_Val_filtered1)+1); //low byte  (0x34)Enc_Val_filtered;
 				bool Enc_Data_Val 	= (bool)CAN_DATA[0];//129   10000001
 				bool TrBr_T 				= (bool)CAN_DATA[1];
 				bool TrBr_Zero			= (bool)CAN_DATA[2];//163   10100011
@@ -1082,7 +1088,7 @@ int main(void)
 				bool TrBr_dataValid = (bool)CAN_DATA[9];	
 				
 				uint8_t dataset1 = Dataset(CAN_DATA[0],CAN_DATA[1],CAN_DATA[2],CAN_DATA[3],CAN_DATA[4],CAN_DATA[5],CAN_DATA[6],CAN_DATA[7]);
-				uint8_t dataset2 = Dataset(0,0,0,0,0,Calibration,CAN_DATA[8],CAN_DATA[9]);
+				uint8_t dataset2 = Dataset(CAN_DATA[8],CAN_DATA[9],Calibration,0,0,0,0,0);
 				CanMSG.u8[2] = dataset1;
 				CanMSG.u8[3] = dataset2;
 				// Transfer data

@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\out\out.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\out\out.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Fri Oct 22 16:46:52 2021
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Wed Oct 27 09:17:23 2021
 <BR><P>
 <H3>Maximum Stack Usage =        428 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -303,6 +303,7 @@ Global Symbols
 <P><STRONG><a name="[8e]"></a>__aeabi_cfrcmple</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, cfrcmple.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[25]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Validaton
+<LI><a href="#[10a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW1
 <LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EN1_filter
 </UL>
 
@@ -910,6 +911,7 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EEPROM_Write
 <LI><a href="#[25]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<LI><a href="#[10a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW1
 <LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Calibration_protocol
 </UL>
 
@@ -1439,12 +1441,14 @@ Global Symbols
 <P><STRONG><a name="[3]"></a>SVC_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f0xx_it.o(i.SVC_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f091xc.o(RESET)
 </UL>
-<P><STRONG><a name="[10a]"></a>SW1</STRONG> (Thumb, 36 bytes, Stack size 16 bytes, main.o(i.SW1))
+<P><STRONG><a name="[10a]"></a>SW1</STRONG> (Thumb, 82 bytes, Stack size 16 bytes, main.o(i.SW1))
 <BR><BR>[Stack]<UL><LI>Max Depth = 76<LI>Call Chain = SW1 &rArr; ReadAnalogInput &rArr; HAL_ADC_Start &rArr; ADC_Enable &rArr; __aeabi_uidivmod
 </UL>
 <BR>[Calls]<UL><LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
+<LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfrcmple
 <LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfcmple
 <LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
+<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Delay
 </UL>
 <BR>[Called By]<UL><LI><a href="#[25]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Validaton
@@ -1641,7 +1645,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_delete
 </UL>
 
-<P><STRONG><a name="[25]"></a>main</STRONG> (Thumb, 1908 bytes, Stack size 160 bytes, main.o(i.main))
+<P><STRONG><a name="[25]"></a>main</STRONG> (Thumb, 1906 bytes, Stack size 160 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 428<LI>Call Chain = main &rArr; CO_init &rArr; CO_TPDO_init &rArr; CO_TPDOconfigMap &rArr; CO_PDOfindMap &rArr; CO_OD_find
 </UL>
 <BR>[Calls]<UL><LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
