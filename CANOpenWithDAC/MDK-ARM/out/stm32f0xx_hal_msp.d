@@ -1,4 +1,4 @@
-.\out\stm32f0xx_hal_msp.o: ..\Src\stm32f0xx_hal_msp.c
+.\out\stm32f0xx_hal_msp.o: ../Src/stm32f0xx_hal_msp.c
 .\out\stm32f0xx_hal_msp.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal.h
 .\out\stm32f0xx_hal_msp.o: ../Inc/stm32f0xx_hal_conf.h
 .\out\stm32f0xx_hal_msp.o: ../Inc/main.h

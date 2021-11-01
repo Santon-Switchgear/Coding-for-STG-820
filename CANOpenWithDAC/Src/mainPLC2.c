@@ -4,7 +4,7 @@
   * Description        : Main program body
 	* Version						 : 20.0
 	* Author						 : Zander van der Steege
-	* PLC 2
+	* PLC 2_v2
   ******************************************************************************
   *
   * COPYRIGHT(c) 2016 STMicroelectronics

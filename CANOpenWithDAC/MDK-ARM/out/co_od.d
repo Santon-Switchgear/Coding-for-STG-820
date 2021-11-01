@@ -1,5 +1,5 @@
 .\out\co_od.o: ..\CANopenNode-master\example\CO_OD.c
-.\out\co_od.o: ../CANopenNode-master/stack/CO_driver.h
+.\out\co_od.o: ..\CANopenNode-master\stack\CO_driver.h
 .\out\co_od.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal.h
 .\out\co_od.o: ../Inc/stm32f0xx_hal_conf.h
 .\out\co_od.o: ../Inc/main.h
@@ -40,4 +40,4 @@
 .\out\co_od.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart_ex.h
 .\out\co_od.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 .\out\co_od.o: ..\CANopenNode-master\example\CO_OD.h
-.\out\co_od.o: ../CANopenNode-master/stack/CO_SDO.h
+.\out\co_od.o: ..\CANopenNode-master\stack\CO_SDO.h
