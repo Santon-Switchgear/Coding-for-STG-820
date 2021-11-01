@@ -5,10 +5,10 @@
 <h2>Tool Versions:</h2>
 IDE-Version: µVision V5.35.0.0
 Copyright (C) 2021 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: Zander van der Steege, Santon Holland, LIC=LB4EI-T5TUG-WTAKF-JFV0E-NJ0C2-Q16LT
+License Information: Zander van der Steege, Santon Holland BV., LIC=----
  
 Tool Versions:
-Toolchain:       MDK-ARM Cortex-M0/M0+ for ST  Version: 5.35.0.2
+Toolchain:       MDK-Lite  Version: 5.35.0.2
 Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
 C Compiler:      Armcc.exe V5.06 update 7 (build 960)
 Assembler:       Armasm.exe V5.06 update 7 (build 960)
@@ -21,49 +21,16 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.9.0
 Dialog DLL:      TARMCM1.DLL V1.14.4.0
  
 <h2>Project:</h2>
-Y:\BARTH softwar\9045-0014-A\Coding-for-50MZ\CANOpenWithDAC\MDK-ARM\STG.uvprojx
-Project File Date:  09/28/2021
+C:\Users\Testing\Documents\GitHub\Coding-for-STG-820\CANOpenWithDAC\MDK-ARM\STG.BARTH.uvprojx
+Project File Date:  11/01/2021
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
-Build target 'BARTH'
+Rebuild target 'BARTH'
+compiling stm32f0xx_it.c...
+compiling stm32f0xx_hal_msp.c...
 compiling main.c...
-../Src/main.c(602): warning:  #940-D: missing return statement at end of non-void function "Calibration_protocol" 
-  	 }
-../Src/main.c(629): warning:  #940-D: missing return statement at end of non-void function "FACTORYRESET" 
-  }
-../Src/main.c(688): warning:  #177-D: variable "F3"  was declared but never referenced
-  					bool F3=1;
-../Src/main.c(770): warning:  #940-D: missing return statement at end of non-void function "Validaton" 
-   }
-../Src/main.c(908): warning:  #177-D: variable "NodeID1"  was declared but never referenced
-  				uint8_t NodeID1 = 59; //CPU1-CAB2
-../Src/main.c(913): warning:  #177-D: variable "NodeID1"  was declared but never referenced
-  				uint8_t NodeID1 = 57; //CPU1-CAB1
-../Src/main.c(927): warning:  #177-D: variable "NodeID1"  was declared but never referenced
-  							int NodeID1 = 59;//CPU2_CAB2//58; //CPU1-CAB2
-../Src/main.c(932): warning:  #177-D: variable "NodeID1"  was declared but never referenced
-  							int NodeID1 = 57;//CPU2_CAB1////56; //CPU1-CAB1
-../Src/main.c(1179): warning:  #1215-D: #warning directive: Debug version without watch dog! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-  					#warning Debug version without watch dog! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-../Src/main.c(967): warning:  #550-D: variable "timer1msDiff"  was set but never used
-  				uint16_t timer1msCopy, timer1msDiff;
-../Src/main.c(1011): warning:  #177-D: variable "Jumpers"  was declared but never referenced
-  				bool Jumpers = jumper;
-../Src/main.c(924): warning:  #177-D: variable "NodeID"  was declared but never referenced
-  						bool NodeID = 0;
-../Src/main.c(1189): warning:  #111-D: statement is unreachable
-      CO_delete(0/* CAN module address */);
-../Src/main.c(896): warning:  #550-D: variable "err"  was set but never used
-  			CO_ReturnError_t err;
-../Src/main.c(902): warning:  #550-D: variable "NodeID_condition"  was set but never used
-  			bool NodeID_condition = 0;
-../Src/main.c(857): warning:  #177-D: variable "test"  was declared but never referenced
-  	uint8_t test =0;
-../Src/main.c: 16 warnings, 0 errors
-linking...
-Program Size: Code=35952 RO-data=1944 RW-data=1132 ZI-data=9972  
-".\out\out.axf" - 0 Error(s), 16 Warning(s).
+compiling main_hal.c...
 
 <h2>Software Packages used:</h2>
 
@@ -80,13 +47,14 @@ Package Vendor: Keil
 
 <h2>Collection of Component include folders:</h2>
   .\RTE\_BARTH
-  C:\Users\zvdsteege\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include
-  C:\Users\zvdsteege\AppData\Local\Arm\Packs\Keil\STM32F0xx_DFP\2.1.0\Drivers\CMSIS\Device\ST\STM32F0xx\Include
+  C:\Users\Mktest\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include
+  C:\Users\Mktest\AppData\Local\Arm\Packs\Keil\STM32F0xx_DFP\2.1.0\Drivers\CMSIS\Device\ST\STM32F0xx\Include
 
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.5.0
-Build Time Elapsed:  00:00:19
+Project build/rebuild aborted.
+Build Time Elapsed:  00:00:04
 </pre>
 </body>
 </html>

@@ -39,7 +39,7 @@
 ".\out\canopen.o"
 ".\out\co_od.o"
 ".\out\co_driver.o"
---library_type=microlib --strict --scatter ".\out\out.sct"
---diag_suppress=L6329 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--library_type=microlib --strict --scatter "./out.BARTH.sct"
+--diag_suppress=L6329 --summary_stderr --info summarysizes --load_addr_map_info --entry=Reset_Handler --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
---list ".\lst\out.map" -o .\out\out.axf
+--list ".\out\out.map" -o .\out\out.axf

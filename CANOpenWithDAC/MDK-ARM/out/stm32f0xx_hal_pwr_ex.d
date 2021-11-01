@@ -1,4 +1,4 @@
-.\out\stm32f0xx_hal_pwr_ex.o: ../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_pwr_ex.c
+.\out\stm32f0xx_hal_pwr_ex.o: ..\Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_pwr_ex.c
 .\out\stm32f0xx_hal_pwr_ex.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal.h
 .\out\stm32f0xx_hal_pwr_ex.o: ../Inc/stm32f0xx_hal_conf.h
 .\out\stm32f0xx_hal_pwr_ex.o: ../Inc/main.h

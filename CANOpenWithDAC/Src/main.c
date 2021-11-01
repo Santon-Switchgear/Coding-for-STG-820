@@ -714,7 +714,7 @@ bool FACTORYRESET()
    if(Enc_valid >= 0 && Enc_valid < 500) // BRAKE Pos active {TrBr_B} STG-826
 	 {
 		 CAN_DATA[3] = true;
-		 if(!SW4()&& Enc_valid < 365)//(SW4()&& Enc_valid < 400)
+		 if(!SW4()&& Enc_valid < 355)//(SW4()&& Enc_valid < 400)
 				{
 					CAN_DATA[8] = 1;
 				}
