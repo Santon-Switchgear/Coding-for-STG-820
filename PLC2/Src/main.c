@@ -550,9 +550,9 @@ int Calibration_protocol()
 							 //MIN= ReadAnalogInput(ADC_IN1);
 							 
 							 uint16_t MINtemp =ReadAnalogInput(ADC_IN1);
-							 CalibratedMIN=0x01;
 							 EEPROM_Write(0x0005,(uint8_t*)&MINtemp, 2 );
 							 HAL_Delay(50);
+							 CalibratedMIN=0x01;
 							 
 						 }
 						 
@@ -571,9 +571,6 @@ int Calibration_protocol()
 								FAILSTATEold = 0;
 								EEPROM_Write(0x0001, &FAILSTATE, 1);
 								HAL_Delay(50);
-								Calibrated = true;
-								Calibration = false;
-								CalibratedMAX=0x01;
 								HAL_NVIC_SystemReset();
 								
 							}
