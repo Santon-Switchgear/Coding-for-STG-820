@@ -551,7 +551,7 @@ int Calibration_protocol()
 							 
 							 uint16_t MINtemp =ReadAnalogInput(ADC_IN1);
 							 EEPROM_Write(0x0005,(uint8_t*)&MINtemp, 2 );
-							 HAL_Delay(50);
+							 HAL_Delay(100);
 							 CalibratedMIN=0x01;
 							 
 						 }
