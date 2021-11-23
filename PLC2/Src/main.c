@@ -79,10 +79,10 @@ uint8_t FAILSTATE = false;
 uint8_t FAILSTATEold;
 //uint8_t MAX1 = 12;//11; //15;//4030 separated in 2x 8 bit numbers
 //uint8_t MAX2 = 48;//236; //190;
-uint16_t MAX=3150;
+uint16_t MAX=488;
 //uint8_t MIN1 = 15;//11;//3052
 //uint8_t MIN2 = 220;//190; //236;
-uint16_t MIN=4105;
+uint16_t MIN=1466;
 //uint8_t MAX1old;//4030 separated in 2x 8 bit numbers
 //uint8_t MAX2old;
 uint16_t MAXold;
@@ -265,7 +265,7 @@ void vCalibration ( void )
       
 		break;
 		case 7:
-			if ( jumper && (HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)) )//FACTORY RESET VARIABLES & EEPROM
+			if ( jumper && !(HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)) )//FACTORY RESET VARIABLES & EEPROM
 			{ // ____|------> 2. raise edge
 			  if ( au16Timer[eTmr_Calibration] == 0  ) // more as 2000 ms = 2s
 				{
@@ -545,13 +545,14 @@ int Calibration_protocol()
 				 if (Calibration)
 				 {
 						
-					 if (CalibratedMIN==0x00 && jumper && !SW3())//(CalibratedMIN==0x00 && jumper && SW3())
+					 if (CalibratedMIN==0x00 && jumper && SW3())//(CalibratedMIN==0x00 && jumper && SW3())
 						 {
 							 //MIN= ReadAnalogInput(ADC_IN1);
 							 
 							 uint16_t MINtemp =ReadAnalogInput(ADC_IN1);
+							 MIN = MINtemp;
 							 EEPROM_Write(0x0005,(uint8_t*)&MINtemp, 2 );
-							 HAL_Delay(100);
+							 HAL_Delay(50);
 							 CalibratedMIN=0x01;
 							 
 						 }
@@ -559,7 +560,7 @@ int Calibration_protocol()
 
 						if (!jumper && CalibratedMIN ==0x01)
 							{
-							if (CalibratedMAX==0x00 && (SW3()))//(CalibratedMAX==0x00 && (!SW3()))
+							if (CalibratedMAX==0x00 && (!SW3()))//(CalibratedMAX==0x00 && (!SW3()))
 						  {
 								uint16_t MAXtemp = ReadAnalogInput(ADC_IN1);
 								
