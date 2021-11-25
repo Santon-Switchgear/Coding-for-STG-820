@@ -497,7 +497,7 @@ float EN1_filter()//uint16_t n)
 		{
 			Enc_Val = 1023;
 		}
-	if ( 570 > Enc_Val && Enc_Val > 510)//IDLE
+	if ( 570 > Enc_Val && Enc_Val > 530)//IDLE
 		{
 			Enc_Val = 546;
 		}
