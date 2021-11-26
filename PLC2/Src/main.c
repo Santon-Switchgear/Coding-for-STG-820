@@ -79,10 +79,10 @@ uint8_t FAILSTATE = false;
 uint8_t FAILSTATEold;
 //uint8_t MAX1 = 12;//11; //15;//4030 separated in 2x 8 bit numbers
 //uint8_t MAX2 = 48;//236; //190;
-uint16_t MAX=1248;
+uint16_t MAX=1188;
 //uint8_t MIN1 = 15;//11;//3052
 //uint8_t MIN2 = 220;//190; //236;
-uint16_t MIN=2118;
+uint16_t MIN=2120;
 //uint8_t MAX1old;//4030 separated in 2x 8 bit numbers
 //uint8_t MAX2old;
 uint16_t MAXold;
@@ -292,8 +292,8 @@ void vCalibration ( void )
 						{
 							CAN_DATA[u8I] = 0;
 						}
-						MAX=3120;
-						MIN=4060;
+						//MAX=3120;
+						//MIN=4060;
 						u8State = 0;
 						HAL_NVIC_SystemReset();
 				}
@@ -487,7 +487,7 @@ float EN1_filter()//uint16_t n)
 	MINTEST= MIN;
 	float Enc_Val =(((Enc_Val_raw-MIN)/(MAX-MIN))*1023);//1023-(((Enc_Val_raw-293)/962)*1023);//300)/910)*1023);//-308)/962)*1023);//(((Enc_Val_raw-285)/918)*1023);
 
-if ( Enc_Val < 30)//EMG
+if ( Enc_Val < 20)//EMG
 		{
 			Enc_Val = 0;
 		}
@@ -550,7 +550,7 @@ int Calibration_protocol()
 							 //MIN= ReadAnalogInput(ADC_IN1);
 							 
 							 uint16_t MINtemp =ReadAnalogInput(ADC_IN1);
-							 EEPROM_Write(0x0005,(uint8_t*)&MINtemp, 2 );
+							 //EEPROM_Write(0x0005,(uint8_t*)&MINtemp, 2 );
 							 HAL_Delay(100);
 							 CalibratedMIN=0x01;
 							 
@@ -563,7 +563,7 @@ int Calibration_protocol()
 						  {
 								uint16_t MAXtemp = ReadAnalogInput(ADC_IN1);
 								
-								EEPROM_Write(0x0003,(uint8_t*)&MAXtemp, 2 );
+								//EEPROM_Write(0x0003,(uint8_t*)&MAXtemp, 2 );
 								HAL_Delay(50);
 								uint8_t Calibrated_temp= 1;
 								EEPROM_Write(0x0010,&Calibrated_temp , 1);
@@ -619,8 +619,8 @@ bool FACTORYRESET()
 		{
 			CAN_DATA[u8I] = 0;
 		}
-		MAX=3120;
-		MIN=4060;
+		MAX=1188;
+		MIN=2120;
 
 	}
 }
@@ -736,7 +736,7 @@ bool FACTORYRESET()
 				{
 					//CAN_DATA[7] = 0;
 				}
-			if((SW3()) &&  Enc_valid <= 30)//(!(SW3()) &&  Enc_valid <= 30)
+			if((SW3()) &&  Enc_valid <= 20)//(!(SW3()) &&  Enc_valid <= 30)
 				{
 					CAN_DATA[7] = 1;
 				}

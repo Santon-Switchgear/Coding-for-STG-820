@@ -489,7 +489,7 @@ float EN1_filter()//uint16_t n)
 	float Enc_Val =(((Enc_Val_raw-MIN)/(MAX-MIN))*1023);//1023-(((Enc_Val_raw-293)/962)*1023);//300)/910)*1023);//-308)/962)*1023);//(((Enc_Val_raw-285)/918)*1023);
 
 
-	if ( Enc_Val < 30)//EMG
+	if ( Enc_Val < 20)//EMG
 		{
 			Enc_Val = 0;
 		}
@@ -497,7 +497,7 @@ float EN1_filter()//uint16_t n)
 		{
 			Enc_Val = 1023;
 		}
-	if ( 570 > Enc_Val && Enc_Val > 530)//IDLE
+	if ( 570 > Enc_Val && Enc_Val > 536)//IDLE
 		{
 			Enc_Val = 546;
 		}
@@ -682,7 +682,7 @@ bool FACTORYRESET()
 //						//CAN_DATA[6] = 0;
 //					
 //				}
-		 if(SW_2 && Enc_valid > 540 && Enc_valid < 550)//(!SW_2 && Enc_valid > 535 && Enc_valid < 550)
+		 if(SW_2 && Enc_valid > 542 && Enc_valid < 548)//(!SW_2 && Enc_valid > 535 && Enc_valid < 550)
 				{
 						CAN_DATA[6] = 1;//Check status of S2 {MICRO2_TrBr_Ko}
 					bool F3=1;
@@ -703,7 +703,7 @@ bool FACTORYRESET()
 							F1=1;
 						}
 					}
-			 if (!SW_2 && Enc_valid > 690 && Enc_valid < 1023)//(SW_2 && Enc_valid > 690 && Enc_valid < 1023)
+			 if (!SW_2 && Enc_valid > 700 && Enc_valid < 1023)//(SW_2 && Enc_valid > 690 && Enc_valid < 1023)
 					{
 						CAN_DATA[6]=1;
 						F2=1;
