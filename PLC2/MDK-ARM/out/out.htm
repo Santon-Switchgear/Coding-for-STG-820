@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\out\out.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\out\out.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Mon Jan 03 16:14:32 2022
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Mon Jan 03 17:02:16 2022
 <BR><P>
 <H3>Maximum Stack Usage =        428 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -650,17 +650,17 @@ Global Symbols
 <LI><a href="#[31]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_ODF_1200
 </UL>
 
-<P><STRONG><a name="[82]"></a>Calibration_protocol</STRONG> (Thumb, 304 bytes, Stack size 16 bytes, main.o(i.Calibration_protocol))
+<P><STRONG><a name="[82]"></a>Calibration_protocol</STRONG> (Thumb, 332 bytes, Stack size 16 bytes, main.o(i.Calibration_protocol))
 <BR><BR>[Stack]<UL><LI>Max Depth = 184<LI>Call Chain = Calibration_protocol &rArr; EEPROM_Write &rArr; HAL_I2C_Mem_Write &rArr; I2C_RequestMemoryWrite &rArr; I2C_WaitOnTXISFlagUntilTimeout &rArr; I2C_IsAcknowledgeFailed
 </UL>
 <BR>[Calls]<UL><LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
 <LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfcmpeq
-<LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
+<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
 <LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_NVIC_SystemReset
 <LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Delay
 <LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EEPROM_Write
 <LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EEPROM_Read
-<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW3
+<LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW3
 </UL>
 <BR>[Called By]<UL><LI><a href="#[25]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -715,7 +715,7 @@ Global Symbols
 <LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2iz
 <LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfrcmple
 <LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfcmple
-<LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
+<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
 </UL>
 <BR>[Called By]<UL><LI><a href="#[25]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Validaton
@@ -759,7 +759,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[10a]"></a>HAL_ADC_GetValue</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, stm32f0xx_hal_adc.o(i.HAL_ADC_GetValue))
-<BR><BR>[Called By]<UL><LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
+<BR><BR>[Called By]<UL><LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
 </UL>
 
 <P><STRONG><a name="[94]"></a>HAL_ADC_Init</STRONG> (Thumb, 440 bytes, Stack size 16 bytes, stm32f0xx_hal_adc.o(i.HAL_ADC_Init))
@@ -783,7 +783,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
 </UL>
-<BR>[Called By]<UL><LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
+<BR>[Called By]<UL><LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
 </UL>
 
 <P><STRONG><a name="[98]"></a>HAL_ADC_Start</STRONG> (Thumb, 114 bytes, Stack size 16 bytes, stm32f0xx_hal_adc.o(i.HAL_ADC_Start))
@@ -791,7 +791,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_Enable
 </UL>
-<BR>[Called By]<UL><LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
+<BR>[Called By]<UL><LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
 </UL>
 
 <P><STRONG><a name="[99]"></a>HAL_ADC_Stop</STRONG> (Thumb, 80 bytes, Stack size 16 bytes, stm32f0xx_hal_adc.o(i.HAL_ADC_Stop))
@@ -800,7 +800,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_Disable
 <LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_ConversionStop
 </UL>
-<BR>[Called By]<UL><LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
+<BR>[Called By]<UL><LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
 </UL>
 
 <P><STRONG><a name="[107]"></a>HAL_CAN_ConfigFilter</STRONG> (Thumb, 432 bytes, Stack size 12 bytes, stm32f0xx_hal_can.o(i.HAL_CAN_ConfigFilter))
@@ -930,7 +930,7 @@ Global Symbols
 <LI><a href="#[11c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vCalibration
 <LI><a href="#[25]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[10e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW4
-<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW3
+<LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW3
 </UL>
 
 <P><STRONG><a name="[119]"></a>HAL_GPIO_TogglePin</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, stm32f0xx_hal_gpio.o(i.HAL_GPIO_TogglePin))
@@ -1421,7 +1421,7 @@ Global Symbols
 <P><STRONG><a name="[a]"></a>RCC_CRS_IRQHandler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f0xx_it.o(i.RCC_CRS_IRQHandler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f091xc.o(RESET)
 </UL>
-<P><STRONG><a name="[87]"></a>ReadAnalogInput</STRONG> (Thumb, 62 bytes, Stack size 16 bytes, main_hal.o(i.ReadAnalogInput))
+<P><STRONG><a name="[88]"></a>ReadAnalogInput</STRONG> (Thumb, 62 bytes, Stack size 16 bytes, main_hal.o(i.ReadAnalogInput))
 <BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = ReadAnalogInput &rArr; HAL_ADC_Start &rArr; ADC_Enable &rArr; __aeabi_uidivmod
 </UL>
 <BR>[Calls]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_ADC_Stop
@@ -1445,7 +1445,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
 <LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfrcmple
 <LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfcmple
-<LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
+<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
 </UL>
 <BR>[Called By]<UL><LI><a href="#[25]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Validaton
@@ -1456,13 +1456,13 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
 <LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfcmple
-<LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
+<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
 </UL>
 <BR>[Called By]<UL><LI><a href="#[25]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Validaton
 </UL>
 
-<P><STRONG><a name="[88]"></a>SW3</STRONG> (Thumb, 30 bytes, Stack size 8 bytes, main.o(i.SW3))
+<P><STRONG><a name="[87]"></a>SW3</STRONG> (Thumb, 30 bytes, Stack size 8 bytes, main.o(i.SW3))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = SW3
 </UL>
 <BR>[Calls]<UL><LI><a href="#[10d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
@@ -1614,7 +1614,7 @@ Global Symbols
 <LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfcmple
 <LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfcmpeq
 <LI><a href="#[10e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW4
-<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW3
+<LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW3
 <LI><a href="#[10c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW2
 <LI><a href="#[10b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW1
 <LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EN1_filter
@@ -1654,7 +1654,7 @@ Global Symbols
 <LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfrcmple
 <LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfcmple
 <LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfcmpeq
-<LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
+<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
 <LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MainInit
 <LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_NVIC_SystemReset
 <LI><a href="#[f3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
@@ -1672,7 +1672,7 @@ Global Symbols
 <LI><a href="#[11c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vCalibration
 <LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Validaton
 <LI><a href="#[10e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW4
-<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW3
+<LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW3
 <LI><a href="#[10c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW2
 <LI><a href="#[10b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW1
 <LI><a href="#[f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Initialize_outputs
