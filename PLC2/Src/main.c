@@ -79,10 +79,10 @@ uint8_t FAILSTATE = false;
 uint8_t FAILSTATEold;
 //uint8_t MAX1 = 12;//11; //15;//4030 separated in 2x 8 bit numbers
 //uint8_t MAX2 = 48;//236; //190;
-uint16_t MAX=1188;
+uint16_t MAX=3872;//2729;
 //uint8_t MIN1 = 15;//11;//3052
 //uint8_t MIN2 = 220;//190; //236;
-uint16_t MIN=2120;
+uint16_t MIN=5030;//3722;
 //uint8_t MAX1old;//4030 separated in 2x 8 bit numbers
 //uint8_t MAX2old;
 uint16_t MAXold;
@@ -550,7 +550,8 @@ int Calibration_protocol()
 							 //MIN= ReadAnalogInput(ADC_IN1);
 							 
 							 uint16_t MINtemp =ReadAnalogInput(ADC_IN1);
-							 //EEPROM_Write(0x0005,(uint8_t*)&MINtemp, 2 );
+							 MIN = MINtemp;
+							 EEPROM_Write(0x0005,(uint8_t*)&MINtemp, 2 );
 							 HAL_Delay(100);
 							 CalibratedMIN=0x01;
 							 
@@ -562,8 +563,8 @@ int Calibration_protocol()
 							if (CalibratedMAX==0x00 && (SW3()))//(CalibratedMAX==0x00 && (!SW3()))
 						  {
 								uint16_t MAXtemp = ReadAnalogInput(ADC_IN1);
-								
-								//EEPROM_Write(0x0003,(uint8_t*)&MAXtemp, 2 );
+								MAX = MAXtemp;
+								EEPROM_Write(0x0003,(uint8_t*)&MAXtemp, 2 );
 								HAL_Delay(50);
 								uint8_t Calibrated_temp= 1;
 								EEPROM_Write(0x0010,&Calibrated_temp , 1);
@@ -732,10 +733,6 @@ bool FACTORYRESET()
 	 if(Enc_valid >= 0 && Enc_valid <= 100) // EMERGENCY Pos active {TrBr_EMG} S3 {MICRO3_TrBr_Ko}
 	 {
 		 CAN_DATA[4] = true;
-		 if(SW3() && Enc_valid >= 0 && Enc_valid <= 40)
-				{
-					//CAN_DATA[7] = 0;
-				}
 			if((SW3()) &&  Enc_valid <= 20)//(!(SW3()) &&  Enc_valid <= 30)
 				{
 					CAN_DATA[7] = 1;

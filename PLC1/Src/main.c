@@ -497,7 +497,7 @@ float EN1_filter()//uint16_t n)
 		{
 			Enc_Val = 1023;
 		}
-	if ( 570 > Enc_Val && Enc_Val > 536)//IDLE
+	if ( 570 > Enc_Val && Enc_Val > 510)//IDLE
 		{
 			Enc_Val = 546;
 		}
@@ -646,7 +646,7 @@ bool FACTORYRESET()
 	 {
 		 CAN_DATA[1] = true;
 		 bool SW_1 = SW1();
-		 if(!SW_1 && Enc_valid >= 680 && 1023 >= Enc_valid )//(SW_1 && Enc_valid >= 680 && 1023 >= Enc_valid )
+		 if(!SW_1 && Enc_valid >= 690 && 1023 >= Enc_valid )//(SW_1 && Enc_valid >= 680 && 1023 >= Enc_valid )
 			{
 				CAN_DATA[5] = 1;//Check status of S1 {MICRO1_TrBr_Ko}
 			}
@@ -682,7 +682,7 @@ bool FACTORYRESET()
 //						//CAN_DATA[6] = 0;
 //					
 //				}
-		 if(SW_2 && Enc_valid > 542 && Enc_valid < 548)//(!SW_2 && Enc_valid > 535 && Enc_valid < 550)
+		 if(SW_2 && Enc_valid > 540 && Enc_valid < 550)//(!SW_2 && Enc_valid > 535 && Enc_valid < 550)
 				{
 						CAN_DATA[6] = 1;//Check status of S2 {MICRO2_TrBr_Ko}
 					bool F3=1;
@@ -703,7 +703,7 @@ bool FACTORYRESET()
 							F1=1;
 						}
 					}
-			 if (!SW_2 && Enc_valid > 700 && Enc_valid < 1023)//(SW_2 && Enc_valid > 690 && Enc_valid < 1023)
+			 if (!SW_2 && Enc_valid > 690 && Enc_valid < 1023)//(SW_2 && Enc_valid > 690 && Enc_valid < 1023)
 					{
 						CAN_DATA[6]=1;
 						F2=1;
@@ -743,7 +743,7 @@ bool FACTORYRESET()
 				{
 					//CAN_DATA[7] = 0;
 				}
-			if((SW3()) &&  Enc_valid <= 30)//(!(SW3()) &&  Enc_valid <= 30)
+			if((SW3()) &&  Enc_valid <= 20)//(!(SW3()) &&  Enc_valid <= 30)
 				{
 					CAN_DATA[7] = 1;
 				}
