@@ -1058,6 +1058,13 @@ int main(void)
 				}
 				if (Start > 2)
 				{
+					/*---------------------------------------
+					 Limit function for DC-DC converter data:
+					-----------------------------------------
+					float IN2 = ReadAnalogInput(ADC_IN2);
+					float IN3 = ReadAnalogInput(ADC_IN3);
+					if (23900 < IN2 < 24160)
+					-----------------------------------------*/
 					Validaton();//Function to validate the microswitches and encoder validility and convert them to an array
 				}
 				
