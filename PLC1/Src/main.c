@@ -345,7 +345,7 @@ void HAL_SYSTICK_Callback(void)
 
 		
 
-bool SW1(){//s1 analog to bool conversion with threshhold 20mV
+bool IN2_EmBr_IDLE(){//s1 analog to bool conversion with threshhold 20mV
 		float IN2 = ReadAnalogInput(ADC_IN2);
 	  bool Sw1 = 0;
 		if(IN2 < 20)
@@ -360,7 +360,7 @@ bool SW1(){//s1 analog to bool conversion with threshhold 20mV
 		return !Sw1;
 }
 
-bool SW2(){//s2 analog to bool conversion with threshhold 20mV
+bool IN3_T_B(){//IN3 s2 analog to bool conversion with threshhold 20mV
 	float IN3;
 	bool Sw2 = 0;
 	for(u8I=0; u8I<3; u8I++)
@@ -630,10 +630,39 @@ bool FACTORYRESET()
 
  float Validaton(){
 	 
-	 float Enc_valid = EN1_filter();
-	 //CAN_DATA;
+	 float Enc_valid = EN1_filter();//Encoder value
 	 
-	 if(Enc_valid > -1 && Enc_valid < 1024) // Datavalidility check {Enc_DataVal}
+	 
+	 float IN2 = ReadAnalogInput(ADC_IN2);//Analog switch readout Emergency brake |or| Idle
+	 HAL_Delay(1);
+	 float IN3 = ReadAnalogInput(ADC_IN3);//Analog switch readout Traction |or| Brake
+	 HAL_Delay(1);
+	 
+	 bool complete;
+	 bool DataValid;
+	 if ((23900 <= IN3 && IN3 <= 24150)||(23900 <= IN2 && IN2 <= 24150))
+		 {
+			 //Valid Data Reset
+			 DataValid = true;
+			 if(complete==false)
+				 {
+					 CAN_DATA[0] 		= true;
+					 CAN_DATA[5] 		= false;
+					 CAN_DATA[6] 		= false;
+					 CAN_DATA[7] 		= false;
+					 CAN_DATA[8] 		= false;
+					 complete = true;
+				 }
+				 
+		 }
+	 else
+	 {
+		  DataValid 		= false;
+		  complete 			= false;
+	 }
+			
+	 
+	 if(Enc_valid > -1 && Enc_valid < 1024 && DataValid) // Datavalidility check {Enc_DataVal}
 	 {
 		 CAN_DATA[0] = true;
 	 }
@@ -642,30 +671,23 @@ bool FACTORYRESET()
 		 CAN_DATA[0] = false;
 	 }
 	 
-	 if(Enc_valid >= 636 && Enc_valid <= 1023) // TRACTION Pos active {TrBr_T}
+	 if(Enc_valid >= 636 && Enc_valid <= 1023 ) // TRACTION Pos active {TrBr_T}
 	 {
 		 CAN_DATA[1] = true;
-		 bool SW_1 = SW1();
+		 bool SW_1 = IN3_T_B();
 		 if(!SW_1 && Enc_valid >= 690 && 1023 >= Enc_valid )//(SW_1 && Enc_valid >= 680 && 1023 >= Enc_valid )
 			{
 				CAN_DATA[5] = 1;//Check status of S1 {MICRO1_TrBr_Ko}
 			}
-		 if(!SW_1 && Enc_valid >= 670 && 1023 >= Enc_valid )//Check status of S1 {MICRO1_TrBr_Ko}
-			{
-				//CAN_DATA[5] = 0;
-			}
+
 	 }
 
 	 else
 	 {
 		 CAN_DATA[1] = false;
-		 bool SW_1 = SW1();
+		 bool SW_1 = IN3_T_B();
 		
-		 if(SW_1 && Enc_valid >= 0 && 602 >= Enc_valid)
-			{
-				//CAN_DATA[5] = 1;
-			}
-			if(SW_1 && Enc_valid >= 0 && 546 >= Enc_valid)//(!SW_1 && Enc_valid >= 0 && 546 >= Enc_valid)
+			if(SW_1 && Enc_valid == 546)//(!SW_1 && Enc_valid >= 0 && 546 >= Enc_valid)
 			{
 				CAN_DATA[5] = 1;//PLC1
 			}
@@ -676,12 +698,8 @@ bool FACTORYRESET()
 	 if(Enc_valid > 455 && Enc_valid < 635) // IDLE Pos active {TrBr_Zero}
 			{
 				CAN_DATA[2] = true;
-				bool SW_2 = SW2();
-//		 if(SW_2 && Enc_valid > 546 && Enc_valid < 603)//Check status of S2 {MICRO2_TrBr_Ko}
-//				{
-//						//CAN_DATA[6] = 0;
-//					
-//				}
+				bool SW_2 = IN2_EmBr_IDLE();
+
 		 if(SW_2 && Enc_valid > 540 && Enc_valid < 550)//(!SW_2 && Enc_valid > 535 && Enc_valid < 550)
 				{
 						CAN_DATA[6] = 1;//Check status of S2 {MICRO2_TrBr_Ko}
@@ -693,12 +711,12 @@ bool FACTORYRESET()
 			 
 			 CAN_DATA[2] = false;
 			 HAL_Delay(2);
-			 bool SW_2 = SW2();
+			 bool SW_2 = IN2_EmBr_IDLE();
 			 bool F1=0;
 			 bool F2=0;
-			 if(!SW_2 && Enc_valid >= 0 && Enc_valid < 400)//(SW_2 && Enc_valid >= 0 && Enc_valid < 410)
+			 if(!SW_2 && Enc_valid >= 200 && Enc_valid < 400)//(SW_2 && Enc_valid >= 0 && Enc_valid < 410)
 					{
-						if (!SW2()){
+						if (!IN2_EmBr_IDLE()){
 							CAN_DATA[6]=1;
 							F1=1;
 						}
@@ -708,28 +726,22 @@ bool FACTORYRESET()
 						CAN_DATA[6]=1;
 						F2=1;
 					}
-			 if(!F1 && !F2)
-				 {
-					 //CAN_DATA[6] = 0;
-				 }
+
 		 }
 	 
    if(Enc_valid >= 0 && Enc_valid < 500) // BRAKE Pos active {TrBr_B} STG-826
 	 {
 		 CAN_DATA[3] = true;
-		 if(!SW4()&& Enc_valid < 365)//(SW4()&& Enc_valid < 400)
+		 if(!IN3_T_B()&& Enc_valid < 365)//(SW4()&& Enc_valid < 400)
 				{
 					CAN_DATA[8] = 1;
 				}
-			else
-				{
-					//CAN_DATA[8]=;
-				} //Check status of S4 {MICRO4_TrBr_Ko}
+
 	 }
 	 else
 	 {
 		 CAN_DATA[3] = false;
-		 if(SW4()&& Enc_valid >= 546)
+		 if(IN3_T_B()&& Enc_valid == 546)
 				{
 					CAN_DATA[8] = 1;
 				}
@@ -739,27 +751,17 @@ bool FACTORYRESET()
 	 if(Enc_valid >= 0 && Enc_valid <= 100) // EMERGENCY Pos active {TrBr_EMG} S3 {MICRO3_TrBr_Ko}
 	 {
 		 CAN_DATA[4] = true;
-		 if(SW3() && Enc_valid >= 0 && Enc_valid <= 40)
-				{
-					//CAN_DATA[7] = 0;
-				}
-			if((SW3()) &&  Enc_valid <= 20)//(!(SW3()) &&  Enc_valid <= 30)
+
+			if((IN2_EmBr_IDLE()) &&  Enc_valid <= 20)//(!(SW3()) &&  Enc_valid <= 30)
 				{
 					CAN_DATA[7] = 1;
 				}
 			
 	 }
-	 else
-	 {
-		  CAN_DATA[4] = false;
-			if(!(SW3()) && Enc_valid >= 148 && Enc_valid <= 1023)//((SW3()) && Enc_valid >= 148 && Enc_valid <= 1023)
-				{
-					CAN_DATA[7] = 2;
-				}
-		  
-	 }
 
-	 if(((!CAN_DATA[0]) || CAN_DATA[5] || CAN_DATA[6] || CAN_DATA[7] || CAN_DATA[8] || FAILSTATE) )
+		
+	
+	 if(((!CAN_DATA[0]) || CAN_DATA[5] || CAN_DATA[6] || CAN_DATA[7] || CAN_DATA[8] || FAILSTATE)&& DataValid )
 		{
 			CAN_DATA[9] = 0;
 			FAILSTATE = true;
@@ -1009,8 +1011,8 @@ int main(void)
 				Encoder_Set = EncoderState+0;
 				float EncoderState3 = (((EncoderState-300)/910)*1023);
 				float EncoderState4 = (((EncoderState-308)/962)*1023);
-				bool S1 = SW1();
-			  bool S2 = SW2();//ReadAnalogInput(ADC_IN3);//s2
+				bool S1 = IN2_EmBr_IDLE();
+			  bool S2 = IN3_T_B();//ReadAnalogInput(ADC_IN3);//s2
 				bool S3 = SW3();//s3
 				bool Jumpers = jumper;
 				bool S4 = SW4();
