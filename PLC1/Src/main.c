@@ -489,7 +489,7 @@ float EN1_filter()//uint16_t n)
 	MINTEST= MIN;
 	float Enc_Val =(((Enc_Val_raw-MIN)/(MAX-MIN))*1023);//1023-(((Enc_Val_raw-293)/962)*1023);//300)/910)*1023);//-308)/962)*1023);//(((Enc_Val_raw-285)/918)*1023);
 
-
+	
 	if ( Enc_Val < 20)//EMG
 		{
 			Enc_Val = 0;
