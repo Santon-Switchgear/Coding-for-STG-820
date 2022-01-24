@@ -70,6 +70,7 @@ bool factory_reset = 0;
 uint16_t MINtemp;
 uint16_t MAXtemp;
 bool write_to_failstate_memory = 0;
+uint8_t Failstate_Counter=0;
 
 /* EEPROM declared Private variables ---------------------------------------------------------*/
 uint8_t u8WrSetup;//Setup_Complete
@@ -824,7 +825,7 @@ int main(void)
   // System init	
   MainInit();
 	
-	HAL_Delay(100);
+	HAL_Delay(1000);
 	{
 		uint8_t u8Temp, u8I;
 		//uint16_t u16a = 0x5555;
@@ -839,6 +840,7 @@ int main(void)
 		}
 		EEPROM_Read(0x0010, &Calibrated, 1);
 		EEPROM_Read(0x0001, &FAILSTATEold, 1);
+		FAILSTATE=FAILSTATEold;
 		EEPROM_Read(0x0003, (uint8_t*)&MAXold, 2 );
 		EEPROM_Read(0x0005, (uint8_t*)&MINold, 2 );
 		
@@ -1033,12 +1035,7 @@ int main(void)
 					HAL_Delay(1000);
 					HAL_NVIC_SystemReset();
 				}
-				if ( FAILSTATE != FAILSTATEold) // Write data to EEPROM if changed
-				{
-					FAILSTATE = FAILSTATEold;
-					//EEPROM_Write(0x0001, &FAILSTATE, 1);
-					//HAL_Delay(50);
-				}
+
 				
 				float Enc_Val_filtered = EN1_filter();//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
 				
@@ -1057,9 +1054,7 @@ int main(void)
 				}
 				if ( FAILSTATE != FAILSTATEold) // Write data to EEPROM if changed
 				{
-					FAILSTATEold = FAILSTATE;
 					write_to_failstate_memory = 1;
-
 				}
 				
 				long Enc_Val_filtered1 = (long)Enc_Val_filtered;
@@ -1112,10 +1107,17 @@ int main(void)
 				    EEPROM_Read(0x0001, &FAILSTATEold, 1);
 						if (write_to_failstate_memory)
 							{
-								EEPROM_Write(0x0001, &FAILSTATE, 1);
-								HAL_Delay(50);
-								write_to_failstate_memory = 0;
+								Failstate_Counter++;
+								if (Failstate_Counter>3)
+									{
+										EEPROM_Write(0x0001, &FAILSTATE, 1);
+										HAL_Delay(50);
+										write_to_failstate_memory = 0;
+										Failstate_Counter = 0;
+									}
+								
 							}
+						FAILSTATE = FAILSTATEold;
 						Calibration_protocol();
 						
 						if (jumper && HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin) && Calibrationcounter0 == 2 && Calibrationcounter2 == 2 )
