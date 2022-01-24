@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\out\out.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\out\out.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Mon Jan 03 16:54:04 2022
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Mon Jan 24 10:30:23 2022
 <BR><P>
 <H3>Maximum Stack Usage =        428 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -303,7 +303,7 @@ Global Symbols
 <P><STRONG><a name="[8e]"></a>__aeabi_cfrcmple</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, cfrcmple.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[25]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Validaton
-<LI><a href="#[10a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW1
+<LI><a href="#[10b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW2
 <LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EN1_filter
 </UL>
 
@@ -651,7 +651,7 @@ Global Symbols
 <LI><a href="#[31]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_ODF_1200
 </UL>
 
-<P><STRONG><a name="[81]"></a>Calibration_protocol</STRONG> (Thumb, 332 bytes, Stack size 16 bytes, main.o(i.Calibration_protocol))
+<P><STRONG><a name="[81]"></a>Calibration_protocol</STRONG> (Thumb, 324 bytes, Stack size 16 bytes, main.o(i.Calibration_protocol))
 <BR><BR>[Stack]<UL><LI>Max Depth = 184<LI>Call Chain = Calibration_protocol &rArr; EEPROM_Write &rArr; HAL_I2C_Mem_Write &rArr; I2C_RequestMemoryWrite &rArr; I2C_WaitOnTXISFlagUntilTimeout &rArr; I2C_IsAcknowledgeFailed
 </UL>
 <BR>[Calls]<UL><LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
@@ -735,7 +735,7 @@ Global Symbols
 <LI><a href="#[f3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_ADC_Init
 </UL>
 
-<P><STRONG><a name="[90]"></a>FACTORYRESET</STRONG> (Thumb, 78 bytes, Stack size 16 bytes, main.o(i.FACTORYRESET))
+<P><STRONG><a name="[90]"></a>FACTORYRESET</STRONG> (Thumb, 80 bytes, Stack size 16 bytes, main.o(i.FACTORYRESET))
 <BR><BR>[Stack]<UL><LI>Max Depth = 184<LI>Call Chain = FACTORYRESET &rArr; EEPROM_Write &rArr; HAL_I2C_Mem_Write &rArr; I2C_RequestMemoryWrite &rArr; I2C_WaitOnTXISFlagUntilTimeout &rArr; I2C_IsAcknowledgeFailed
 </UL>
 <BR>[Calls]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EEPROM_Write
@@ -845,7 +845,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MainInit
 </UL>
 
-<P><STRONG><a name="[4f]"></a>HAL_CAN_RxCpltCallback</STRONG> (Thumb, 22 bytes, Stack size 8 bytes, main.o(i.HAL_CAN_RxCpltCallback))
+<P><STRONG><a name="[4f]"></a>HAL_CAN_RxCpltCallback</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, main.o(i.HAL_CAN_RxCpltCallback))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = HAL_CAN_RxCpltCallback &rArr; CO_CAN1InterruptHandler &rArr; CO_CANinterrupt_Rx
 </UL>
 <BR>[Calls]<UL><LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_CAN1InterruptHandler
@@ -911,6 +911,8 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EEPROM_Write
 <LI><a href="#[25]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Validaton
+<LI><a href="#[10b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW2
 <LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Calibration_protocol
 </UL>
 
@@ -1440,30 +1442,31 @@ Global Symbols
 <P><STRONG><a name="[3]"></a>SVC_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f0xx_it.o(i.SVC_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f091xc.o(RESET)
 </UL>
-<P><STRONG><a name="[10a]"></a>SW1</STRONG> (Thumb, 76 bytes, Stack size 16 bytes, main.o(i.SW1))
+<P><STRONG><a name="[10a]"></a>SW1</STRONG> (Thumb, 40 bytes, Stack size 16 bytes, main.o(i.SW1))
 <BR><BR>[Stack]<UL><LI>Max Depth = 76<LI>Call Chain = SW1 &rArr; ReadAnalogInput &rArr; HAL_ADC_Start &rArr; ADC_Enable &rArr; __aeabi_uidivmod
+</UL>
+<BR>[Calls]<UL><LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
+<LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfcmple
+<LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
+</UL>
+<BR>[Called By]<UL><LI><a href="#[25]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Validaton
+</UL>
+
+<P><STRONG><a name="[10b]"></a>SW2</STRONG> (Thumb, 86 bytes, Stack size 16 bytes, main.o(i.SW2))
+<BR><BR>[Stack]<UL><LI>Max Depth = 76<LI>Call Chain = SW2 &rArr; ReadAnalogInput &rArr; HAL_ADC_Start &rArr; ADC_Enable &rArr; __aeabi_uidivmod
 </UL>
 <BR>[Calls]<UL><LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
 <LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfrcmple
 <LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfcmple
 <LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
+<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Delay
 </UL>
 <BR>[Called By]<UL><LI><a href="#[25]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Validaton
 </UL>
 
-<P><STRONG><a name="[10b]"></a>SW2</STRONG> (Thumb, 36 bytes, Stack size 16 bytes, main.o(i.SW2))
-<BR><BR>[Stack]<UL><LI>Max Depth = 76<LI>Call Chain = SW2 &rArr; ReadAnalogInput &rArr; HAL_ADC_Start &rArr; ADC_Enable &rArr; __aeabi_uidivmod
-</UL>
-<BR>[Calls]<UL><LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
-<LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfcmple
-<LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReadAnalogInput
-</UL>
-<BR>[Called By]<UL><LI><a href="#[25]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
-<LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Validaton
-</UL>
-
-<P><STRONG><a name="[86]"></a>SW3</STRONG> (Thumb, 30 bytes, Stack size 8 bytes, main.o(i.SW3))
+<P><STRONG><a name="[86]"></a>SW3</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, main.o(i.SW3))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = SW3
 </UL>
 <BR>[Calls]<UL><LI><a href="#[10c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
@@ -1473,7 +1476,7 @@ Global Symbols
 <LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Calibration_protocol
 </UL>
 
-<P><STRONG><a name="[10d]"></a>SW4</STRONG> (Thumb, 30 bytes, Stack size 8 bytes, main.o(i.SW4))
+<P><STRONG><a name="[10d]"></a>SW4</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, main.o(i.SW4))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = SW4
 </UL>
 <BR>[Calls]<UL><LI><a href="#[10c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
@@ -1608,12 +1611,13 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f091xc.o(RESET)
 </UL>
-<P><STRONG><a name="[114]"></a>Validaton</STRONG> (Thumb, 662 bytes, Stack size 24 bytes, main.o(i.Validaton))
+<P><STRONG><a name="[114]"></a>Validaton</STRONG> (Thumb, 680 bytes, Stack size 24 bytes, main.o(i.Validaton))
 <BR><BR>[Stack]<UL><LI>Max Depth = 116<LI>Call Chain = Validaton &rArr; EN1_filter &rArr; ReadAnalogInput &rArr; HAL_ADC_Start &rArr; ADC_Enable &rArr; __aeabi_uidivmod
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfrcmple
 <LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfcmple
 <LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfcmpeq
+<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Delay
 <LI><a href="#[10d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW4
 <LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW3
 <LI><a href="#[10b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SW2
@@ -1643,7 +1647,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_delete
 </UL>
 
-<P><STRONG><a name="[25]"></a>main</STRONG> (Thumb, 1906 bytes, Stack size 160 bytes, main.o(i.main))
+<P><STRONG><a name="[25]"></a>main</STRONG> (Thumb, 1950 bytes, Stack size 160 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 428<LI>Call Chain = main &rArr; CO_init &rArr; CO_TPDO_init &rArr; CO_TPDOconfigMap &rArr; CO_PDOfindMap &rArr; CO_OD_find
 </UL>
 <BR>[Calls]<UL><LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
@@ -1691,7 +1695,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[3e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calloc
 </UL>
 
-<P><STRONG><a name="[11b]"></a>vCalibration</STRONG> (Thumb, 438 bytes, Stack size 16 bytes, main.o(i.vCalibration))
+<P><STRONG><a name="[11b]"></a>vCalibration</STRONG> (Thumb, 452 bytes, Stack size 16 bytes, main.o(i.vCalibration))
 <BR><BR>[Stack]<UL><LI>Max Depth = 184<LI>Call Chain = vCalibration &rArr; EEPROM_Write &rArr; HAL_I2C_Mem_Write &rArr; I2C_RequestMemoryWrite &rArr; I2C_WaitOnTXISFlagUntilTimeout &rArr; I2C_IsAcknowledgeFailed
 </UL>
 <BR>[Calls]<UL><LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_NVIC_SystemReset
@@ -2196,10 +2200,10 @@ Local Symbols
 <P><STRONG><a name="[63]"></a>CO_PDOfindMap</STRONG> (Thumb, 336 bytes, Stack size 48 bytes, co_pdo.o(i.CO_PDOfindMap))
 <BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = CO_PDOfindMap &rArr; CO_OD_find
 </UL>
-<BR>[Calls]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_OD_getDataPointer
+<BR>[Calls]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_OD_getLength
+<LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_OD_getDataPointer
 <LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_OD_getAttribute
 <LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_OD_find
-<LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_OD_getLength
 </UL>
 <BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_TPDOconfigMap
 <LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_RPDOconfigMap

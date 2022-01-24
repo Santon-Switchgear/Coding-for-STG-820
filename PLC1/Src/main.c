@@ -51,6 +51,8 @@ typedef enum
 } eSwTimer_t;
 
 /* Private variables ---------------------------------------------------------*/
+uint16_t Soft_Ver = 786;
+
 CanTxMsgTypeDef CAN_TX_Msg;
 CanRxMsgTypeDef CAN_RX_Msg;
 __IO uint16_t au16Timer[SW_TIMER_CNT];
@@ -70,6 +72,8 @@ bool factory_reset = 0;
 uint16_t MINtemp;
 uint16_t MAXtemp;
 bool write_to_failstate_memory = 0;
+bool LifeSign = false;
+uint8_t LifeSignCounter = 0;
 
 /* EEPROM declared Private variables ---------------------------------------------------------*/
 uint8_t u8WrSetup;//Setup_Complete
@@ -321,6 +325,25 @@ void vCalibration ( void )
 void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* hcan)
 {
 	// Implement CAN RX
+		if ( hcan->pRxMsg->IDE == CAN_ID_STD )
+	{
+		switch ( hcan->pRxMsg->StdId )
+		{
+			case 0x100:
+				// Test received data an set OUT1
+				if ( hcan->pRxMsg->Data[0] > 5 )
+					LifeSign = true;
+				//break;
+
+		}
+	}
+  else
+	{
+		switch ( hcan->pRxMsg->ExtId )
+		{
+			
+		}
+	}
 	CO_CAN1InterruptHandler();
 	
 	__HAL_CAN_ENABLE_IT(hcan, CAN_IT_FMP0);
@@ -997,7 +1020,7 @@ int main(void)
 						hcan.pTxMsg->StdId = 0x000038;//  0x000039; //Reciever adres: 0x0038 (DMA-15)
 					} 
 				
-				hcan.pTxMsg->DLC = 4 ;					
+				hcan.pTxMsg->DLC = 6 ;					
 				
 				//Debugging code-----------------------------
 			//_____________________________________________
@@ -1091,9 +1114,10 @@ int main(void)
 				bool TrBr_dataValid = (bool)CAN_DATA[9];	
 				
 				uint8_t dataset1 = Dataset(CAN_DATA[0],CAN_DATA[1],CAN_DATA[2],CAN_DATA[3],CAN_DATA[4],CAN_DATA[5],CAN_DATA[6],CAN_DATA[7]);
-				uint8_t dataset2 = Dataset(CAN_DATA[8],CAN_DATA[9],Calibration,0,0,0,0,0);
+				uint8_t dataset2 = Dataset(CAN_DATA[8],CAN_DATA[9],Calibration,LifeSign,0,0,0,0);
 				CanMSG.u8[2] = dataset1;
 				CanMSG.u8[3] = dataset2;
+				CanMSG.u16[4] = Soft_Ver;
 				// Transfer data
 				hcan.pTxMsg->Data[0] = CanMSG.u8[0];
 				hcan.pTxMsg->Data[1] = CanMSG.u8[1];
@@ -1127,7 +1151,14 @@ int main(void)
 								write_to_failstate_memory = 0;
 							}
 						Calibration_protocol();
-						
+						if(LifeSign)
+						{
+							LifeSignCounter++;
+							if(LifeSignCounter>5)
+							{
+								LifeSign = false;
+							}
+						}
 						if (jumper && HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin) && Calibrationcounter0 == 2 && Calibrationcounter2 == 2 )
 							{
 								Calibrationcounter1--;
