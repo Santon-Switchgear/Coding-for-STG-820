@@ -51,7 +51,7 @@ typedef enum
 } eSwTimer_t;
 
 /* Private variables ---------------------------------------------------------*/
-uint16_t Soft_Ver = 788;
+uint16_t Soft_Ver = 90;
 
 CanTxMsgTypeDef CAN_TX_Msg;
 CanRxMsgTypeDef CAN_RX_Msg;
