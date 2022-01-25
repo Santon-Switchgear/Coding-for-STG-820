@@ -51,6 +51,8 @@ typedef enum
 } eSwTimer_t;
 
 /* Private variables ---------------------------------------------------------*/
+uint16_t Soft_Ver = 788;
+
 CanTxMsgTypeDef CAN_TX_Msg;
 CanRxMsgTypeDef CAN_RX_Msg;
 __IO uint16_t au16Timer[SW_TIMER_CNT];
@@ -70,6 +72,9 @@ bool factory_reset = 0;
 uint16_t MINtemp;
 uint16_t MAXtemp;
 bool write_to_failstate_memory = 0;
+uint8_t Failstate_Counter = 0;
+uint8_t LifeSign = 0;
+uint8_t LifeSignCounter = 0;
 
 /* EEPROM declared Private variables ---------------------------------------------------------*/
 uint8_t u8WrSetup;//Setup_Complete
@@ -321,6 +326,29 @@ void vCalibration ( void )
 void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* hcan)
 {
 	// Implement CAN RX
+		if ( hcan->pRxMsg->IDE == CAN_ID_STD )
+	{
+		
+		switch ( hcan->pRxMsg->StdId )
+		{
+			case 0x3B:
+				// Test received data an set LifeSign to TPDO1 = RPDO1 +1 
+				LifeSign = (hcan->pRxMsg->Data[0])+1;
+				LifeSignCounter = 0;
+			case 0x39:
+				// Test received data an set LifeSign to TPDO1 = RPDO1 +1 
+				LifeSign = (hcan->pRxMsg->Data[0])+1;
+				LifeSignCounter = 1;
+				//break;
+		}
+	}
+  else
+	{
+		switch ( hcan->pRxMsg->ExtId )
+		{
+			
+		}
+	}
 	CO_CAN1InterruptHandler();
 	
 	__HAL_CAN_ENABLE_IT(hcan, CAN_IT_FMP0);
@@ -824,7 +852,7 @@ int main(void)
   // System init	
   MainInit();
 	
-	HAL_Delay(100);
+	HAL_Delay(1000);
 	{
 		uint8_t u8Temp, u8I;
 		//uint16_t u16a = 0x5555;
@@ -987,7 +1015,7 @@ int main(void)
 						hcan.pTxMsg->StdId = 0x000039;//0x000038;   //Reciever adres: 0x0038 (DMA-15)
 					} 
 				
-				hcan.pTxMsg->DLC = 4 ;					
+				hcan.pTxMsg->DLC = 8 ;					
 				
 				//Debugging code-----------------------------
 			//_____________________________________________
@@ -1084,12 +1112,19 @@ int main(void)
 				uint8_t dataset2 = Dataset(CAN_DATA[8],CAN_DATA[9],Calibration,0,0,0,0,0);
 				CanMSG.u8[2] = dataset1;
 				CanMSG.u8[3] = dataset2;
+				CanMSG.u8[4] = LifeSign;
+				CanMSG.u8[5] = 0;
+				CanMSG.u8[6] = *((uint8_t*)&(Soft_Ver)+0);
+				CanMSG.u8[7] = *((uint8_t*)&(Soft_Ver)+1);
 				// Transfer data
 				hcan.pTxMsg->Data[0] = CanMSG.u8[0];
 				hcan.pTxMsg->Data[1] = CanMSG.u8[1];
 				hcan.pTxMsg->Data[2] = CanMSG.u8[2];
 				hcan.pTxMsg->Data[3] = CanMSG.u8[3];
-				
+				hcan.pTxMsg->Data[4] = CanMSG.u8[4];
+				hcan.pTxMsg->Data[5] = CanMSG.u8[5];
+				hcan.pTxMsg->Data[6] = CanMSG.u8[6];
+				hcan.pTxMsg->Data[7] = CanMSG.u8[7];
 				
 //				for ( u8I=0; u8I<8; u8I++ )
 //					hcan.pTxMsg->Data[u8I] = CanMSG.u8[u8I];
@@ -1112,12 +1147,24 @@ int main(void)
 				    EEPROM_Read(0x0001, &FAILSTATEold, 1);
 						if (write_to_failstate_memory)
 							{
-								EEPROM_Write(0x0001, &FAILSTATE, 1);
-								HAL_Delay(50);
-								write_to_failstate_memory = 0;
+								Failstate_Counter++;
+								if (Failstate_Counter>3)
+									{
+										EEPROM_Write(0x0001, &FAILSTATE, 1);
+										HAL_Delay(50);
+										write_to_failstate_memory = 0;
+										Failstate_Counter = 0;
+									}
 							}
 						Calibration_protocol();
-						
+						if(LifeSign!=0)
+						{
+							LifeSignCounter++;
+							if(LifeSignCounter >3)
+							{
+								LifeSign = 0;
+							}
+						}
 						if (jumper && HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin) && Calibrationcounter0 == 2 && Calibrationcounter2 == 2 )
 							{
 								Calibrationcounter1--;

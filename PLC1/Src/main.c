@@ -72,6 +72,7 @@ bool factory_reset = 0;
 uint16_t MINtemp;
 uint16_t MAXtemp;
 bool write_to_failstate_memory = 0;
+uint8_t Failstate_Counter = 0;
 uint8_t LifeSign = 0;
 uint8_t LifeSignCounter = 0;
 
@@ -327,18 +328,18 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* hcan)
 	// Implement CAN RX
 		if ( hcan->pRxMsg->IDE == CAN_ID_STD )
 	{
-		if ( hcan->pRxMsg->Data[0] > 5 )
-					LifeSign = (hcan->pRxMsg->Data[0]);
+		
 		switch ( hcan->pRxMsg->StdId )
 		{
 			case 0x3A:
-				// Test received data an set LifeSign to 10000001 =129 //OUT1
-
+				// Test received data an set LifeSign to TPDO1 = RPDO1 +1 
+				LifeSign = (hcan->pRxMsg->Data[0])+1;
 				LifeSignCounter = 0;
 			case 0x38:
+				// Test received data an set LifeSign to TPDO1 = RPDO1 +1 
+				LifeSign = (hcan->pRxMsg->Data[0])+1;
 				LifeSignCounter = 1;
 				//break;
-
 		}
 	}
   else
@@ -861,7 +862,7 @@ int main(void)
   // System init	
   MainInit();
 	
-	HAL_Delay(100);
+	HAL_Delay(1000);
 	{
 		uint8_t u8Temp, u8I;
 		//uint16_t u16a = 0x5555;
@@ -1157,8 +1158,14 @@ int main(void)
 				    EEPROM_Read(0x0001, &FAILSTATEold, 1);
 						if (write_to_failstate_memory)
 							{
-								EEPROM_Write(0x0001, &FAILSTATE, 1);
-								HAL_Delay(50);
+								Failstate_Counter++;
+								if (Failstate_Counter>3)
+									{
+										EEPROM_Write(0x0001, &FAILSTATE, 1);
+										HAL_Delay(50);
+										write_to_failstate_memory = 0;
+										Failstate_Counter = 0;
+									}
 								write_to_failstate_memory = 0;
 							}
 						Calibration_protocol();
