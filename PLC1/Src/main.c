@@ -51,7 +51,7 @@ typedef enum
 } eSwTimer_t;
 
 /* Private variables ---------------------------------------------------------*/
-uint16_t Soft_Ver = 90;
+uint16_t Soft_Ver = 92;
 
 CanTxMsgTypeDef CAN_TX_Msg;
 CanRxMsgTypeDef CAN_RX_Msg;
@@ -74,7 +74,7 @@ uint16_t MAXtemp;
 bool write_to_failstate_memory = 0;
 uint8_t Failstate_Counter = 0;
 uint8_t LifeSign = 0;
-uint8_t LifeSignCounter = 0;
+//uint8_t LifeSignCounter = 0;
 
 /* EEPROM declared Private variables ---------------------------------------------------------*/
 uint8_t u8WrSetup;//Setup_Complete
@@ -334,11 +334,11 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* hcan)
 			case 0x3A:
 				// Test received data an set LifeSign to TPDO1 = RPDO1 +1 
 				LifeSign = (hcan->pRxMsg->Data[0])+1;
-				LifeSignCounter = 0;
+				//LifeSignCounter = 0;
 			case 0x38:
 				// Test received data an set LifeSign to TPDO1 = RPDO1 +1 
 				LifeSign = (hcan->pRxMsg->Data[0])+1;
-				LifeSignCounter = 1;
+				//LifeSignCounter = 1;
 				//break;
 		}
 	}
@@ -1169,14 +1169,14 @@ int main(void)
 								write_to_failstate_memory = 0;
 							}
 						Calibration_protocol();
-						if(LifeSign!=0)
-						{
-							LifeSignCounter++;
-							if(LifeSignCounter >3)
-							{
-								LifeSign = 0;
-							}
-						}
+//						if(LifeSign!=0)
+//						{
+//							LifeSignCounter++;
+//							if(LifeSignCounter >3)
+//							{
+//								LifeSign = 0;
+//							}
+//						}
 						if (jumper && HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin) && Calibrationcounter0 == 2 && Calibrationcounter2 == 2 )
 							{
 								Calibrationcounter1--;
