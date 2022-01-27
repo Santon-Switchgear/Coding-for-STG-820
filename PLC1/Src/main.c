@@ -51,7 +51,7 @@ typedef enum
 } eSwTimer_t;
 
 /* Private variables ---------------------------------------------------------*/
-uint16_t Soft_Ver = 92;
+uint16_t Soft_Ver = 93;
 
 CanTxMsgTypeDef CAN_TX_Msg;
 CanRxMsgTypeDef CAN_RX_Msg;
@@ -328,16 +328,26 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* hcan)
 	// Implement CAN RX
 		if ( hcan->pRxMsg->IDE == CAN_ID_STD )
 	{
-		
+		int temp=0;
 		switch ( hcan->pRxMsg->StdId )
 		{
 			case 0x3A:
-				// Test received data an set LifeSign to TPDO1 = RPDO1 +1 
+				// Test received data an set LifeSign to TPDO1 = RPDO1 +1
 				LifeSign = (hcan->pRxMsg->Data[0])+1;
+				temp = (hcan->pRxMsg->Data[0]);
+				if (temp == 255)
+				{
+					LifeSign = 0;
+				}
 				//LifeSignCounter = 0;
 			case 0x38:
 				// Test received data an set LifeSign to TPDO1 = RPDO1 +1 
 				LifeSign = (hcan->pRxMsg->Data[0])+1;
+				temp = (hcan->pRxMsg->Data[0]);
+				if (temp == 255)
+				{
+					LifeSign = 0;
+				}
 				//LifeSignCounter = 1;
 				//break;
 		}
