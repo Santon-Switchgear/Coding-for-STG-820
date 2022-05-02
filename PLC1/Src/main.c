@@ -51,7 +51,7 @@ typedef enum
 } eSwTimer_t;
 
 /* Private variables ---------------------------------------------------------*/
-uint16_t Soft_Ver = 93;
+uint16_t Soft_Ver = 94;
 
 CanTxMsgTypeDef CAN_TX_Msg;
 CanRxMsgTypeDef CAN_RX_Msg;
@@ -535,7 +535,7 @@ float EN1_filter()//uint16_t n)
 		{
 			Enc_Val = 1023;
 		}
-	if ( 570 > Enc_Val && Enc_Val > 510)//IDLE
+	if ( 560 > Enc_Val && Enc_Val > 535)//IDLE
 		{
 			Enc_Val = 546;
 		}
@@ -720,7 +720,7 @@ bool FACTORYRESET()
 //						//CAN_DATA[6] = 0;
 //					
 //				}
-		 if(SW_2 && Enc_valid > 540 && Enc_valid < 550)//(!SW_2 && Enc_valid > 535 && Enc_valid < 550)
+		 if(SW_2 && Enc_valid > 540 && Enc_valid < 555)//(!SW_2 && Enc_valid > 535 && Enc_valid < 550)
 				{
 						CAN_DATA[6] = 1;//Check status of S2 {MICRO2_TrBr_Ko}
 					bool F3=1;
