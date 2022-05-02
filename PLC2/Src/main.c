@@ -415,7 +415,7 @@ bool SW2(){//s2 analog to bool conversion with threshhold 20mV
 				Sw2=1;
 			}
 		
-		return Sw2;
+		return !Sw2;
 }
 
 bool SW3(){//s2 analog to bool conversion with threshhold 20mV
