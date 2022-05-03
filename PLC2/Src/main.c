@@ -52,7 +52,7 @@ typedef enum
 
 /* Private variables ---------------------------------------------------------*/
 uint16_t Soft_Ver = 93;
-
+uint16_t Soft_Version_Internal = 95;
 CanTxMsgTypeDef CAN_TX_Msg;
 CanRxMsgTypeDef CAN_RX_Msg;
 __IO uint16_t au16Timer[SW_TIMER_CNT];
@@ -696,11 +696,7 @@ bool FACTORYRESET()
 	 {
 		 CAN_DATA[1] = false;
 		 bool SW_1 = SW1();
-		
-		 if(SW_1 && Enc_valid >= 0 && 602 >= Enc_valid)
-			{
-				//CAN_DATA[5] = 1;
-			}
+
 			if(SW_1 && Enc_valid >= 0 && 546 >= Enc_valid)//(!SW_1 && Enc_valid >= 0 && 546 >= Enc_valid)
 			{
 				CAN_DATA[5] = 1;//PLC1
@@ -709,15 +705,11 @@ bool FACTORYRESET()
 	 }
 	
 
-	 if(Enc_valid > 455 && Enc_valid < 635) // IDLE Pos active {TrBr_Zero}
+	 if(Enc_valid > 440 && Enc_valid < 635) // IDLE Pos active {TrBr_Zero}
 			{
 				CAN_DATA[2] = true;
 				bool SW_2 = SW2();
-		 if(SW_2 && Enc_valid > 530 && Enc_valid < 603)//Check status of S2 {MICRO2_TrBr_Ko}
-				{
-						//CAN_DATA[6] = 0;
-					
-				}
+
 		 if(SW_2 && Enc_valid > 535 && Enc_valid < 550)//(!SW_2 && Enc_valid > 535 && Enc_valid < 550)
 				{
 						CAN_DATA[6] = 1;//Check status of S2 {MICRO2_TrBr_Ko}
@@ -731,7 +723,7 @@ bool FACTORYRESET()
 			 bool SW_2 = SW2();
 			 bool F1=0;
 			 bool F2=0;
-			 if(!SW_2 && Enc_valid >= 0 && Enc_valid < 410)//(SW_2 && Enc_valid >= 0 && Enc_valid < 410)
+			 if(!SW_2 && Enc_valid > 0 && Enc_valid < 400)//(SW_2 && Enc_valid >= 0 && Enc_valid < 410)
 					{
 						CAN_DATA[6]=1;
 						F1=1;
@@ -741,10 +733,7 @@ bool FACTORYRESET()
 						CAN_DATA[6]=1;
 						F2=1;
 					}
-			 if(!F1 && !F2)
-				 {
-					 //CAN_DATA[6] = 0;
-				 }
+
 		 }
 	 
    if(Enc_valid >= 0 && Enc_valid < 500) // BRAKE Pos active {TrBr_B} STG-826
