@@ -406,7 +406,7 @@ bool SW1(){//s1 analog to bool conversion with threshhold 20mV
 bool SW2(){//s2 analog to bool conversion with threshhold 20mV
 		float IN3 = ReadAnalogInput(ADC_IN3);
 	  bool Sw2 = 0;
-		if(IN3 < 20)
+		if(IN3 < 500)
 			{
 				Sw2=0;
 			} 

@@ -386,7 +386,7 @@ void HAL_SYSTICK_Callback(void)
 bool SW1(){//s1 analog to bool conversion with threshhold 20mV
 		float IN2 = ReadAnalogInput(ADC_IN2);
 	  bool Sw1 = 0;
-		if(IN2 < 20)
+		if(IN2 < 500)
 			{
 				Sw1=0;
 			} 
