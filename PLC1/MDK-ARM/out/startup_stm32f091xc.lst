@@ -417,13 +417,13 @@ ork --depend=.\out\startup_stm32f091xc.d -o.\out\startup_stm32f091xc.o -I../CAN
 openNode-master -I../CANopenNode-master/example -I../CANopenNode-master/stack -
 I../Drivers/CMSIS/Device/ST/STM32F0xx/Include -I../Drivers/CMSIS/Include -I../D
 rivers/STM32F0xx_HAL_Driver/Inc -I../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy -I
-../Inc -I.\RTE\_BARTH -IC:\Users\zvdsteege\AppData\Local\Arm\Packs\ARM\CMSIS\5.
-8.0\CMSIS\Core\Include -IC:\Users\zvdsteege\AppData\Local\Arm\Packs\Keil\STM32F
-0xx_DFP\2.1.0\Drivers\CMSIS\Device\ST\STM32F0xx\Include --predefine="__MICROLIB
- SETA 1" --predefine="__UVISION_VERSION SETA 535" --predefine="_RTE_ SETA 1" --
-predefine="STM32F091xC SETA 1" --predefine="_RTE_ SETA 1" --predefine="STM32F09
-1xC SETA 1" --predefine="USE_HAL_DRIVER SETA 1" --list=.\out\startup_stm32f091x
-c.lst startup_stm32f091xc.s
+../Inc -I.\RTE\_BARTH -IC:\Users\vlm\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CM
+SIS\Core\Include -IC:\Users\vlm\AppData\Local\Arm\Packs\Keil\STM32F0xx_DFP\2.1.
+1\Drivers\CMSIS\Device\ST\STM32F0xx\Include --predefine="__MICROLIB SETA 1" --p
+redefine="__UVISION_VERSION SETA 537" --predefine="_RTE_ SETA 1" --predefine="S
+TM32F091xC SETA 1" --predefine="_RTE_ SETA 1" --predefine="STM32F091xC SETA 1" 
+--predefine="USE_HAL_DRIVER SETA 1" --list=.\out\startup_stm32f091xc.lst startu
+p_stm32f091xc.s
 
 
 

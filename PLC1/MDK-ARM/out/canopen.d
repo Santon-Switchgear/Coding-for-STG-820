@@ -1,6 +1,6 @@
 .\out\canopen.o: ..\CANopenNode-master\CANopen.c
 .\out\canopen.o: ..\CANopenNode-master\CANopen.h
-.\out\canopen.o: ..\CANopenNode-master\stack\CO_driver.h
+.\out\canopen.o: ../CANopenNode-master/stack/CO_driver.h
 .\out\canopen.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal.h
 .\out\canopen.o: ../Inc/stm32f0xx_hal_conf.h
 .\out\canopen.o: ../Inc/main.h
@@ -40,11 +40,11 @@
 .\out\canopen.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart.h
 .\out\canopen.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart_ex.h
 .\out\canopen.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
-.\out\canopen.o: ..\CANopenNode-master\example\CO_OD.h
-.\out\canopen.o: ..\CANopenNode-master\stack\CO_SDO.h
-.\out\canopen.o: ..\CANopenNode-master\stack\CO_Emergency.h
-.\out\canopen.o: ..\CANopenNode-master\stack\CO_NMT_Heartbeat.h
-.\out\canopen.o: ..\CANopenNode-master\stack\CO_SYNC.h
-.\out\canopen.o: ..\CANopenNode-master\stack\CO_PDO.h
-.\out\canopen.o: ..\CANopenNode-master\stack\CO_HBconsumer.h
+.\out\canopen.o: ../CANopenNode-master/example/CO_OD.h
+.\out\canopen.o: ../CANopenNode-master/stack/CO_SDO.h
+.\out\canopen.o: ../CANopenNode-master/stack/CO_Emergency.h
+.\out\canopen.o: ../CANopenNode-master/stack/CO_NMT_Heartbeat.h
+.\out\canopen.o: ../CANopenNode-master/stack/CO_SYNC.h
+.\out\canopen.o: ../CANopenNode-master/stack/CO_PDO.h
+.\out\canopen.o: ../CANopenNode-master/stack/CO_HBconsumer.h
 .\out\canopen.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h

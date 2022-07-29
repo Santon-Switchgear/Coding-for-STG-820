@@ -1,4 +1,4 @@
-.\out\system_stm32f0xx.o: ../Drivers/CMSIS/Device/ST/STM32F0xx/Source/Templates/system_stm32f0xx.c
+.\out\system_stm32f0xx.o: ..\Drivers\CMSIS\Device\ST\STM32F0xx\Source\Templates\system_stm32f0xx.c
 .\out\system_stm32f0xx.o: ../Drivers/CMSIS/Device/ST/STM32F0xx/Include/stm32f0xx.h
 .\out\system_stm32f0xx.o: ../Drivers/CMSIS/Device/ST/STM32F0xx/Include/stm32f091xc.h
 .\out\system_stm32f0xx.o: ../Drivers/CMSIS/Include/core_cm0.h
