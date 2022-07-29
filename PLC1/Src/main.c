@@ -2,7 +2,8 @@
  ******************************************************************************
   * File Name          : main.c
   * Description        : Main program body
-	* Version						 : 20.0
+	* Version						 : 20.1
+	* Publish date			 : 29-07-2022
 	* Author						 : Zander van der Steege
 	* PLC 1
   ******************************************************************************
@@ -317,7 +318,7 @@ void vCalibration ( void )
 /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
 
 
-/**
+/** short explanation hcan
   * @brief  Transmission  complete callback in non blocking mode 
   * @param  hcan: pointer to a CAN_HandleTypeDef structure that contains
   *         the configuration information for the specified CAN.
