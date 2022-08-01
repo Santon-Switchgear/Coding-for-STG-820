@@ -9,12 +9,12 @@ License Information: Zander van der Steege, Santon Holland BV, LIC=AC93N-YH81X-2
  
 Tool Versions:
 Toolchain:       MDK-ARM Cortex-M0/M0+ for ST  Version: 5.37.0.0
-Toolchain Path:  C:\Keil_v5\ARM\ARMCLANG\bin\
-C Compiler:      ArmClang.exe V6.18
-Assembler:       Armasm.exe V6.18
-Linker/Locator:  ArmLink.exe V6.18
-Library Manager: ArmAr.exe V6.18
-Hex Converter:   FromElf.exe V6.18
+Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 update 7 (build 960)
+Assembler:       Armasm.exe V5.06 update 7 (build 960)
+Linker/Locator:  ArmLink.exe V5.06 update 7 (build 960)
+Library Manager: ArmAr.exe V5.06 update 7 (build 960)
+Hex Converter:   FromElf.exe V5.06 update 7 (build 960)
 CPU DLL:         SARMCM3.DLL V5.37.0.0
 Dialog DLL:      DARMCM1.DLL V1.19.6.0
 Target DLL:      UL2CM3.DLL V1.164.7.0
@@ -22,14 +22,22 @@ Dialog DLL:      TARMCM1.DLL V1.14.6.0
  
 <h2>Project:</h2>
 C:\Users\zvdsteege\Documents\GitHub\Coding-for-STG-820\PLC1\MDK-ARM\STG.uvprojx
-Project File Date:  07/29/2022
+Project File Date:  08/01/2022
 
 <h2>Output:</h2>
-*** Target 'BARTH' uses ARM-Compiler 'Default Compiler Version 5' which is not available.
-*** Please review the installed ARM Compiler Versions:
-   'Manage Project Items - Folders/Extensions' to manage ARM Compiler Versions.
-   'Options for Target - Target' to select an ARM Compiler Version for the target.
-*** Rebuild aborted.
+*** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
+Rebuild target 'BARTH'
+Error instantiating RTE components
+Error #543: Device STM32F091CC(STMicroelectronics) not found, pack 'Keil.STM32F0xx_DFP' is not installed
+Error #541: 'ARM::CMSIS:CORE:5.5.0' component is missing (previously found in pack 'ARM.CMSIS')
+
+<h2>Software Packages used:</h2>
+
+<h2>Collection of Component include folders:</h2>
+  ./RTE/_BARTH
+
+<h2>Collection of Component Files used:</h2>
+Target not created.
 Build Time Elapsed:  00:00:00
 </pre>
 </body>

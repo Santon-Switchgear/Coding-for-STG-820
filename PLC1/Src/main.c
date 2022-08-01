@@ -508,7 +508,7 @@ float EN1_filter()//uint16_t n)
 	//HAL_Delay(100);
 		*/
 	
-	
+	`
 	
 	
 	float Enc_Val_raw = ReadAnalogInput(ADC_IN1);

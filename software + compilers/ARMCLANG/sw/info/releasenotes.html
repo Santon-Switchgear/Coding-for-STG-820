@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+ <html><head><title>Release notes for Arm Compiler 6.16</title> <meta charset="utf-8"/> <style type="text/css">body { font-family: times new roman, serif; margin: 20px; }
+h1 { font-size: xx-large; font-weight: bold; color: #0091BD; text-align: center; }
+h2 { color: #0091BD; font-size: 24px; }
+h3 { color: #0091BD; font-size: 20px; }
+h4 { color: #0091BD; font-size: 16px; }
+h5 { color: #0091BD; font-size: 14px; font-style: italic; }
+dt { font-weight: bold; }
+p { color: black; }
+.builddata { color: #0091BD; text-align: center; }
+.bookref { font-style: italic; }
+.guiref { font-weight: bold; }
+table, th, td { border: 1px solid #0091BD; border-collapse:collapse; padding-left:10px; padding-right:10px; font-size:0.9em; }
+th { background-color:#0091BD; color: white; text-align: left; }
+.toc {
+  list-style-type: none;
+}
+.tab { margin-left: 40px; }
+</style> </head><body><img alt="Arm Logo" src="data:image/png;base64,
+iVBORw0KGgoAAAANSUhEUgAAAIMAAAAqCAYAAACQjuhAAAAACXBIWXMAABcRAAAXEQHKJvM/AAAE
+BElEQVR42u2c23GjMBSG/zD7vpRACbiCkKGAdSoIVCC7AuwKbFVgbwX2FsCEVBC2gng7IBXsPkis
+GcLlSGAMtv4Zv3iMLkefjs4RkgEjIyOjsh60n+SxA8AD8AjAlZ+yUgAJgF9gflJRhtdSSwbmp8S2
+OI2/KdbPYxtAAOCH7INau3XqFM/MC3U6NXVyMP9E7PNc2t8DYFeUl8o+HC8DgxhAJhuiohOANZi/
+L5T1t+WZBMx/IrRpBSBqGZiHwoDsKoxX3wYg/DJAanV6ADY1E6ZKewBLMD+rgSCSMKvYftkGhaXk
+CXh8APCqAQLkTNiBx69yZg4vHm8AHBRAgBzArEOdC2kzV+GpAMA7eOyWyhLfq4GQ2/4AHu+6wyBm
+07smBGV5AIYHQhhiofHksXKG0uHbaLbYkXZyCyDsFEH+ClkDEBahQ4HGbKLMtteB/UKg+dy6Q52L
+jm22pTfNQejHDgJSRRj6bUQVEGPXkRTMXVbuBcZgURW8Ww0guBcEYSriN9y3iAaDWM8PGhVkMvrO
+P6cJGyutTSu7lnu2Tx/KNO3tyczkv741rHWOQsF7mR+nNalQINNRe0SDLfYRxOAUg9sX2fe+vcJR
+pnen0qSLNGOLTJa3r0j9d8TxmwPY1sNwzmOp+WvYOINE51fg8VY2cn5lCDIAzzVtTmRbgy9G7qaw
+sjyRpSzB408Fm+d2f6qMZ5ifgMczAB+EyfdYhMHqEHWnAGZkV8r8DMx/ll7kmiA8tba5XxCOreUx
+f6Xo4p8bA9scMsUgvgqGF6JRQ638m/mhdJnX0Jq0vd2vlmRoqEsyrQ+U8px6GEQG4Qxg1BBddvV0
+vQLztyNOTd+Iv/tJ9sSKQapVEVC0r1ddjSoaygcfmOH1W3EJo9gu6bXMwpa3VRFQ9EMmLQMZUm9X
+gCFRmCCU36YXgNGug8EZbIYJ9znk+j3lPQ8176EpdRj6DcCSWzHkLci68uB9DtbT4bMIHbc+KRiM
+1ANlA8MdreN3u0z0LccMwXRhcI3J7geGtoDHLr/27KhHMwTjhYGyhvfz1lG8vvXMEIwXBsouHeup
+7rkx/7hhoOwjOPJsZFevEBnzjxkGsTFDWSo2HY+6RyaTmEY2QXmbaEP37oPwKgtj+mnAsAdtH9+V
+QDgKIKxgTlxPCAa1swYuxDWwVSMUPA7A4w8TJ4xbdaejtzifEqYsGRGACDzOb/7+AfBdwmLSx0nD
+wPwMPA6hfgWu7mq+0URjhhyIBOKsotHdwyCA2KPbxVOjm4FBALG6gIfIjNeZIgxnDzFDPyd3ThAX
+WfbG/FOEQQCRgvkzOaNPmt5gDXELKzWmH5+6/MFX8c+l3AYAEogLrsepHQMzMOjD4ZT2JVIz+EZG
+E9U/yX9anPUqLjMAAAAASUVORK5CYII=
+"/><div><h1>Release notes for Arm Compiler 6.16</h1>
+<p></p><a name="head_link_14"></a><h2>Table of Contents</h2><ol class="toc"><li><a href="#head_link_14">1. Introduction</a><ol class="toc"><li><a href="#head_link_13">1.1 Arm Compiler 6 Toolchain</a></li><li><a href="#head_link_12">1.2 What's Supported in Arm Compiler 6.16?</a></li></ol></li><li><a href="#head_link_11">2. Installation Instructions</a><ol class="toc"><li><a href="#head_link_10">2.1. Integration into Arm Development Studio 2018.0 or later</a></li><li><a href="#head_link_9">2.2. Integration into Keil MDK 5.22 or later</a></li><li><a href="#head_link_8">2.3. Use as a standalone toolchain installation</a></li><li><a href="#head_link_7">2.4. Installation on Linux</a></li><li><a href="#head_link_6">2.5. Installation on Windows</a></li></ol></li><li><a href="#head_link_5">3. Uninstall</a></li><li><a href="#head_link_4">4. Documentation</a></li><li><a href="#head_link_3">5. Feedback and Support</a></li><li><a href="#head_link_2">6. Release History and Changes</a><ol class="toc"><li><a href="#head_link_1">Changes in Arm Compiler 6.16</a></li></ol></li></ol><h2>1. Introduction</h2><p>Arm Compiler is the most advanced embedded C/C++ compilation toolchain from Arm for the development of bare-metal software, firmware, and Real-Time Operating System (RTOS) applications.</p><p>Arm Compiler provides the earliest, most complete, and most accurate support for the latest architectural features and extensions of the Arm architecture. It supports all the latest Arm processors, including those in development. Through powerful optimization techniques and optimized libraries, Arm Compiler enables embedded system developers to meet challenging performance goals and memory constraints.</p><p>Arm Compiler is used by leading companies in a wide variety of industries, including automotive (ISO 26262), consumer electronics, industrial (IEC 61508), medical (IEC 62304), networking, railway (EN 50128), storage, and telecommunications. For projects that have long-term maintenance or functional safety requirements, please consider using a <a href="https://developer.arm.com/tools-and-software/embedded/arm-compiler/safety">qualified version</a> of Arm Compiler.</p><p>Arm Compiler 6.16 is the latest release as of March 2021 and supersedes every previous release.  </p><p>The key features of Arm Compiler 6.16 are:</p><ul><li>Recently launched processors:<ul><li>Support for Cortex-A78C and Cortex-R52+.</li></ul></li><li>Early support for Future Architecture Technologies in the A architecture profile:<ul><li>Assembly for the Branch Record Buffer Extensions (BRBE). </li></ul></li><li>Armv8.7-A:<ul><li>Support for assembly.</li><li>Support for intrinsics for the optional Accelerator Support Extension.</li></ul></li><li>Armv8.2-A and later:<ul><li>Support for the optional Flag Manipulation Instructions.</li><li>Support for the optional Pointer Authentication Extension.</li></ul></li><li>The Application Binary Interface (ABI) version used for the C++ library has been updated. </li></ul><p>Arm Compiler 6.16 is intended for use:</p><ul><li>In conjunction with an Arm Development Studio toolkit.</li><li>In conjunction with a Keil MDK toolkit (Windows only).</li><li>As a standalone toolchain installation, provided you have a license for a suitable toolkit.</li></ul><p>Contact your sales representative or visit <a href="https://developer.arm.com/tools-and-software/embedded/arm-compiler/buy">https://developer.arm.com/tools-and-software/embedded/arm-compiler/buy</a> to enquire about a license. Visit <a href="https://developer.arm.com/support/licensing">https://developer.arm.com/support/licensing</a> to manage your licenses or access troubleshooting resources.</p><p>If you are using a floating license, your license server must be running version 11.14.1.0 or later of both <code>armlmd</code> and <code>lmgrd</code>. Arm recommends that you always use the latest version of the license server software that is available from <a href="https://developer.arm.com/products/software-development-tools/license-management/downloads">https://developer.arm.com/products/software-development-tools/license-management/downloads</a>.</p><a name="head_link_13"></a><h3>1.1 Arm Compiler 6 Toolchain</h3><p>The Arm Compiler 6.16 toolchain includes the following:</p><ul><li><strong>armclang:</strong> Compiler and integrated assembler based on LLVM and Clang technology.</li><li><strong>armasm:</strong> Legacy assembler for <code>armasm</code>-syntax assembly code. Use the <code>armclang</code> integrated assembler for all new assembly files.</li><li><strong>armar:</strong> Archiver which enables sets of ELF object files to be collected together.</li><li><strong>armlink:</strong> Linker that combines objects and libraries to produce an executable.</li><li><strong>fromelf:</strong> Image conversion utility and dissembler.</li><li><strong>Arm C++ libraries:</strong> Libraries based on the LLVM libc++ project.</li><li><strong>Arm C libraries:</strong> Runtime support libraries for embedded systems.</li></ul><a name="head_link_12"></a><h3>1.2 What's Supported in Arm Compiler 6.16?</h3><p>Arm Compiler is provided as part of Arm development suites such as Arm Development Studio and Keil Microcontroller Development Kit (MDK). Subject to your license terms, Arm Compiler 6.16 provides support for the following Arm Architectures and Processors:</p><div><table><colgroup> <col/> <col/> </colgroup><tbody><tr><th>Architecture</th><th>Processors*</th></tr><tr><td>Future</td><td>—</td></tr><tr><td rowspan="2"><p>Armv8-A up to 8.7-A</p></td><td><p>Neoverse V2/N2/N1/E1</p></td></tr><tr><td colspan="1"><p>Cortex-X1/A78C/A78AE/A78/A77/76AE/76/75/73/72/65AE/65/57/55/53/35/34/32</p></td></tr><tr><td>Armv7-A</td><td>Cortex-A17/15/12/9/8/7/5</td></tr><tr><td>Armv8-R</td><td>Cortex-R82/R52/R52+</td></tr><tr><td>Armv7-R</td><td>Cortex-R8/7/5/4F/4</td></tr><tr><td rowspan="2">Armv8-M up to 8.1-M</td><td>Star</td></tr><tr><td colspan="1">Cortex-M55/M35P/33/23</td></tr><tr><td rowspan="2">Armv7-M</td><td>SC300</td></tr><tr><td colspan="1">Cortex-M7/4/3</td></tr><tr><td rowspan="2">Armv6-M</td><td>SC000</td></tr><tr><td>Cortex-M1/0/0+</td></tr></tbody></table></div><p>For more information about the level of support for the Architectures and Processors, refer to the development suite documentation:</p><ul><li>Arm Development Studio: <a href="https://developer.arm.com/tools-and-software/embedded/arm-development-studio">https://developer.arm.com/tools-and-software/embedded/arm-development-studio</a>.</li><li>Keil MDK: <a href="https://developer.arm.com/tools-and-software/embedded/keil-mdk">https://developer.arm.com/tools-and-software/embedded/keil-mdk</a>.</li></ul><p>To download Arm Compiler 6.16, please visit <a href="https://developer.arm.com/tools-and-software/embedded/arm-compiler/downloads/version-6">https://developer.arm.com/tools-and-software/embedded/arm-compiler/downloads/version-6</a>.</p><p>* Support for Future Architecture Technologies and certain Processors is available only as part of Arm Development Studio Platinum Edition. Arm Development Studio Platinum Edition is reserved for Arm partners developing the latest IP before it becomes available in devices. It includes all the features of Arm Development Studio Gold Edition, and additionally has support for the latest announced IP from Arm. Please contact Arm for more information.</p><a name="head_link_11"></a><h2>2. Installation Instructions</h2><p>If you received Arm Compiler 6.16 as part of a toolkit, for example Arm Development Studio, the toolkit installer takes care of the installation process. Please refer to the installation instructions for the toolkit in such cases.</p><p>For all other cases, you must select an appropriate installation location depending on how you intend to use Arm Compiler 6.16:</p><ul><li>Integrated into Arm Development Studio 2018.0 or later.</li><li>Integrated into Keil MDK 5.22 or later.</li><li>As a standalone toolchain installation.</li></ul><p>Unless you are using Keil MDK, Arm Compiler 6.16 can be installed in any location, including the default location, providing this is outside of an Arm Development Studio product installation directory.</p><p>Please refer to the important configuration instructions at <a href="https://developer.arm.com/tools-and-software/software-development-tools/license-management/resources/product-and-toolkit-configuration">https://developer.arm.com/tools-and-software/software-development-tools/license-management/resources/product-and-toolkit-configuration</a> and also the relevant sections below.</p><a name="head_link_10"></a><h3>2.1. Integration into Arm Development Studio 2018.0 or later</h3><p>You can integrate the toolchain with Arm Development Studio by following the instructions available at <a href="https://developer.arm.com/documentation/101470/2010/Configure-Arm-Development-Studio/Register-a-compiler-toolchain">https://developer.arm.com/documentation/101470/2010/Configure-Arm-Development-Studio/Register-a-compiler-toolchain</a> </p><a name="head_link_9"></a><h3>2.2. Integration into Keil MDK 5.22 or later</h3><p>Arm Compiler 6.16 must be installed underneath the ARM subdirectory of the Keil MDK installation directory. For example, if your Keil MDK installation directory is in <code>C:\Keil_v5</code>, the recommended installation path is <code>C:\Keil_v5\ARM\ARMCompiler6.16</code>.</p><p>You can integrate the toolchain into a Keil MDK project by following the instructions in the tutorial available at <a href="http://www.keil.com/support/man/docs/uv4/uv4_armcompilers.htm">http://www.keil.com/support/man/docs/uv4/uv4_armcompilers.htm</a>.</p><p>Only the 32-bit variant of Arm Compiler 6.16 for Windows can be used with a Keil Single-User License or Keil Floating-User License.</p><p>With an MDK license, Arm Compiler 6.16 is supported on Windows only.</p><a name="head_link_8"></a><h3>2.3. Use as a standalone toolchain installation</h3><p>Ensure that the <code>ARMLMD_LICENSE_FILE</code> environment variable is pointing to your license file or license server.</p><a name="head_link_7"></a><h3>2.4. Installation on Linux</h3><p>Arm Compiler 6.16 has been tested on the following supported 64-bit platforms:</p><ul><li>Red Hat Enterprise Linux 7.</li><li>Red Hat Enterprise Linux 8.</li><li>Ubuntu Desktop Edition 16.04 LTS.</li><li>Ubuntu Desktop Edition 18.04 LTS.</li><li>Ubuntu Desktop Edition 20.04 LTS.</li></ul><p>Arm Compiler 6.16 is not expected to work on older platforms.</p><p>To install Arm Compiler 6.16, run (not <code>source</code>) <code>install_x86_64.sh</code> and follow the on-screen instructions. The installer unpacks Arm Compiler 6.16 into your chosen directory.</p><p>The <code>armclang</code> binary is dynamically linked to a copy of libstdc++ installed under your chosen directory as part of Arm Compiler 6.16.</p><a name="head_link_6"></a><h3>2.5. Installation on Windows</h3><p>Arm Compiler 6.16 has been tested on the following supported 64-bit platforms:</p><ul><li>Windows Server 2012.</li><li>Windows Server 2016.</li><li>Windows 8.1.</li><li>Windows 10.</li></ul><p>Arm Compiler 6.16 is not expected to work on older platforms.</p><p>Arm Compiler 6.16 has been tested on Windows 10 v1909. It is expected to work well on later updates.</p><p>The 32-bit variant of Arm Compiler 6.16 for Windows is supported if and only if you are using Keil MDK on a supported 64-bit platform. 32-bit Windows platforms are not supported.</p><p>To install Arm Compiler 6.16, run <code>win-x86_64\setup.exe</code> or <code>win-x86_32\setup.exe</code> and follow the on-screen instructions. If you have an earlier version of Arm Compiler 6 installed and you wish to perform an upgrade, Arm recommends that you uninstall the previous version before installing the new version of Arm Compiler 6.</p><p>Arm Compiler 6.16 is built with Microsoft Visual Studio 2017 and requires the Universal C Runtime in Windows to be installed. For more information, see <a href="https://support.microsoft.com/en-gb/help/2999226/update-for-universal-c-runtime-in-windows">https://support.microsoft.com/en-gb/help/2999226/update-for-universal-c-runtime-in-windows</a>.</p><a name="head_link_5"></a><h2>3. Uninstall</h2><p>On Linux, delete the Arm Compiler 6.16 installation directory.</p><p>On Windows, use <strong>Programs and Features</strong> in <strong>Control Panel</strong>, select ARM Compiler 6.16, and click the <strong>Uninstall </strong>button.</p><a name="head_link_4"></a><h2>4. Documentation</h2><p><a href="https://developer.arm.com/tools-and-software/embedded/arm-compiler/documentation/version-6-16">Documentation for the Arm Compiler 6.16 release series</a> is available on <a href="https://developer.arm.com/">https://developer.arm.com</a> and includes:</p><ul><li>User Guide.</li><li>Reference Guide.</li><li>Arm C and C++ Libraries and Floating-Point Support User Guide.</li><li>Migration and Compatibility Guide.</li><li>Errors and Warnings Reference Guide.</li></ul><a name="head_link_3"></a><h2>5. Feedback and Support</h2><p>Your feedback is important to us, and you are welcome to send us defect reports and suggestions for improvement on any aspect of the product. Defect fixes and enhancements will be considered for a future release according to the <a href="https://developer.arm.com/tools-and-software/embedded/arm-compiler/downloads/version-6">Arm Compiler maintenance policy</a>. For projects that have long-term maintenance or functional safety requirements, please consider using a <a href="https://developer.arm.com/tools-and-software/embedded/arm-compiler/safety">qualified version</a> of Arm Compiler.</p><p>Please contact your supplier or visit <a href="https://developer.arm.com/support">https://developer.arm.com/support</a> and open a case with feedback or support issues. Where appropriate, please provide the <code>--vsn</code> output from the tool, the complete content of any error message that the tools produce, and include any source code, other files, and command-lines necessary to reproduce the issue.</p><a name="head_link_2"></a><h2>6. Release History and Changes</h2><p>The following are the releases to date of the Arm Compiler 6.16 series:<p>
+</p><ul>
+<li>6.16 (Released March 2021)</li>
+</ul>
+<p></p>Below is a summary of the enhancements and defect fixes when compared to the previous release. The information may include technical inaccuracies or typographical errors, and may change in future editions of the release notes. Each itemized change is accompanied by a unique SDCOMP-&lt;n&gt; identifier. If you need to contact Arm about a specific issue within these release notes, please quote the appropriate identifier.</p><a name="head_link_1"></a><h3>Changes in Arm Compiler 6.16</h3><p>Changes are listed since the previous feature release, Arm Compiler 6.15.</p><p></p><h4>General changes in Arm Compiler 6.16</h4><p><p>
+</p><ul>
+<li><p>[SDCOMP-57434]  Support has been added for assembly and intrinsics for the optional Accelerator Support Extension in Armv8.7-A. To target Armv8.7-A with the Accelerator Support Extension, use the following <tt>armclang</tt> options:
+</p><ul>
+<li><tt>--target=aarch64-arm-none-eabi</tt> <tt>-march=armv8.7-a+ls64</tt>.</li>
+</ul>
+<p></p></li>
+<li><p>[SDCOMP-57433]  Early support has been added for assembly for the Branch Record Buffer Extensions (BRBE) for Future Architecture Technologies in the A architecture profile. To target BRBE, use the following <tt>armclang</tt> options:
+</p><ul>
+<li><tt>--target=aarch64-arm-none-eabi</tt> <tt>-march=armv8-a+brbe</tt>.</li>
+</ul>
+<p></p></li>
+<li><p>[SDCOMP-57389]  Support has been added for the optional Flag Manipulation Instructions for Armv8.2-A and later targets. To target Armv8.2-A or later with these instructions, use the following <tt>armclang</tt> options:
+</p><ul>
+<li><tt>--target=aarch64-arm-none-eabi</tt> <tt>-march=armv8.&lt;<em>ext</em>&gt;-a+flagm</tt> for an Armv8.&lt;<em>ext</em>&gt;-A target and AArch64 state, where &lt;<em>ext</em>&gt; is 2 or later.</li>
+</ul>
+<p>For more information about these options, refer to the <em>-march</em> and <em>-mcpu</em> sections of the <em>Reference Guide</em>.</p><p></p></li>
+<li><p>[SDCOMP-57387]  Support has been added for the optional Pointer Authentication Extension for Armv8.2-A and later targets. To target Armv8.2-A or later with this extension, use the following <tt>armclang</tt> options:
+</p><ul>
+<li><tt>--target=aarch64-arm-none-eabi</tt> <tt>-march=armv8.&lt;<em>ext</em>&gt;-a+pauth</tt> for an Armv8.&lt;<em>ext</em>&gt;-A target and AArch64 state, where &lt;<em>ext</em>&gt; is 2 or later.</li>
+</ul>
+<p>For more information about these options, refer to the <em>-march</em> and <em>-mcpu</em> sections of the <em>Reference Guide</em>.</p><p></p></li>
+<li><p>[SDCOMP-57209]  Support has been added for the Cortex-R52+ processor. To target a specific feature set configuration of Cortex-R52+, select from the following options:
+</p><div>
+<table><tbody>
+<tr>
+<th> D16 Single-Precision FPU </th>
+<th> Advanced SIMD Extension </th>
+<th> RAS Extension </th>
+<th> <tt>armclang</tt> </th>
+<th> <tt>armlink</tt> and <tt>fromelf</tt> </th>
+</tr>
+<tr>
+<td> Included </td>
+<td> Included </td>
+<td> Included </td>
+<td> <tt>-mcpu=cortex-r52plus+ras</tt> </td>
+<td> <tt>--cpu=Cortex-R52plus</tt> </td>
+</tr>
+<tr>
+<td> Included </td>
+<td> Included </td>
+<td> Not included </td>
+<td> <tt>-mcpu=cortex-r52plus</tt> </td>
+<td> <tt>--cpu=Cortex-R52plus</tt> </td>
+</tr>
+<tr>
+<td> Included </td>
+<td> Not included </td>
+<td> Included </td>
+<td> <tt>-mcpu=cortex-r52plus+ras</tt> <tt>-mfpu=fpv5-sp-d16</tt> </td>
+<td> <tt>--cpu=Cortex-R52plus.no_neon</tt> <tt>--fpu=FPv5-SP</tt> </td>
+</tr>
+<tr>
+<td> Included </td>
+<td> Not included </td>
+<td> Not included </td>
+<td> <tt>-mcpu=cortex-r52plus</tt> <tt>-mfpu=fpv5-sp-d16</tt> </td>
+<td> <tt>--cpu=Cortex-R52plus.no_neon</tt> <tt>--fpu=FPv5-SP</tt> </td>
+</tr>
+<tr>
+<td> Not included </td>
+<td> Not included </td>
+<td> Included </td>
+<td> <tt>-mcpu=cortex-r52plus+ras</tt> <tt>-mfpu=none</tt> </td>
+<td> <tt>--cpu=Cortex-R52plus.no_neon</tt> <tt>--fpu=softvfp</tt> </td>
+</tr>
+<tr>
+<td> Not included </td>
+<td> Not included </td>
+<td> Not included </td>
+<td> <tt>-mcpu=cortex-r52plus</tt> <tt>-mfpu=none</tt> </td>
+<td> <tt>--cpu=Cortex-R52plus.no_neon</tt> <tt>--fpu=softvfp</tt> </td>
+</tr>
+</tbody></table>
+</div>
+<p></p></li>
+<li><p>[SDCOMP-57085]  Support has been added for the Cortex-A78C processor. To target Cortex-A78C, select from the following <tt>armclang</tt> options:
+</p><ul>
+<li><tt>--target=aarch64-arm-none-eabi</tt> <tt>-mcpu=cortex-a78c</tt> for AArch64 state.</li>
+<li><tt>--target=arm-arm-none-eabi</tt> <tt>-mcpu=cortex-a78c</tt> for AArch32 state.</li>
+</ul>
+<p></p></li>
+<li><p>[SDCOMP-55932]  Assembly for the Armv8.7-A architecture is now fully supported. To target Armv8.7-A, select from the following <tt>armclang</tt> options:
+</p><ul>
+<li><tt>--target=aarch64-arm-none-eabi</tt> <tt>-march=armv8.7-a</tt> for AArch64 state.</li>
+<li><tt>--target=arm-arm-none-eabi</tt> <tt>-march=armv8.7-a</tt> for AArch32 state.</li>
+</ul>
+<p></p></li>
+</ul>
+<p></p></p><h4>Enhancements in Arm Compiler 6.16</h4><h5>Libraries and system headers</h5><p><p>
+</p><ul>
+<li><p>[SDCOMP-57309]  Previously, the Arm C++ library implementations of <tt>std::deque&lt;T&gt;</tt> and <tt>std:queue&lt;T&gt;</tt> allocated memory in blocks with a minimum size that is the largest of either 4096 bytes or 16 elements of <tt>T</tt> type. This behavior has changed. Memory is now allocated in blocks with a minimum size that is the largest of either 64 bytes or 8 elements of <tt>T</tt> type. This can reduce the amount of memory that is allocated.</p></li>
+<li><p>[SDCOMP-51880]  The <em>Application Binary Interface</em> (ABI) version used for the C++ library, libc++, is now version 2. C++ objects or libraries built using Arm Compiler 6.15 or earlier are not guaranteed to be compatible with C++ objects or libraries built using 6.16. To make sure your C++ objects and libraries are compatible with Arm Compiler 6.16, you must rebuild all your C++ code with 6.16.
+
+</p><p>For more information, see the <em>C++ library changes</em> section of the <em>Migration and Compatibility Guide</em>.</p><p></p></li>
+</ul>
+<p></p></p><h4>Defect fixes in Arm Compiler 6.16</h4><h5>Compiler and integrated assembler (armclang)</h5><p><p>
+</p><ul>
+<li><p>[SDCOMP-57379]  The compiler could generate incorrect code for an access to a <b><tt>volatile</tt></b> bit-field. This has been fixed.</p></li>
+<li><p>[SDCOMP-57168]  The compiler could incorrectly report the following fatal error:
+</p><ul>
+<li><tt>error</tt> <tt>in</tt> <tt>backend:</tt> <tt>Error</tt> <tt>while</tt> <tt>trying</tt> <tt>to</tt> <tt>spill</tt> <tt>LR</tt> <tt>from</tt> <tt>class</tt> <tt>GPR:</tt> <tt>Cannot</tt> <tt>scavenge</tt> <tt>register</tt> <tt>without</tt> <tt>an</tt> <tt>emergency</tt> <tt>spill</tt> <tt>slot</tt>.</li>
+</ul>
+<p>This has been fixed.</p><p></p></li>
+<li><p>[SDCOMP-57011]  When compiling for T32 state, the compiler could generate incorrect code when applying tail-call optimization to a function. This has been fixed.</p></li>
+<li><p>[SDCOMP-56288]  The compiler could either incorrectly fail to report an error for a function and a variable that are placed in the same section using <tt>__attribute__((section("<em>name</em>")))</tt>, or incorrectly report one of the following fatal errors:
+</p><ul>
+<li><tt>error</tt> <tt>in</tt> <tt>backend:</tt> <tt>'&lt;label&gt;'</tt> <tt>label</tt> <tt>emitted</tt> <tt>multiple</tt> <tt>times</tt> <tt>to</tt> <tt>assembly</tt> <tt>file</tt>.</li>
+<li><tt>error</tt> <tt>in</tt> <tt>backend:</tt> <tt>invalid</tt> <tt>symbol</tt> <tt>redefinition</tt>.</li>
+</ul>
+<p>This has been fixed. The compiler now reports one of the following errors:</p>
+<ul>
+<li><tt>'&lt;function&gt;'</tt> <tt>causes</tt> <tt>a</tt> <tt>section</tt> <tt>type</tt> <tt>conflict</tt> <tt>with</tt> <tt>'&lt;variable&gt;'</tt>.</li>
+<li><tt>'&lt;variable&gt;'</tt> <tt>causes</tt> <tt>a</tt> <tt>section</tt> <tt>type</tt> <tt>conflict</tt> <tt>with</tt> <tt>'&lt;function&gt;'</tt>.</li>
+</ul>
+<p></p></li>
+<li><p>[SDCOMP-56235]  The compiler could generate an object file containing an incorrect <tt>DW_AT_high_pc</tt> entry for the debug information of a function that is followed by a constant pool. This has been fixed.</p></li>
+<li><p>[SDCOMP-56105]  The compiler could incorrectly report the following error:
+</p><ul>
+<li><tt>out</tt> <tt>of</tt> <tt>range</tt> <tt>pc-relative</tt> <tt>fixup</tt> <tt>value</tt>.</li>
+</ul>
+<p>This has been fixed.</p><p></p></li>
+<li><p>[SDCOMP-55371]  The compiler could generate incorrect code for a call to a function that is defined in the <tt>stdio.h</tt> system header. This has been fixed.</p></li>
+<li><p>[SDCOMP-54072]  The <em>Procedure Call Standard for the Arm Architecture</em> ABI requires that a <b><tt>volatile</tt></b> bit-field container is loaded before being written to. The compiler incorrectly did not meet this requirement. This has been fixed. If your program relies on the old compiler behavior, compile with the [COMMUNITY] option <tt>-fno-aapcs-bitfield-load</tt>.
+
+</p><p>Previous releases of the <em>Procedure Call Standard for the Arm Architecture</em> ABI required that a <b><tt>volatile</tt></b> bit-field is accessed using an access width appropriate to the type of the bit-field container. For example, the ABI required the use of a 32-bit access width for a <b><tt>volatile</tt></b> bit-field with an <b><tt>int</tt></b> container. The ABI has changed. It no longer requires that a <b><tt>volatile</tt></b> bit-field is accessed using an access width appropriate to the type of the bit-field container if the bit-field container overlaps with a non-bit-field member or a zero length bit-field placed between two other bit-fields. The compiler complies with this changed requirement. If your program relies on the old compiler behavior, compile with the [COMMUNITY] option <tt>-fno-aapcs-bitfield-width</tt>.</p><p></p></li>
+<li><p>[SDCOMP-53818]  When compiling at <tt>-O0</tt> for an Armv6-M target or an Armv8-M target without the Main Extension, the compiler could generate incorrect code for an inline assembly statement that contains an input operand with the <tt>h</tt> constraint code. This has been fixed.</p></li>
+<li><p>[SDCOMP-51315]  When compiling for AArch64 state at any optimization level except <tt>-O0</tt>, the compiler could generate incorrect code. This has been fixed.</p></li>
+<li><p>[SDCOMP-50955]  When assigning a value to a bit-field, the compiler could incorrectly fail to convert a value that cannot be represented by the bit-field. This has been fixed. For potentially affected code, the compiler would correctly report the following warning:
+</p><ul>
+<li><tt>implicit</tt> <tt>truncation</tt> <tt>from</tt> <tt>'&lt;bit-field_container&gt;'</tt> <tt>to</tt> <tt>bit-field</tt> <tt>changes</tt> <tt>value</tt> <tt>from</tt> <tt>&lt;original_value&gt;</tt> <tt>to</tt> <tt>&lt;truncated_value&gt;</tt> <tt>[-Wbitfield-constant-conversion]</tt>.</li>
+</ul>
+<p></p></li>
+<li><p>[SDCOMP-50060]  The compiler incorrectly failed to report an error for a range-based <b><tt>for</tt></b> statement when its range declaration uses the <b><tt>thread_local</tt></b> storage class specifier. This has been fixed. The compiler now reports the following error:
+</p><ul>
+<li><tt>loop</tt> <tt>variable</tt> <tt>'&lt;variable&gt;'</tt> <tt>may</tt> <tt>not</tt> <tt>be</tt> <tt>declared</tt> <tt>'thread_local'</tt>.</li>
+</ul>
+<p></p></li>
+</ul>
+<p></p></p><h5>Linker (armlink)</h5><p><p>
+</p><ul>
+<li><p>[SDCOMP-57231]  The linker could incorrectly fail to align an execution region with a relative base address to a multiple of 4 bytes. This has been fixed.</p></li>
+<li><p>[SDCOMP-57018]  The linker could incorrectly fail to report an error for an execution region with an absolute base address that is not a multiple of 4 bytes. This has been fixed. The linker now reports the following error:
+</p><ul>
+<li><tt>L6244E:</tt> <tt>Exec</tt> <tt>region</tt> <tt>&lt;name&gt;</tt> <tt>address</tt> <tt>(&lt;address&gt;)</tt> <tt>not</tt> <tt>aligned</tt> <tt>on</tt> <tt>a</tt> <tt>&lt;alignment&gt;</tt> <tt>byte</tt> <tt>boundary.</tt></li>
+</ul>
+<p></p></li>
+<li><p>[SDCOMP-56263]  The linker could incorrectly fail to align an <tt>RW</tt> or <tt>ZI</tt> output section <tt>S</tt> to a 4-byte boundary when <tt>S</tt> is not the first output section within an execution region. This has been fixed.</p></li>
+<li><p>[SDCOMP-49941]  When linking with LTO enabled, and an input object contains a symbol name prefixed with <tt>$Sub$$</tt>, the linker could incorrectly report the following error:
+</p><ul>
+<li><tt>L6137E:</tt> <tt>Symbol</tt> <tt>$Sub$$&lt;symbol&gt;</tt> <tt>was</tt> <tt>not</tt> <tt>preserved</tt> <tt>by</tt> <tt>the</tt> <tt>LTO</tt> <tt>codegen</tt> <tt>but</tt> <tt>is</tt> <tt>needed</tt> <tt>by</tt> <tt>the</tt> <tt>image</tt>.</li>
+</ul>
+<p>This has been fixed.</p><p></p></li>
+<li><p>[SDCOMP-46595]  During dynamic linking, the linker could incorrectly fail to use the most constraining symbol visibility for a symbol that appears in different input files with different symbol visibilities. This has been fixed.</p></li>
+</ul>
+<p></p></p><h5>Libraries and system headers</h5><p><p>
+</p><ul>
+<li><p>[SDCOMP-57176]  The Arm C library implementations of certain functions that convert a string to a value of <b><tt>double</tt></b> or <b><tt>long</tt> <tt>double</tt></b> type could return an incorrect result. This has been fixed.</p></li>
+<li><p>[SDCOMP-51923]  The Arm C++ library incorrectly did not define <tt>std::pointer_safety</tt> as a scoped enum type. This has been fixed.</p></li>
+<li><p>[SDCOMP-50015]  The Arm implementation of the C++ standard library incorrectly defined the <tt>std::regex_constants::ECMAScript</tt> constant as zero. This has been fixed.</p></li>
+</ul>
+<p></p></p><h5>Fromelf</h5><p><p>
+</p><ul>
+<li><p>[SDCOMP-56902]  When processing an ELF format input file that contains DWARF 4 debug information with <tt>-g</tt>, the <tt>fromelf</tt> utility could incorrectly fail to generate output for a <tt>.debug_line</tt> section. This has been fixed.</p></li>
+<li><p>[SDCOMP-50938]  When processing an ELF format input file with <tt>--bincombined</tt>, the <tt>fromelf</tt> utility could generate an invalid binary file and incorrectly report one of the following:
+</p><ul>
+<li><tt>Internal</tt> <tt>fault:</tt> <tt>[0x6abbc1:&lt;ver&gt;]</tt>.</li>
+<li><tt>Internal</tt> <tt>fault:</tt> <tt>[0x7a1b3a:&lt;ver&gt;]</tt>.</li>
+</ul>
+<p>This has been fixed.</p><p></p></li>
+</ul>
+<p></p></p><h4>Known Issues in Arm Compiler 6.16</h4><p><p>
+</p><ul>
+<li><p>[SDCOMP-49441]  When linking with the C++ libraries supplied with Arm Compiler, <tt>--cpu=<em>name</em></tt> where <em>name</em> specifies an Armv8-R target, and an input object has been compiled in a C++ source language mode for an Armv8-R target, the linker can incorrectly report the following error:
+</p><ul>
+<li><tt>L6366E:</tt> <tt>&lt;object&gt;</tt> <tt>attributes</tt> <tt>are</tt> <tt>not</tt> <tt>compatible</tt> <tt>with</tt> <tt>the</tt> <tt>provided</tt> <tt>attributes</tt>.</li>
+</ul>
+<p>To avoid this issue, link without <tt>--cpu</tt>.</p><p></p></li>
+<li><p>[SDCOMP-54724]  When compiling with <tt>-ffixed-r6</tt>, the compiler can generate code that incorrectly fails to fulfil stack alignment requirements.</p></li>
+<li><p>[SDCOMP-50470]  The compiler incorrectly fails to report an error for a function call that involves invalid default argument promotion for the <tt>_Float16</tt> data type.</p></li>
+</ul>
+<p></p></p>
+</div></body> </html>
