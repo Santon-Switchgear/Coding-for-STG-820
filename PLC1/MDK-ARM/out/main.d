@@ -49,3 +49,4 @@
 .\out\main.o: ../CANopenNode-master/stack/CO_PDO.h
 .\out\main.o: ../CANopenNode-master/stack/CO_HBconsumer.h
 .\out\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\out\main.o: ../Inc/Object_Dictionary.h

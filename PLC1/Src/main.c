@@ -40,6 +40,7 @@
 #include "main_hal.h"
 #include "CANopen.h"
 #include "stdlib.h"
+#include "Object_Dictionary.h"
 
 typedef enum
 {
@@ -52,7 +53,7 @@ typedef enum
 } eSwTimer_t;
 
 /* Private variables ---------------------------------------------------------*/
-uint16_t Soft_Ver = 93;
+uint16_t Soft_Ver = 95;
 
 CanTxMsgTypeDef CAN_TX_Msg;
 CanRxMsgTypeDef CAN_RX_Msg;
@@ -508,7 +509,7 @@ float EN1_filter()//uint16_t n)
 	//HAL_Delay(100);
 		*/
 	
-	`
+	
 	
 	
 	float Enc_Val_raw = ReadAnalogInput(ADC_IN1);
@@ -1053,6 +1054,7 @@ int main(void)
 				bool S3 = SW3();//s3
 				bool Jumpers = jumper;
 				bool S4 = SW4();
+				char _0x0001[2]  = {CAN_controller_type_access,CAN_controller_type_config};
 				
 			//---------------------------------------------
 			//---------------------------------------------
