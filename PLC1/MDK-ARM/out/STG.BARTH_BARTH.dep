@@ -127,7 +127,7 @@ I (../CANopenNode-master/stack/CO_SYNC.h)(0x62E3A2E3)
 I (../CANopenNode-master/stack/CO_PDO.h)(0x62E3A2E3)
 I (../CANopenNode-master/stack/CO_HBconsumer.h)(0x62E3A2E3)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x602593F4)
-I (../Inc/Object_Dictionary.h)(0x62EA3F08)
+I (../Inc/Object_Dictionary.h)(0x62EBE10A)
 F (..\Src\main_hal.c)(0x62E3A2E4)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 -Otime --apcs=interwork --split_sections -I ../CANopenNode-master -I ../CANopenNode-master/example -I ../CANopenNode-master/stack -I ../Drivers/CMSIS/Device/ST/STM32F0xx/Include -I ../Drivers/CMSIS/Include -I ../Drivers/STM32F0xx_HAL_Driver/Inc -I ../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy -I ../Inc --C99-I.\RTE\_BARTH-IC:\Users\vlm\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\vlm\AppData\Local\Arm\Packs\Keil\STM32F0xx_DFP\2.1.1\Drivers\CMSIS\Device\ST\STM32F0xx\Include-D__UVISION_VERSION="537" -D_RTE_ -DSTM32F091xC -D_RTE_ -D__MICROLIB -DSTM32F091xC -DUSE_HAL_DRIVER-o .\out\main_hal.o --omf_browse .\out\main_hal.crf --depend .\out\main_hal.d)
 I (../Inc/main.h)(0x62E3A2E4)
 I (../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal.h)(0x62E3A2E4)

@@ -12,6 +12,18 @@
 #define CAN_controller_type_config 'S'  //SDO config not mapped for PDO
 #define CAN_controller_type_value 'MC' 
 
+#define CAN_consumer_heartbeat_time_index 0x1016 
+#define CAN_consumer_heartbeat_time_access 'R'
+#define CAN_consumer_heartbeat_time_config 'S'
+#define CAN_consumer_heartbeat_time_value 50 //minimal acceptance rate for recieving heartbeat messages
+
+#define CAN_PDO1_rx_comm_index 0x1400 //PDO1: receive communication parameter.RPDO (link)
+#define CAN_PDO1_rx_comm_access 'R+W'
+#define CAN_PDO1_rx_comm_config 'S'
+#define CAN_PDO1_rx_comm_value 0
+
+
+
 #define CAN_error_register_index 0x1001
 #define CAN_error_register_access 'R'
 #define CAN_error_register_config 'S'
@@ -56,10 +68,7 @@
 #define CAN_cmd_restore_parameters_value4 0
 #define CAN_cmd_restore_parameters_value5 0
 
-#define CAN_consumer_heartbeat_time_index 0x1016 
-#define CAN_consumer_heartbeat_time_access 'R'
-#define CAN_consumer_heartbeat_time_config 'S'
-#define CAN_consumer_heartbeat_time_value 50 //minimal acceptance rate for recieving heartbeat messages
+
 
 #define CAN_producer_heartbeat_time_index 0x1017 
 #define CAN_producer_heartbeat_time_access 'R'
@@ -76,10 +85,7 @@
 #define CAN_SDO1_server_config 'S'
 #define CAN_SDO1_server_value 0
 
-#define CAN_PDO1_rx_comm_index 0x1400 //PDO1: receive communication parameter.RPDO (link)
-#define CAN_PDO1_rx_comm_access 'R+W'
-#define CAN_PDO1_rx_comm_config 'S'
-#define CAN_PDO1_rx_comm_value 0
+
 
 #define CAN_PDO1_rx_map_index 0x1600 //PDO1: receive communication parameter. (link)
 #define CAN_PDO1_rx_map_access 'R+W'
