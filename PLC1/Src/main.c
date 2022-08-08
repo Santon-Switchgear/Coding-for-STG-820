@@ -40,7 +40,7 @@
 #include "main_hal.h"
 #include "CANopen.h"
 #include "stdlib.h"
-#include "Object_Dictionary.h"
+//#include "Object_Dictionary.h"//Self made Object dictionary (Not Standard CO dictionart See CO_OD.c/CO_OD.h
 
 typedef enum
 {
@@ -76,6 +76,50 @@ uint16_t MAXtemp;
 bool write_to_failstate_memory = 0;
 uint8_t Failstate_Counter = 0;
 uint8_t LifeSign = 0;
+uint8_t INITIALIZED1 = 0;
+bool INITIALIZED2 = 0;
+
+uint8_t STATE = 0;// 0 = (Re)Initialize Application; 
+									// 1 = (Re)Initialize Communication; 
+									// 2 = Pre-Operational(Idle); (SDO configuration full access, PDO disabled)
+									// 3 = Operational (SDO configuration partial access, PDO enabled)
+									// 4 = Stopped (PDO disabled , SDO configuration partial access)
+/* Device Operational State Chart
+========================================================
+--------------------------------------------------------
+									Initialize Application
+--------------------------------------------------------
+												||| (Auto)
+												vvv
+--------------------------------------------------------
+									Initialize Communication
+--------------------------------------------------------
+												|||  (Auto)
+												vvv
+--------------------------------------------------------
+									Pre-operational(SDO phase/config)
+--------------------------------------------------------
+												|||  (Trigger from 0x700+NodeID)   
+												vvv
+--------------------------------------------------------
+									Operational(PDO phase/Process Data)
+--------------------------------------------------------
+
+========================================================
+	Stopped State can To any state when triggered to do so
+========================================================
+--------------------------------------------------------
+									Stopped(PDO disabled+SDO partial)
+--------------------------------------------------------
+					  ^^^    								^^^
+						|||  (Trigger from    |||  (Trigger from
+						vvv   0x700+NodeID)   vvv   0x700+NodeID)
+--------------------------			------------------------
+	Pre-operational									Operational
+--------------------------			------------------------
+
+
+*/
 //uint8_t LifeSignCounter = 0;
 
 /* EEPROM declared Private variables ---------------------------------------------------------*/
@@ -175,6 +219,7 @@ void /* interrupt */ CO_CAN1InterruptHandler(void)
 
 void vReset ( void )
 {
+	
 
 }
 
@@ -327,7 +372,7 @@ void vCalibration ( void )
   */
 void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* hcan)
 {
-	// Implement CAN RX
+	// Implement CAN RX for CanOpen Protocol
 		if ( hcan->pRxMsg->IDE == CAN_ID_STD )
 	{
 		int temp=0;
@@ -467,6 +512,189 @@ int Initialize_outputs(){
 	
 
 	return(true);
+}
+
+
+int Initialize_Application(){
+ 
+	STATE = 0;
+  // System init	
+  MainInit();
+	
+	HAL_Delay(1000);
+	{
+		uint8_t u8Temp, u8I;
+		//uint16_t u16a = 0x5555;
+		EEPROM_Read(0x0000, &u8Temp, 1);
+
+	  if ( u8Temp == 0xFF )
+		{
+		  // first init of EEPROM
+			u8Temp = 0;
+			for ( u8I=0; u8I<20; u8I++ )
+			  EEPROM_Write((uint16_t)u8I, &u8Temp , 1);
+		}
+		EEPROM_Read(0x0010, &Calibrated, 1);
+		EEPROM_Read(0x0001, &FAILSTATEold, 1);
+		EEPROM_Read(0x0003, (uint8_t*)&MAXold, 2 );
+		EEPROM_Read(0x0005, (uint8_t*)&MINold, 2 );
+		
+		
+//		EEPROM_Write(0x0003, (uint8_t*)&u16a, 2 );
+//		EEPROM_Read(0x0003, (uint8_t*)&u16a, 2 );
+//		u16a = u16a;
+	}
+	
+	uint8_t test =0;
+	//EEPROM_Write(0x00010,&test , 1);
+	
+	//EEPROM definitions
+	//EEPROM_Read(0x0000, &u8RdSetup, 1); //Read value from EEPROM and store it in "u8Rd"
+	//EEPROM_Read(0x0001, &FAILSTATEold, 1);
+	u8WrSetup = u8RdSetup; //Set u8Wr to value of u8Rd after a reset, read and written value are identical
+	u8WrSetupOld = u8RdSetup; //Set u8WrOld = u8Rd, so that no value will be written until u8Wr changes
+	
+	// Start DAC output
+	HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
+	
+	//Initialize Digital and Analog OUTPUTS as HIGH or 5V/5000mV
+	bool STAT1 = Initialize_outputs();
+	
+	// LED On
+	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+	STATE = 1;
+	
+}
+int Initialize_Communication(){
+	//STATE = 1;
+		//Can open reset init()
+	//CO_delete(0/* CAN module address */);
+	CO_NMT_reset_cmd_t reset = CO_RESET_NOT;
+	// =======================================================================
+	// Set up baudrate
+	hcan.Instance->BTR &= 0xFFFFFC00;
+	hcan.Instance->BTR |= CAN_250K;
+	// =======================================================================
+	if(reset != CO_RESET_APP)
+		{
+			/* CANopen communication reset - initialize CANopen objects *******************/
+			CO_ReturnError_t err;
+			uint16_t timer1msPrevious;
+			
+			/* disable CAN and CAN interrupts */
+      CanDisable();
+		//	uint8_t NodeID1 = 56;//57; //Default set Node ID if Jumper open/FALSE
+			bool NodeID_condition = 0;
+			
+			vReadJumper();
+
+			if (jumper)//ReadAnalogInput(ADC_IN2))  //Condition for noe ID is HIGH / TRUE
+			{
+				uint8_t NodeID1 = 58;//59; //CPU1-CAB2
+				NodeID_condition = 1;
+				err = CO_init(0/* CAN module address */, NodeID1/* NodeID */, CAN_250K /* bit rate */);
+			}
+			else
+			{
+				uint8_t NodeID1 = 56;//57; //CPU1-CAB1
+				NodeID_condition = 0;
+				err = CO_init(0/* CAN module address */, NodeID1/* NodeID */, CAN_250K /* bit rate */);
+			}
+			if(1)//err != CO_ERROR_NO)
+			{
+				// LED flicker for error
+						if ( au16Timer[eTmr_LED] == 0 )
+						{
+							au16Timer[eTmr_LED] = 100;
+							HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+						}
+
+			
+						/* Configure Timer interrupt function for execution every 1 millisecond */
+
+						
+						/* Configure CAN transmit and receive interrupt */
+						CanEnable();
+
+
+						/* start CAN */
+						CO_CANsetNormalMode(CO->CANmodule[0]);
+
+						reset = CO_RESET_NOT;
+						timer1msPrevious = CO_timer1ms;
+						
+						// Enable timer
+						u8TmrCallbackEnabled = 1;
+						
+						
+						if(reset == CO_RESET_NOT)
+							{
+								hcan.pTxMsg->IDE = CAN_ID_STD;
+
+							if (jumper)//)
+								{
+									hcan.pTxMsg->StdId = 0x00003A;//0x00003B;   //Reciever adres: 0x003A (DMA-15)
+								}
+							else
+								{
+									hcan.pTxMsg->StdId = 0x000038;//  0x000039; //Reciever adres: 0x0038 (DMA-15)
+								} 
+							
+							hcan.pTxMsg->DLC = 8;
+							HAL_Delay(50);
+							while(INITIALIZED1 < 2)
+								{
+									CanEnable();
+									CO_CANsetNormalMode(CO->CANmodule[0]);
+
+									reset = CO_RESET_NOT;
+									timer1msPrevious = CO_timer1ms;
+									
+									// Enable timer
+									u8TmrCallbackEnabled = 1;
+									if (jumper)//700+NodeID OS Command   
+										{
+											uint16_t NodeID2 = 1851;
+											err = CO_init(0/* CAN module address */, NodeID2/* NodeID */, CAN_250K /* bit rate */);
+											hcan.pTxMsg->StdId = 0x73B;//0x00003B+0x700;   //Reciever adres: 0x003A (DMA-15)
+										}
+									else
+										{
+											uint16_t NodeID2 = 1848;
+											err = CO_init(0/* CAN module address */, NodeID2/* NodeID */, CAN_250K /* bit rate */);
+											hcan.pTxMsg->StdId = 0x738;//  0x000039+0x700; //Reciever adres: 0x0038 (DMA-15)
+										} 
+										hcan.pTxMsg->IDE = CAN_ID_STD;
+										hcan.pTxMsg->DLC = 1;
+										CanEnable();
+										if(INITIALIZED1==0){CanMSG.u8[0] = 0x00;}
+										if(INITIALIZED1==1){CanMSG.u8[0] = 0x7F;}
+										hcan.pTxMsg->Data[0] = CanMSG.u8[0];
+										HAL_CAN_Transmit(&hcan, 25);
+										INITIALIZED1 = INITIALIZED1+1;
+										//HAL_NVIC_SystemReset();
+										
+										//if ( au16Timer[eTmr_CanSend] == 0 )
+											//{
+												//HAL_CAN_Transmit(&hcan, 25); //XXXXXXXX you are sending the CAN message all the time - is this right???? Have you PCAN for monitoring????
+												//au16Timer[eTmr_CanSend] = 25;
+											//}
+									
+									
+								}
+							
+							}
+							
+			}
+			
+		}
+		
+	
+
+
+	
+	
+	//STATE = 1;
 }
 
 
@@ -862,65 +1090,14 @@ bool FACTORYRESET()
 }
  
 
-
-int main(void)
-{
-	// Do not change the system clock above 16 MHz! Higher speed can lead to the destruction of the module!
+int Operational(){
 	
-	
-	//Can open reset init()
-	CO_NMT_reset_cmd_t reset = CO_RESET_NOT; 
-	
-  // System init	
-  MainInit();
-	
-	HAL_Delay(1000);
-	{
-		uint8_t u8Temp, u8I;
-		//uint16_t u16a = 0x5555;
-		EEPROM_Read(0x0000, &u8Temp, 1);
-
-	  if ( u8Temp == 0xFF )
-		{
-		  // first init of EEPROM
-			u8Temp = 0;
-			for ( u8I=0; u8I<20; u8I++ )
-			  EEPROM_Write((uint16_t)u8I, &u8Temp , 1);
-		}
-		EEPROM_Read(0x0010, &Calibrated, 1);
-		EEPROM_Read(0x0001, &FAILSTATEold, 1);
-		EEPROM_Read(0x0003, (uint8_t*)&MAXold, 2 );
-		EEPROM_Read(0x0005, (uint8_t*)&MINold, 2 );
-		
-		
-//		EEPROM_Write(0x0003, (uint8_t*)&u16a, 2 );
-//		EEPROM_Read(0x0003, (uint8_t*)&u16a, 2 );
-//		u16a = u16a;
-	}
-	uint8_t Start= 0;
-	uint8_t test =0;
-	//EEPROM_Write(0x00010,&test , 1);
-	
-	//EEPROM definitions
-	//EEPROM_Read(0x0000, &u8RdSetup, 1); //Read value from EEPROM and store it in "u8Rd"
-	//EEPROM_Read(0x0001, &FAILSTATEold, 1);
-	u8WrSetup = u8RdSetup; //Set u8Wr to value of u8Rd after a reset, read and written value are identical
-	u8WrSetupOld = u8RdSetup; //Set u8WrOld = u8Rd, so that no value will be written until u8Wr changes
-	
-	// Start DAC output
-	HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
-	
-	//Initialize Digital and Analog OUTPUTS as HIGH or 5V/5000mV
+	CO_NMT_reset_cmd_t reset = CO_RESET_NOT;
 	bool STAT1 = Initialize_outputs();
+	uint8_t Start= 0;
 	
-	// LED On
-	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
 	
-	// =======================================================================
-	// Set up baudrate
-	hcan.Instance->BTR &= 0xFFFFFC00;
-	hcan.Instance->BTR |= CAN_250K;
-	// =======================================================================
+
 	
 	/* increase powerOnCounter variable each startup. Variable is stored in EEPROM. */
 	//OD_powerOnCounter++;
@@ -942,7 +1119,7 @@ int main(void)
 			
 			/* disable CAN and CAN interrupts */
       CanDisable();
-			uint8_t NodeID1 = 56;//57; //Default set Node ID if Jumper open/FALSE
+		//	uint8_t NodeID1 = 56;//57; //Default set Node ID if Jumper open/FALSE
 			bool NodeID_condition = 0;
 			
 			vReadJumper();
@@ -951,14 +1128,16 @@ int main(void)
 			{
 				uint8_t NodeID1 = 58;//59; //CPU1-CAB2
 				NodeID_condition = 1;
+				err = CO_init(0/* CAN module address */, NodeID1/* NodeID */, CAN_250K /* bit rate */);
 			}
 			else
 			{
 				uint8_t NodeID1 = 56;//57; //CPU1-CAB1
 				NodeID_condition = 0;
+				err = CO_init(0/* CAN module address */, NodeID1/* NodeID */, CAN_250K /* bit rate */);
 			}
 			/* initialize CANopen */
-			err = CO_init(0/* CAN module address */, NodeID1/* NodeID */, CAN_250K /* bit rate */);
+			
 			if(1)//err != CO_ERROR_NO)
 			{
 					while(1)
@@ -988,275 +1167,327 @@ int main(void)
 							HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 						}
 
-
-			/* Configure Timer interrupt function for execution every 1 millisecond */
-
 			
-			/* Configure CAN transmit and receive interrupt */
-      CanEnable();
+						/* Configure Timer interrupt function for execution every 1 millisecond */
+
+						
+						/* Configure CAN transmit and receive interrupt */
+						CanEnable();
 
 
-			/* start CAN */
-			CO_CANsetNormalMode(CO->CANmodule[0]);
+						/* start CAN */
+						CO_CANsetNormalMode(CO->CANmodule[0]);
 
-			reset = CO_RESET_NOT;
-			timer1msPrevious = CO_timer1ms;
-			
-			// Enable timer
-			u8TmrCallbackEnabled = 1;
+						reset = CO_RESET_NOT;
+						timer1msPrevious = CO_timer1ms;
+						
+						// Enable timer
+						u8TmrCallbackEnabled = 1;
 
-			while(reset == CO_RESET_NOT )//|| 1)
-			{
-				/* loop for normal program execution ******************************************/
-				uint16_t timer1msCopy, timer1msDiff;
+						while(reset == CO_RESET_NOT )//|| 1)
+						{
+							/* loop for normal program execution ******************************************/
+							uint16_t timer1msCopy, timer1msDiff;
 
-				timer1msCopy = CO_timer1ms;
-				timer1msDiff = timer1msCopy - timer1msPrevious;
-				timer1msPrevious = timer1msCopy;
+							timer1msCopy = CO_timer1ms;
+							timer1msDiff = timer1msCopy - timer1msPrevious;
+							timer1msPrevious = timer1msCopy;
 
-				vReadJumper();
-				
-				vCalibration();
-				
-				/* CANopen process */
-			//	reset = CO_process(CO, timer1msDiff, NULL);
+							vReadJumper();
+							
+							vCalibration();
+							
+							/* CANopen process */
+						//	reset = CO_process(CO, timer1msDiff, NULL);
 
-				/* Nonblocking application code may go here. */
-				// LED handling:
-				STAT1 = Initialize_outputs();
-				
-				// Send it by CAN
-				hcan.pTxMsg->IDE = CAN_ID_STD;
+							/* Nonblocking application code may go here. */
+							// LED handling:
+							STAT1 = Initialize_outputs();
+							
+							// Send it by CAN
+							hcan.pTxMsg->IDE = CAN_ID_STD;
 
-				if (jumper)//)
-					{
-						hcan.pTxMsg->StdId = 0x00003A;//0x00003B;   //Reciever adres: 0x003A (DMA-15)
-					}
-				else
-					{
-						hcan.pTxMsg->StdId = 0x000038;//  0x000039; //Reciever adres: 0x0038 (DMA-15)
-					} 
-				
-				hcan.pTxMsg->DLC = 8 ;					
-				
-				//Debugging code-----------------------------
-			//_____________________________________________
-				
-				float JumperState = HAL_GPIO_ReadPin(DIN6_Port,DIN6_HS_Pin);//ReadAnalogInput(ADC_IN2);
-				
-				float EncoderState = ReadAnalogInput(ADC_IN1);
-				float EncoderState21 =	EN1_filter();
-				Encoder_Set = EncoderState+0;
-				float EncoderState3 = (((EncoderState-300)/910)*1023);
-				float EncoderState4 = (((EncoderState-308)/962)*1023);
-				bool S1 = SW1();
-			  bool S2 = SW2();//ReadAnalogInput(ADC_IN3);//s2
-				bool S3 = SW3();//s3
-				bool Jumpers = jumper;
-				bool S4 = SW4();
-				char _0x0001[2]  = {CAN_controller_type_access,CAN_controller_type_config};
-				
-			//---------------------------------------------
-			//---------------------------------------------
-				//HAL_Delay(1);	
-				EEPROM_Read(0x0000, &u8WrSetup, 1); //Read value from EEPROM and store it in "u8Rd"
-				EEPROM_Read(0x0001, &FAILSTATEold, 1);
-				if (factory_reset)
-					{
-						FACTORYRESET();
-					}
-				
-				
-				
-				if ( u8WrSetup == 0) // Write data to EEPROM if not run ( One time run )
-				{
-					u8WrSetup = 1;//Set Setup to 0x01
-					FAILSTATEold = 0x00;//Set FAILSTATE to 0x00
-					EEPROM_Write(0x0000, &u8WrSetup, 1);//Set Setup to 0x01 and write to EEPROM
-					//EEPROM_Write(0x0001, &FAILSTATEold, 1);//Set FAILSTATE to 0x00 and write to EEPROM
-//					EEPROM_Write(0x0003, &MAX1, 1 );
-//					EEPROM_Write(0x0004, &MAX2, 1 );
-					EEPROM_Write(0x0003, (uint8_t*)&MAX, 2 );
-//					EEPROM_Write(0x0005, &MIN1, 1);
-//					EEPROM_Write(0x0006, &MIN2, 1);
-					EEPROM_Write(0x0005, (uint8_t*)&MIN, 2 );
-					//Calibration_protocol();
-					HAL_Delay(1000);
-					HAL_NVIC_SystemReset();
-				}
-				if ( FAILSTATE != FAILSTATEold) // Write data to EEPROM if changed
-				{
-					FAILSTATE = FAILSTATEold;
-					//EEPROM_Write(0x0001, &FAILSTATE, 1);
-					//HAL_Delay(50);
-				}
-				
-				float Enc_Val_filtered = EN1_filter();//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
-				
-				if (Calibration)
-				{
-					Enc_Val_filtered = ReadAnalogInput(ADC_IN1);
-				}
-				if (Start > 2)
-				{
-					Validaton();//Function to validate the microswitches and encoder validility and convert them to an array
-				}
-				
-				if (Start<3)
-				{
-					Start++;
-				}
-				if ( FAILSTATE != FAILSTATEold) // Write data to EEPROM if changed
-				{
-					FAILSTATEold = FAILSTATE;
-					write_to_failstate_memory = 1;
-
-				}
-				
-				long Enc_Val_filtered1 = (long)Enc_Val_filtered;
-
-				CanMSG.u32[0] = 0;
-				CanMSG.u32[1] = 0;
-				
-				CanMSG.u8[0] = *((uint8_t*)&(Enc_Val_filtered1)+0); //high byte (0x12)Enc_Val_filtered;
-				CanMSG.u8[1] = *((uint8_t*)&(Enc_Val_filtered1)+1); //low byte  (0x34)Enc_Val_filtered;
-				bool Enc_Data_Val 	= (bool)CAN_DATA[0];//129   10000001
-				bool TrBr_T 				= (bool)CAN_DATA[1];
-				bool TrBr_Zero			= (bool)CAN_DATA[2];//163   10100011
-				bool TrBr_B					= (bool)CAN_DATA[3];//197   11000101
-				bool TrBr_EMG				= (bool)CAN_DATA[4];// 1    00000001
-				bool MICRO1_TrBr_Ko	= (bool)CAN_DATA[5];
-				bool MICRO2_TrBr_Ko	= (bool)CAN_DATA[6];
-				bool MICRO3_TrBr_Ko	= (bool)CAN_DATA[7];//129   10000001
-				bool MICRO4_TrBr_Ko	= (bool)CAN_DATA[8];
-				bool TrBr_dataValid = (bool)CAN_DATA[9];	
-				
-				uint8_t dataset1 = Dataset(CAN_DATA[0],CAN_DATA[1],CAN_DATA[2],CAN_DATA[3],CAN_DATA[4],CAN_DATA[5],CAN_DATA[6],CAN_DATA[7]);
-				uint8_t dataset2 = Dataset(CAN_DATA[8],CAN_DATA[9],Calibration,0,0,0,0,0);
-				CanMSG.u8[2] = dataset1;
-				CanMSG.u8[3] = dataset2;
-				CanMSG.u8[4] = LifeSign;
-				CanMSG.u8[5] = 0;
-				CanMSG.u8[6] = *((uint8_t*)&(Soft_Ver)+0);
-				CanMSG.u8[7] = *((uint8_t*)&(Soft_Ver)+1);
-				// Transfer data
-				hcan.pTxMsg->Data[0] = CanMSG.u8[0];
-				hcan.pTxMsg->Data[1] = CanMSG.u8[1];
-				hcan.pTxMsg->Data[2] = CanMSG.u8[2];
-				hcan.pTxMsg->Data[3] = CanMSG.u8[3];
-				hcan.pTxMsg->Data[4] = CanMSG.u8[4];
-				hcan.pTxMsg->Data[5] = CanMSG.u8[5];
-				hcan.pTxMsg->Data[6] = CanMSG.u8[6];
-				hcan.pTxMsg->Data[7] = CanMSG.u8[7];
-				
-				
-//				for ( u8I=0; u8I<8; u8I++ )
-//					hcan.pTxMsg->Data[u8I] = CanMSG.u8[u8I];
-				// Send it by CAN
-				
-				if ( au16Timer[eTmr_CanSend] == 0 )
-				{
-				  HAL_CAN_Transmit(&hcan, 25); //XXXXXXXX you are sending the CAN message all the time - is this right???? Have you PCAN for monitoring????
-					au16Timer[eTmr_CanSend] = 25;
-				}
-				
-				{
-
-				
-					if ( au16Timer[eTmr_LED] == 0 )
-					{
-						au16Timer[eTmr_LED] = 1000;
-						HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-						EEPROM_Read(0x0000, &u8WrSetup, 1); //Read value from EEPROM and store it in "u8Rd"
-				    EEPROM_Read(0x0001, &FAILSTATEold, 1);
-						if (write_to_failstate_memory)
+							if (jumper)//)
+								{
+									hcan.pTxMsg->StdId = 0x00003A;//0x00003B;   //Reciever adres: 0x003A (DMA-15)
+								}
+							else
+								{
+									hcan.pTxMsg->StdId = 0x000038;//  0x000039; //Reciever adres: 0x0038 (DMA-15)
+								} 
+							
+							hcan.pTxMsg->DLC = 8 ;					
+							
+							//Debugging code-----------------------------
+						//_____________________________________________
+							
+							float JumperState = HAL_GPIO_ReadPin(DIN6_Port,DIN6_HS_Pin);//ReadAnalogInput(ADC_IN2);
+							
+							float EncoderState = ReadAnalogInput(ADC_IN1);
+							float EncoderState21 =	EN1_filter();
+							Encoder_Set = EncoderState+0;
+							float EncoderState3 = (((EncoderState-300)/910)*1023);
+							float EncoderState4 = (((EncoderState-308)/962)*1023);
+							bool S1 = SW1();
+							bool S2 = SW2();//ReadAnalogInput(ADC_IN3);//s2
+							bool S3 = SW3();//s3
+							bool Jumpers = jumper;
+							bool S4 = SW4();
+							//char _0x0001[2]  = {CAN_controller_type_access,CAN_controller_type_config};
+							
+						//---------------------------------------------
+						//---------------------------------------------
+							//HAL_Delay(1);	
+							EEPROM_Read(0x0000, &u8WrSetup, 1); //Read value from EEPROM and store it in "u8Rd"
+							EEPROM_Read(0x0001, &FAILSTATEold, 1);
+							if (factory_reset)
+								{
+									FACTORYRESET();
+								}
+							
+							
+							
+							if ( u8WrSetup == 0) // Write data to EEPROM if not run ( One time run )
 							{
-								Failstate_Counter++;
-								if (Failstate_Counter>3)
-									{
-										EEPROM_Write(0x0001, &FAILSTATE, 1);
-										HAL_Delay(50);
-										write_to_failstate_memory = 0;
-										Failstate_Counter = 0;
-									}
-								write_to_failstate_memory = 0;
+								u8WrSetup = 1;//Set Setup to 0x01
+								FAILSTATEold = 0x00;//Set FAILSTATE to 0x00
+								EEPROM_Write(0x0000, &u8WrSetup, 1);//Set Setup to 0x01 and write to EEPROM
+								//EEPROM_Write(0x0001, &FAILSTATEold, 1);//Set FAILSTATE to 0x00 and write to EEPROM
+			//					EEPROM_Write(0x0003, &MAX1, 1 );
+			//					EEPROM_Write(0x0004, &MAX2, 1 );
+								EEPROM_Write(0x0003, (uint8_t*)&MAX, 2 );
+			//					EEPROM_Write(0x0005, &MIN1, 1);
+			//					EEPROM_Write(0x0006, &MIN2, 1);
+								EEPROM_Write(0x0005, (uint8_t*)&MIN, 2 );
+								//Calibration_protocol();
+								HAL_Delay(1000);
+								HAL_NVIC_SystemReset();
 							}
-						Calibration_protocol();
-//						if(LifeSign!=0)
-//						{
-//							LifeSignCounter++;
-//							if(LifeSignCounter >3)
-//							{
-//								LifeSign = 0;
-//							}
-//						}
-						if (jumper && HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin) && Calibrationcounter0 == 2 && Calibrationcounter2 == 2 )
+							if ( FAILSTATE != FAILSTATEold) // Write data to EEPROM if changed
 							{
-								Calibrationcounter1--;
+								FAILSTATE = FAILSTATEold;
+								//EEPROM_Write(0x0001, &FAILSTATE, 1);
+								//HAL_Delay(50);
 							}
-						if (!(jumper) && (HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)) && Calibrationcounter1 == 0 && Calibrationcounter2 == 2)//JUMPER IN5 -> IN6
+							
+							float Enc_Val_filtered = EN1_filter();//Readout sensor value 0.21-4.08V translate to 0-1023 and filter noise for n variables
+							
+							if (Calibration)
 							{
-								Calibrationcounter0--;
+								Enc_Val_filtered = ReadAnalogInput(ADC_IN1);
 							}
-						if (jumper && Calibrationcounter0 == 0 && Calibrationcounter1 == 0 && Calibrationcounter3 == 2 )
+							if (Start > 2)
 							{
-								Calibrationcounter2--;							
+								Validaton();//Function to validate the microswitches and encoder validility and convert them to an array
 							}
-						if (!jumper && Calibrationcounter0 == 0 && Calibrationcounter1 == 0 && Calibrationcounter2 == 0)
+							
+							if (Start<3)
 							{
-								Calibrationcounter3--;
-								if (Calibrationcounter3 ==0)
-									{
-										//Calibration= true;
-										//Calibrated = false;
-										//CalibratedMIN = false;
-									//	CalibratedMAX = false;
-									}
+								Start++;
 							}
-						if (Calibrationcounter0 < -1 ||Calibrationcounter1 < -1 ||Calibrationcounter1 < -1 ||Calibrationcounter2 < -1)
+							if ( FAILSTATE != FAILSTATEold) // Write data to EEPROM if changed
 							{
-								Calibrationcounter0 = 2;
-								Calibrationcounter1 = 2;
-								Calibrationcounter2 = 2;
-								Calibrationcounter3 = 2;
-								
-							}
-						if (Calibrationcounter0 != 2 || Calibrationcounter1 != 2 || Calibrationcounter2 != 2 || Calibrationcounter3 != 2)
-							{
-								limitcounter++;
-								if (limitcounter >30)
-									{
-										Calibrationcounter0 = 2;
-										Calibrationcounter1 = 2;
-										Calibrationcounter2 = 2;
-										Calibrationcounter3 = 2;
-									}
-							}
-						Calibration_protocol();
-					}
-				}
-								/* CANopen process */
-				//reset = CO_process(CO, timer1msDiff, NULL);
-				// Watchdog refresh
-				#if ( PRODUCTION_VERSION == 1 )
-					HAL_IWDG_Refresh(&hiwdg);
-					#warning Production version, Debugging not possible! <<<<<<<<<<<<<<<<<<<<<
-				#else
-					#warning Debug version without watch dog! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-				#endif
+								FAILSTATEold = FAILSTATE;
+								write_to_failstate_memory = 1;
 
-				/* Process EEPROM */
-			}
-		}			
+							}
+							
+							long Enc_Val_filtered1 = (long)Enc_Val_filtered;
 
-    /* stop threads */
+							CanMSG.u32[0] = 0;
+							CanMSG.u32[1] = 0;
+							
+							CanMSG.u8[0] = *((uint8_t*)&(Enc_Val_filtered1)+0); //high byte (0x12)Enc_Val_filtered;
+							CanMSG.u8[1] = *((uint8_t*)&(Enc_Val_filtered1)+1); //low byte  (0x34)Enc_Val_filtered;
+							bool Enc_Data_Val 	= (bool)CAN_DATA[0];//129   10000001
+							bool TrBr_T 				= (bool)CAN_DATA[1];
+							bool TrBr_Zero			= (bool)CAN_DATA[2];//163   10100011
+							bool TrBr_B					= (bool)CAN_DATA[3];//197   11000101
+							bool TrBr_EMG				= (bool)CAN_DATA[4];// 1    00000001
+							bool MICRO1_TrBr_Ko	= (bool)CAN_DATA[5];
+							bool MICRO2_TrBr_Ko	= (bool)CAN_DATA[6];
+							bool MICRO3_TrBr_Ko	= (bool)CAN_DATA[7];//129   10000001
+							bool MICRO4_TrBr_Ko	= (bool)CAN_DATA[8];
+							bool TrBr_dataValid = (bool)CAN_DATA[9];	
+							
+							uint8_t dataset1 = Dataset(CAN_DATA[0],CAN_DATA[1],CAN_DATA[2],CAN_DATA[3],CAN_DATA[4],CAN_DATA[5],CAN_DATA[6],CAN_DATA[7]);
+							uint8_t dataset2 = Dataset(CAN_DATA[8],CAN_DATA[9],Calibration,0,0,0,0,0);
+							CanMSG.u8[2] = dataset1;
+							CanMSG.u8[3] = dataset2;
+							CanMSG.u8[4] = LifeSign;
+							CanMSG.u8[5] = 0;
+							CanMSG.u8[6] = *((uint8_t*)&(Soft_Ver)+0);
+							CanMSG.u8[7] = *((uint8_t*)&(Soft_Ver)+1);
+							// Transfer data
+							hcan.pTxMsg->Data[0] = CanMSG.u8[0];
+							hcan.pTxMsg->Data[1] = CanMSG.u8[1];
+							hcan.pTxMsg->Data[2] = CanMSG.u8[2];
+							hcan.pTxMsg->Data[3] = CanMSG.u8[3];
+							hcan.pTxMsg->Data[4] = CanMSG.u8[4];
+							hcan.pTxMsg->Data[5] = CanMSG.u8[5];
+							hcan.pTxMsg->Data[6] = CanMSG.u8[6];
+							hcan.pTxMsg->Data[7] = CanMSG.u8[7];
+							
+							
+			//				for ( u8I=0; u8I<8; u8I++ )
+			//					hcan.pTxMsg->Data[u8I] = CanMSG.u8[u8I];
+							// Send it by CAN
+							
+							if ( au16Timer[eTmr_CanSend] == 0 )
+							{
+								HAL_CAN_Transmit(&hcan, 25); //XXXXXXXX you are sending the CAN message all the time - is this right???? Have you PCAN for monitoring????
+								au16Timer[eTmr_CanSend] = 25;
+							}
+							
+							{
 
-    /* delete objects from memory */
-    CO_delete(0/* CAN module address */);
+							
+								if ( au16Timer[eTmr_LED] == 0 )
+								{
+									au16Timer[eTmr_LED] = 1000;
+									HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+									EEPROM_Read(0x0000, &u8WrSetup, 1); //Read value from EEPROM and store it in "u8Rd"
+									EEPROM_Read(0x0001, &FAILSTATEold, 1);
+									if (write_to_failstate_memory)
+										{
+											Failstate_Counter++;
+											if (Failstate_Counter>3)
+												{
+													EEPROM_Write(0x0001, &FAILSTATE, 1);
+													HAL_Delay(50);
+													write_to_failstate_memory = 0;
+													Failstate_Counter = 0;
+												}
+											write_to_failstate_memory = 0;
+										}
+									Calibration_protocol();
+			//						if(LifeSign!=0)
+			//						{
+			//							LifeSignCounter++;
+			//							if(LifeSignCounter >3)
+			//							{
+			//								LifeSign = 0;
+			//							}
+			//						}
+									if (jumper && HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin) && Calibrationcounter0 == 2 && Calibrationcounter2 == 2 )
+										{
+											Calibrationcounter1--;
+										}
+									if (!(jumper) && (HAL_GPIO_ReadPin(DIN4_Port,DIN4_Pin)) && Calibrationcounter1 == 0 && Calibrationcounter2 == 2)//JUMPER IN5 -> IN6
+										{
+											Calibrationcounter0--;
+										}
+									if (jumper && Calibrationcounter0 == 0 && Calibrationcounter1 == 0 && Calibrationcounter3 == 2 )
+										{
+											Calibrationcounter2--;							
+										}
+									if (!jumper && Calibrationcounter0 == 0 && Calibrationcounter1 == 0 && Calibrationcounter2 == 0)
+										{
+											Calibrationcounter3--;
+											if (Calibrationcounter3 ==0)
+												{
+													//Calibration= true;
+													//Calibrated = false;
+													//CalibratedMIN = false;
+												//	CalibratedMAX = false;
+												}
+										}
+									if (Calibrationcounter0 < -1 ||Calibrationcounter1 < -1 ||Calibrationcounter1 < -1 ||Calibrationcounter2 < -1)
+										{
+											Calibrationcounter0 = 2;
+											Calibrationcounter1 = 2;
+											Calibrationcounter2 = 2;
+											Calibrationcounter3 = 2;
+											
+										}
+									if (Calibrationcounter0 != 2 || Calibrationcounter1 != 2 || Calibrationcounter2 != 2 || Calibrationcounter3 != 2)
+										{
+											limitcounter++;
+											if (limitcounter >30)
+												{
+													Calibrationcounter0 = 2;
+													Calibrationcounter1 = 2;
+													Calibrationcounter2 = 2;
+													Calibrationcounter3 = 2;
+												}
+										}
+									Calibration_protocol();
+								}
+							}
+											/* CANopen process */
+							//reset = CO_process(CO, timer1msDiff, NULL);
+							// Watchdog refresh
+							#if ( PRODUCTION_VERSION == 1 )
+								HAL_IWDG_Refresh(&hiwdg);
+								#warning Production version, Debugging not possible! <<<<<<<<<<<<<<<<<<<<<
+							#else
+								#warning Debug version without watch dog! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+							#endif
+
+							/* Process EEPROM */
+						}
+					}			
+
+					/* stop threads */
+
+					/* delete objects from memory */
+					CO_delete(0/* CAN module address */);
  		
 		
-  }
+					}
+		}
+	}
 }
-}}
+
+
+int Pre_Operational(){
+		if (STATE == 0)
+		{
+			Initialize_Application();
+		}		
+		if (STATE == 1)
+		{
+			Initialize_Communication();
+		}
+		if (STATE == 2)
+		{
+			Pre_Operational();
+		}				
+		if (STATE == 3)
+		{
+			Operational();
+		}
+
+
+}
+
+
+
+int main(void)
+{
+	// Do not change the system clock above 16 MHz! Higher speed can lead to the destruction of the module!
+	
+	/* increase powerOnCounter variable each startup. Variable is stored in EEPROM. */
+	OD_powerOnCounter++;
+	
+	Initialize_Application();
+	while(INITIALIZED1 < 4 && STATE != 2)
+		{
+			Initialize_Communication();
+		}
+	
+	
+	while(1)
+		{
+			Pre_Operational();
+		}
+	
+
+	
+	
+	//Can open reset init()
+	
+	
+}
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

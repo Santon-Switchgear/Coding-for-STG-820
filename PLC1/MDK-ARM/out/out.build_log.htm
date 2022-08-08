@@ -28,50 +28,54 @@ Project File Date:  07/29/2022
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'BARTH'
 compiling main.c...
-../Inc/Object_Dictionary.h(168): warning:  #1-D: last line of file ends without a newline
-  #endif /* __OBJECT DICTIONARY */
-..\Src\main.c(404): warning:  #177-D: variable "IN3"  was declared but never referenced
+..\Src\main.c(449): warning:  #177-D: variable "IN3"  was declared but never referenced
   	float IN3;
-..\Src\main.c(642): warning:  #940-D: missing return statement at end of non-void function "Calibration_protocol" 
-  	 }
-..\Src\main.c(669): warning:  #940-D: missing return statement at end of non-void function "FACTORYRESET" 
+..\Src\main.c(567): warning:  #940-D: missing return statement at end of non-void function "Initialize_Application" 
   }
-..\Src\main.c(728): warning:  #177-D: variable "F3"  was declared but never referenced
-  					bool F3=1;
-..\Src\main.c(814): warning:  #940-D: missing return statement at end of non-void function "Validaton" 
-   }
-..\Src\main.c(952): warning:  #177-D: variable "NodeID1"  was declared but never referenced
-  				uint8_t NodeID1 = 58;//59; //CPU1-CAB2
-..\Src\main.c(957): warning:  #177-D: variable "NodeID1"  was declared but never referenced
-  				uint8_t NodeID1 = 56;//57; //CPU1-CAB1
-..\Src\main.c(971): warning:  #177-D: variable "NodeID1"  was declared but never referenced
-  							int NodeID1 = 58;//59;//CPU2_CAB2//58; //CPU1-CAB2
-..\Src\main.c(976): warning:  #177-D: variable "NodeID1"  was declared but never referenced
-  							int NodeID1 = 56;//57;//CPU2_CAB1////56; //CPU1-CAB1
-..\Src\main.c(1245): warning:  #1215-D: #warning directive: Debug version without watch dog! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-  					#warning Debug version without watch dog! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-..\Src\main.c(1011): warning:  #550-D: variable "timer1msDiff"  was set but never used
-  				uint16_t timer1msCopy, timer1msDiff;
-..\Src\main.c(1055): warning:  #177-D: variable "Jumpers"  was declared but never referenced
-  				bool Jumpers = jumper;
-..\Src\main.c(1057): warning:  #177-D: variable "_0x0001"  was declared but never referenced
-  				char _0x0001[2]  = {CAN_controller_type_access,CAN_controller_type_config};
-..\Src\main.c(968): warning:  #177-D: variable "NodeID"  was declared but never referenced
-  						bool NodeID = 0;
-..\Src\main.c(1255): warning:  #111-D: statement is unreachable
-      CO_delete(0/* CAN module address */);
-..\Src\main.c(940): warning:  #550-D: variable "err"  was set but never used
-  			CO_ReturnError_t err;
-..\Src\main.c(946): warning:  #550-D: variable "NodeID_condition"  was set but never used
-  			bool NodeID_condition = 0;
-..\Src\main.c(901): warning:  #177-D: variable "test"  was declared but never referenced
+..\Src\main.c(548): warning:  #177-D: variable "test"  was declared but never referenced
   	uint8_t test =0;
-..\Src\main.c(1262): warning:  #1-D: last line of file ends without a newline
+..\Src\main.c(581): warning:  #550-D: variable "err"  was set but never used
+  			CO_ReturnError_t err;
+..\Src\main.c(582): warning:  #550-D: variable "timer1msPrevious"  was set but never used
+  			uint16_t timer1msPrevious;
+..\Src\main.c(587): warning:  #550-D: variable "NodeID_condition"  was set but never used
+  			bool NodeID_condition = 0;
+..\Src\main.c(698): warning:  #940-D: missing return statement at end of non-void function "Initialize_Communication" 
+  }
+..\Src\main.c(870): warning:  #940-D: missing return statement at end of non-void function "Calibration_protocol" 
+  	 }
+..\Src\main.c(897): warning:  #940-D: missing return statement at end of non-void function "FACTORYRESET" 
+  }
+..\Src\main.c(956): warning:  #177-D: variable "F3"  was declared but never referenced
+  					bool F3=1;
+..\Src\main.c(1042): warning:  #940-D: missing return statement at end of non-void function "Validaton" 
+   }
+..\Src\main.c(1150): warning:  #177-D: variable "NodeID1"  was declared but never referenced
+  							int NodeID1 = 58;//59;//CPU2_CAB2//58; //CPU1-CAB2
+..\Src\main.c(1155): warning:  #177-D: variable "NodeID1"  was declared but never referenced
+  							int NodeID1 = 56;//57;//CPU2_CAB1////56; //CPU1-CAB1
+..\Src\main.c(1424): warning:  #1215-D: #warning directive: Debug version without watch dog! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+  								#warning Debug version without watch dog! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+..\Src\main.c(1190): warning:  #550-D: variable "timer1msDiff"  was set but never used
+  							uint16_t timer1msCopy, timer1msDiff;
+..\Src\main.c(1234): warning:  #177-D: variable "Jumpers"  was declared but never referenced
+  							bool Jumpers = jumper;
+..\Src\main.c(1147): warning:  #177-D: variable "NodeID"  was declared but never referenced
+  						bool NodeID = 0;
+..\Src\main.c(1434): warning:  #111-D: statement is unreachable
+  					CO_delete(0/* CAN module address */);
+..\Src\main.c(1117): warning:  #550-D: variable "err"  was set but never used
+  			CO_ReturnError_t err;
+..\Src\main.c(1123): warning:  #550-D: variable "NodeID_condition"  was set but never used
+  			bool NodeID_condition = 0;
+..\Src\main.c(1462): warning:  #940-D: missing return statement at end of non-void function "Pre_Operational" 
+  }
+..\Src\main.c(1493): warning:  #1-D: last line of file ends without a newline
   /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-..\Src\main.c: 20 warnings, 0 errors
+..\Src\main.c: 22 warnings, 0 errors
 linking...
-Program Size: Code=36132 RO-data=1944 RW-data=1132 ZI-data=9972  
-".\out\out.axf" - 0 Error(s), 20 Warning(s).
+Program Size: Code=36664 RO-data=1944 RW-data=1132 ZI-data=9972  
+".\out\out.axf" - 0 Error(s), 22 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -94,7 +98,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.6.0
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>
