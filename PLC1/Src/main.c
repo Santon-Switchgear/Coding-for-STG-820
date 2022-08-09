@@ -147,7 +147,7 @@ bool jumperold;
 //DEBUG variables
 float MAXTEST;
 float MINTEST;
-
+int CanObject = 0;
 /* CANOPEN declared Private variables ---------------------------------------------------------*/
 typedef	union
 {
@@ -1471,9 +1471,56 @@ int main(void)
 	OD_powerOnCounter++;
 	
 	Initialize_Application();
-	while(INITIALIZED1 < 4 && STATE != 2)
+	while(STATE < 2 && STATE != 2)
 		{
 			Initialize_Communication();
+			//CanObject = OD_H1008_MANUF_DEV_NAME;
+			//CanObject = CO_OD_getAttribute(0,0,0);
+			
+			
+			//CO_TPDOsend(
+			//
+			/*CO_NMT_process((
+        CO_NMT_t               *NMT,
+        uint16_t                timeDifference_ms,
+        uint16_t                HBtime,
+        uint32_t                NMTstartup,
+        uint8_t                 errorRegister,
+        const uint8_t           errorBehavior[],
+        uint16_t               *timerNext_ms)*/
+			//
+			/*CO_NMT_init((
+        CO_NMT_t               *NMT,
+        CO_EMpr_t              *emPr,
+        uint8_t                 nodeId,
+        uint16_t                firstHBTime,
+        CO_CANmodule_t         *NMT_CANdev,
+        uint16_t                NMT_rxIdx,
+        uint16_t                CANidRxNMT,
+        CO_CANmodule_t         *HB_CANdev,
+        uint16_t                HB_txIdx,
+        uint16_t                CANidTxHB)*/
+			//			
+			/*CO_process_TPDO((
+        CO_t                   *CO,
+        bool_t                  syncWas,
+        uint32_t                timeDifference_us)*/
+			//
+			/*CO_SDO_init((
+        CO_SDO_t               *SDO,
+        uint32_t                COB_IDClientToServer,
+        uint32_t                COB_IDServerToClient,
+        uint16_t                ObjDictIndex_SDOServerParameter,
+        CO_SDO_t               *parentSDO,
+        const CO_OD_entry_t     OD[],
+        uint16_t                ODSize,
+        CO_OD_extension_t      *ODExtensions,
+        uint8_t                 nodeId,
+        CO_CANmodule_t         *CANdevRx,
+        uint16_t                CANdevRxIdx,
+        CO_CANmodule_t         *CANdevTx,
+        uint16_t                CANdevTxIdx);*/
+				//
 		}
 	
 	
