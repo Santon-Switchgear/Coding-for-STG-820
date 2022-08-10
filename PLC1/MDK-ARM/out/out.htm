@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\out\out.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\out\out.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Tue Aug 09 14:23:29 2022
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Wed Aug 10 16:43:04 2022
 <BR><P>
 <H3>Maximum Stack Usage =        428 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -455,8 +455,7 @@ Global Symbols
 <P><STRONG><a name="[67]"></a>CO_OD_find</STRONG> (Thumb, 96 bytes, Stack size 20 bytes, co_sdo.o(i.CO_OD_find))
 <BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = CO_OD_find
 </UL>
-<BR>[Called By]<UL><LI><a href="#[25]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
-<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_PDOfindMap
+<BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_PDOfindMap
 <LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_OD_configure
 </UL>
 
@@ -1404,8 +1403,8 @@ Global Symbols
 <LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Pre_Operational
 </UL>
 
-<P><STRONG><a name="[f6]"></a>Initialize_Communication</STRONG> (Thumb, 374 bytes, Stack size 24 bytes, main.o(i.Initialize_Communication))
-<BR><BR>[Stack]<UL><LI>Max Depth = 292<LI>Call Chain = Initialize_Communication &rArr; CO_init &rArr; CO_TPDO_init &rArr; CO_TPDOconfigMap &rArr; CO_PDOfindMap &rArr; CO_OD_find
+<P><STRONG><a name="[f6]"></a>Initialize_Communication</STRONG> (Thumb, 380 bytes, Stack size 32 bytes, main.o(i.Initialize_Communication))
+<BR><BR>[Stack]<UL><LI>Max Depth = 300<LI>Call Chain = Initialize_Communication &rArr; CO_init &rArr; CO_TPDO_init &rArr; CO_TPDOconfigMap &rArr; CO_PDOfindMap &rArr; CO_OD_find
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_TogglePin
 <LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Delay
@@ -1743,11 +1742,10 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_delete
 </UL>
 
-<P><STRONG><a name="[25]"></a>main</STRONG> (Thumb, 56 bytes, Stack size 0 bytes, main.o(i.main))
+<P><STRONG><a name="[25]"></a>main</STRONG> (Thumb, 44 bytes, Stack size 0 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 428<LI>Call Chain = main &rArr; Pre_Operational &rArr;  Pre_Operational (Cycle)
 </UL>
-<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_OD_find
-<LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Pre_Operational
+<BR>[Calls]<UL><LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Pre_Operational
 <LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Initialize_Communication
 <LI><a href="#[f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Initialize_Application
 </UL>
@@ -2265,10 +2263,10 @@ Local Symbols
 <P><STRONG><a name="[64]"></a>CO_PDOfindMap</STRONG> (Thumb, 336 bytes, Stack size 48 bytes, co_pdo.o(i.CO_PDOfindMap))
 <BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = CO_PDOfindMap &rArr; CO_OD_find
 </UL>
-<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_OD_find
-<LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_OD_getLength
+<BR>[Calls]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_OD_getLength
 <LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_OD_getDataPointer
 <LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_OD_getAttribute
+<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_OD_find
 </UL>
 <BR>[Called By]<UL><LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_TPDOconfigMap
 <LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CO_RPDOconfigMap

@@ -147,7 +147,7 @@ bool jumperold;
 //DEBUG variables
 float MAXTEST;
 float MINTEST;
-int CanObject = 0;
+VISIBLE_STRING CanObject[30] = {0};
 /* CANOPEN declared Private variables ---------------------------------------------------------*/
 typedef	union
 {
@@ -191,7 +191,7 @@ static void tmrTask_thread(void)
 			syncWas = CO_process_SYNC_RPDO(CO, TMR_TASK_INTERVAL);
 
 			/* Further I/O or nonblocking application code may go here. */
-
+			
 			/* Write outputs */
 			CO_process_TPDO(CO, syncWas, TMR_TASK_INTERVAL);
 
@@ -567,6 +567,14 @@ int Initialize_Application(){
 }
 int Initialize_Communication(){
 	//STATE = 1;
+	struct sCO_OD_ROM ObjectDic;
+	VISIBLE_STRING CanObject = {'C'} ;
+	//ObjectDic.manufacturerDeviceName;
+
+	//int typedef Object = ObjectDic.manufacturerDeviceName;
+	
+	
+
 		//Can open reset init()
 	//CO_delete(0/* CAN module address */);
 	CO_NMT_reset_cmd_t reset = CO_RESET_NOT;
@@ -630,6 +638,7 @@ int Initialize_Communication(){
 						if(reset == CO_RESET_NOT)
 							{
 								hcan.pTxMsg->IDE = CAN_ID_STD;
+								
 
 							if (jumper)//)
 								{
@@ -1457,8 +1466,9 @@ int Pre_Operational(){
 		{
 			Operational();
 		}
+		
 
-
+		
 }
 
 
@@ -1471,10 +1481,10 @@ int main(void)
 	OD_powerOnCounter++;
 	
 	Initialize_Application();
-	while(STATE < 2 && STATE != 2)
+	while(STATE < 2 && STATE != 2)//Initialization loop
 		{
 			Initialize_Communication();
-			//CanObject = OD_H1008_MANUF_DEV_NAME;
+			//= OD_H1008_MANUF_DEV_NAME;
 			//CanObject = CO_OD_getAttribute(0,0,0);
 			
 			
@@ -1524,9 +1534,13 @@ int main(void)
 		}
 	
 	
-	while(1)
+	while(1)//Pre-Operation infinite loop
 		{
 			Pre_Operational();
+			//CO_OD_configure(&CO,0x1000,NULL,NULL,NULL,NULL);
+			//CanObject = CO_OD_FIRST_LAST_WORD;
+			//CanObject = CO_OD_ROM;
+			
 		}
 	
 
