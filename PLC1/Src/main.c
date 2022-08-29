@@ -378,7 +378,7 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* hcan)
 		int temp=0;
 		switch ( hcan->pRxMsg->StdId )
 		{
-			case 0x3A:
+			case 0x3A://PDO Lifesign channel
 				// Test received data an set LifeSign to TPDO1 = RPDO1 +1
 				LifeSign = (hcan->pRxMsg->Data[0])+1;
 				temp = (hcan->pRxMsg->Data[0]);
@@ -387,7 +387,7 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* hcan)
 					LifeSign = 0;
 				}
 				//LifeSignCounter = 0;
-			case 0x38:
+			case 0x38://PDO Lifesign channel
 				// Test received data an set LifeSign to TPDO1 = RPDO1 +1 
 				LifeSign = (hcan->pRxMsg->Data[0])+1;
 				temp = (hcan->pRxMsg->Data[0]);
@@ -397,6 +397,34 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* hcan)
 				}
 				//LifeSignCounter = 1;
 				//break;
+			case 0x73A://OS Command Channel
+				
+				switch (hcan->pRxMsg->Data[0])
+					{
+					case 0x05:
+						STATE = 3;//700+NodeID = Enter Operational (START PDO, Partial SDO)
+					case 0x04:
+						STATE = 4;//700+NodeID = Enter Stopped State (No PDO or SDO communication only OS commands)
+					case 0x7F:
+						STATE = 2;//700+NodeID = Enter Pre-Operational State (SDO communication enabled ,PDO Disabled)
+					}
+			case 0x738://OS Command Channel
+				
+				switch (hcan->pRxMsg->Data[0])
+					{
+					case 0x05:
+						STATE = 3;//700+NodeID = Enter Operational (START PDO, Partial SDO)
+					case 0x04:
+						STATE = 4;//700+NodeID = Enter Stopped State (No PDO or SDO communication only OS commands)
+					case 0x7F:
+						STATE = 2;//700+NodeID = Enter Pre-Operational State (SDO communication enabled ,PDO Disabled)
+					}
+			case 0x5BA://SDO commmand Channel
+				//Read+Write SDO Object [CS(0),Index(1-2),sub Index(3),Data(4-7)]
+				STATE=2;
+			
+			case 0x5B8://SDO commmand Channel
+				STATE=2;
 		}
 	}
   else
@@ -663,9 +691,9 @@ int Initialize_Communication(){
 									u8TmrCallbackEnabled = 1;
 									if (jumper)//700+NodeID OS Command   
 										{
-											uint16_t NodeID2 = 1851;
+											uint16_t NodeID2 = 1850;
 											err = CO_init(0/* CAN module address */, NodeID2/* NodeID */, CAN_250K /* bit rate */);
-											hcan.pTxMsg->StdId = 0x73B;//0x00003B+0x700;   //Reciever adres: 0x003A (DMA-15)
+											hcan.pTxMsg->StdId = 0x73A;//0x00003B+0x700;   //Reciever adres: 0x003A (DMA-15)
 										}
 									else
 										{
@@ -1135,13 +1163,13 @@ int Operational(){
 
 			if (jumper)//ReadAnalogInput(ADC_IN2))  //Condition for noe ID is HIGH / TRUE
 			{
-				uint8_t NodeID1 = 58;//59; //CPU1-CAB2
+				uint16_t NodeID1 = 422;//58;//59; //CPU1-CAB2
 				NodeID_condition = 1;
 				err = CO_init(0/* CAN module address */, NodeID1/* NodeID */, CAN_250K /* bit rate */);
 			}
 			else
 			{
-				uint8_t NodeID1 = 56;//57; //CPU1-CAB1
+				uint16_t NodeID1 = 440;//56;//57; //CPU1-CAB1
 				NodeID_condition = 0;
 				err = CO_init(0/* CAN module address */, NodeID1/* NodeID */, CAN_250K /* bit rate */);
 			}
@@ -1156,12 +1184,12 @@ int Operational(){
 						bool NodeID = 0;
 						if (jumper)//ReadAnalogInput(ADC_IN2))  //Condition is TRUE if pin 13 of register c is HIGH / TRUE
 						{
-							int NodeID1 = 58;//59;//CPU2_CAB2//58; //CPU1-CAB2
+							int NodeID1 = 422;//58;//59;//CPU2_CAB2//58; //CPU1-CAB2
 							NodeID_condition = 1;
 						}
 						else
 						{
-							int NodeID1 = 56;//57;//CPU2_CAB1////56; //CPU1-CAB1
+							int NodeID1 = 440;// 56;//57;//CPU2_CAB1////56; //CPU1-CAB1
 							NodeID_condition = 0;
 						}
 						
@@ -1218,11 +1246,11 @@ int Operational(){
 
 							if (jumper)//)
 								{
-									hcan.pTxMsg->StdId = 0x00003A;//0x00003B;   //Reciever adres: 0x003A (DMA-15)
+									hcan.pTxMsg->StdId = 0x0001BA;//0x180+0x00003A;//0x00003B;   //Reciever adres: 0x003A (DMA-15)
 								}
 							else
 								{
-									hcan.pTxMsg->StdId = 0x000038;//  0x000039; //Reciever adres: 0x0038 (DMA-15)
+									hcan.pTxMsg->StdId = 0x0001B8;//0x180+0x000038;//  0x000039; //Reciever adres: 0x0038 (DMA-15)
 								} 
 							
 							hcan.pTxMsg->DLC = 8 ;					
