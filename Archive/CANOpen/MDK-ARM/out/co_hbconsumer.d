@@ -8,14 +8,14 @@
 .\out\co_hbconsumer.o: ../Drivers/CMSIS/Device/ST/STM32F0xx/Include/stm32f0xx.h
 .\out\co_hbconsumer.o: ../Drivers/CMSIS/Device/ST/STM32F0xx/Include/stm32f091xc.h
 .\out\co_hbconsumer.o: ../Drivers/CMSIS/Include/core_cm0.h
-.\out\co_hbconsumer.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\out\co_hbconsumer.o: C:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
 .\out\co_hbconsumer.o: ../Drivers/CMSIS/Include/core_cmInstr.h
 .\out\co_hbconsumer.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
 .\out\co_hbconsumer.o: ../Drivers/CMSIS/Include/core_cmFunc.h
 .\out\co_hbconsumer.o: ../Drivers/CMSIS/Device/ST/STM32F0xx/Include/system_stm32f0xx.h
 .\out\co_hbconsumer.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal.h
 .\out\co_hbconsumer.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-.\out\co_hbconsumer.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\out\co_hbconsumer.o: C:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
 .\out\co_hbconsumer.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_rcc_ex.h
 .\out\co_hbconsumer.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_gpio.h
 .\out\co_hbconsumer.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_gpio_ex.h
@@ -36,7 +36,7 @@
 .\out\co_hbconsumer.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_tim_ex.h
 .\out\co_hbconsumer.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart.h
 .\out\co_hbconsumer.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart_ex.h
-.\out\co_hbconsumer.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\out\co_hbconsumer.o: C:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdbool.h
 .\out\co_hbconsumer.o: ..\CANopenNode-master\stack\CO_SDO.h
 .\out\co_hbconsumer.o: ..\CANopenNode-master\stack\CO_Emergency.h
 .\out\co_hbconsumer.o: ..\CANopenNode-master\stack\CO_NMT_Heartbeat.h

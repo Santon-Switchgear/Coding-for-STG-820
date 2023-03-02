@@ -7,14 +7,14 @@ stg-826\stm32f0xx_hal_dac_ex.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_ha
 stg-826\stm32f0xx_hal_dac_ex.o: ../Drivers/CMSIS/Device/ST/STM32F0xx/Include/stm32f0xx.h
 stg-826\stm32f0xx_hal_dac_ex.o: ../Drivers/CMSIS/Device/ST/STM32F0xx/Include/stm32f091xc.h
 stg-826\stm32f0xx_hal_dac_ex.o: ../Drivers/CMSIS/Include/core_cm0.h
-stg-826\stm32f0xx_hal_dac_ex.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+stg-826\stm32f0xx_hal_dac_ex.o: C:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
 stg-826\stm32f0xx_hal_dac_ex.o: ../Drivers/CMSIS/Include/core_cmInstr.h
 stg-826\stm32f0xx_hal_dac_ex.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
 stg-826\stm32f0xx_hal_dac_ex.o: ../Drivers/CMSIS/Include/core_cmFunc.h
 stg-826\stm32f0xx_hal_dac_ex.o: ../Drivers/CMSIS/Device/ST/STM32F0xx/Include/system_stm32f0xx.h
 stg-826\stm32f0xx_hal_dac_ex.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal.h
 stg-826\stm32f0xx_hal_dac_ex.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-stg-826\stm32f0xx_hal_dac_ex.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+stg-826\stm32f0xx_hal_dac_ex.o: C:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
 stg-826\stm32f0xx_hal_dac_ex.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_rcc_ex.h
 stg-826\stm32f0xx_hal_dac_ex.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_gpio.h
 stg-826\stm32f0xx_hal_dac_ex.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_gpio_ex.h

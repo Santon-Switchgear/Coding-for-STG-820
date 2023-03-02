@@ -3,7 +3,7 @@
  * Auto generated Run-Time-Environment Configuration File
  *      *** Do not modify ! ***
  *
- * Project: 'STG.BARTH' 
+ * Project: 'STG' 
  * Target:  'BARTH' 
  */
 

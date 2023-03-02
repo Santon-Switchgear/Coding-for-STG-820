@@ -3,42 +3,206 @@
 <pre>
 <h1>µVision Build Log</h1>
 <h2>Tool Versions:</h2>
-IDE-Version: µVision V5.37.0.0
+IDE-Version: µVision V5.38.0.0
 Copyright (C) 2022 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: Zander van der Steege, Santon Holland BV, LIC=AC93N-YH81X-2C51T-4F6AH-3FT8E-5DIH8
+License Information: Zander van der Steege, Santon Holland BV, LIC=PYKYW-QW24P-A4N9K-C4HT7-21WVS-ZDPY5
  
 Tool Versions:
-Toolchain:       MDK-ARM Cortex-M0/M0+ for ST  Version: 5.37.0.0
-Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
+Toolchain:       MDK-ARM Cortex-M0/M0+ for ST  Version: 5.35.0.2
+Toolchain Path:  C:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin
 C Compiler:      Armcc.exe V5.06 update 7 (build 960)
 Assembler:       Armasm.exe V5.06 update 7 (build 960)
 Linker/Locator:  ArmLink.exe V5.06 update 7 (build 960)
 Library Manager: ArmAr.exe V5.06 update 7 (build 960)
 Hex Converter:   FromElf.exe V5.06 update 7 (build 960)
-CPU DLL:         SARMCM3.DLL V5.37.0.0
-Dialog DLL:      DARMCM1.DLL V1.19.6.0
-Target DLL:      UL2CM3.DLL V1.164.7.0
-Dialog DLL:      TARMCM1.DLL V1.14.6.0
+CPU DLL:         SARMCM3.DLL V5.35.0.2
+Dialog DLL:      DARMCM1.DLL V1.19.4.0
+Target DLL:      UL2CM3.DLL V1.164.0.0
+Dialog DLL:      TARMCM1.DLL V1.14.4.0
  
 <h2>Project:</h2>
 C:\Users\zvdsteege\Documents\GitHub\Coding-for-STG-820\PLC1\MDK-ARM\STG.uvprojx
 Project File Date:  08/01/2022
 
 <h2>Output:</h2>
-*** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
-Rebuild target 'BARTH'
-Error instantiating RTE components
-Error #543: Device STM32F091CC(STMicroelectronics) not found, pack 'Keil.STM32F0xx_DFP' is not installed
-Error #541: 'ARM::CMSIS:CORE:5.5.0' component is missing (previously found in pack 'ARM.CMSIS')
+*** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin'
+Build target 'BARTH'
+compiling stm32f0xx_hal_msp.c...
+../Src/stm32f0xx_hal_msp.c(35): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Src/stm32f0xx_hal_msp.c: 0 warnings, 1 error
+compiling stm32f0xx_hal.c...
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal.c(54): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal.c: 0 warnings, 1 error
+compiling stm32f0xx_it.c...
+../Src/stm32f0xx_it.c(34): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Src/stm32f0xx_it.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_dma.c...
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_dma.c(104): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_dma.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_i2c.c...
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_i2c.c(243): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_i2c.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_cortex.c...
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_cortex.c(101): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_cortex.c: 0 warnings, 1 error
+compiling main.c...
+../Src/main.c(38): error:  #5: cannot open source input file "main.h": No such file or directory
+  #include "main.h"
+../Src/main.c: 0 warnings, 1 error
+compiling main_hal.c...
+..\Src\main_hal.c(2): error:  #5: cannot open source input file "main.h": No such file or directory
+  #include "main.h"
+..\Src\main_hal.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_uart.c...
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart.c(158): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_pwr_ex.c...
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_pwr_ex.c(44): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_pwr_ex.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_tim.c...
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim.c(129): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_flash.c...
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash.c(102): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_i2c_ex.c...
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_i2c_ex.c(67): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_i2c_ex.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_pwr.c...
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_pwr.c(45): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_pwr.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_iwdg.c...
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_iwdg.c(108): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_iwdg.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_adc_ex.c...
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_adc_ex.c(52): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_adc_ex.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_tim_ex.c...
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim_ex.c(100): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim_ex.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_uart_ex.c...
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart_ex.c(57): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart_ex.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_rcc.c...
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc.c(81): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_can.c...
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_can.c(102): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_can.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_flash_ex.c...
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash_ex.c(61): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash_ex.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_rcc_ex.c...
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc_ex.c(44): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc_ex.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_adc.c...
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_adc.c(258): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_adc.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_gpio.c...
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_gpio.c(129): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+../Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_gpio.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_dac.c...
+..\Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_dac.c(200): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+..\Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_dac.c: 0 warnings, 1 error
+compiling stm32f0xx_hal_dac_ex.c...
+..\Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_dac_ex.c(56): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+..\Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_dac_ex.c: 0 warnings, 1 error
+assembling startup_stm32f091xc.s...
+compiling CO_Emergency.c...
+..\CANopenNode-master\stack\CO_driver.h(59): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+..\CANopenNode-master\stack\CO_Emergency.c: 0 warnings, 1 error
+compiling CO_HBconsumer.c...
+..\CANopenNode-master\stack\CO_driver.h(59): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+..\CANopenNode-master\stack\CO_HBconsumer.c: 0 warnings, 1 error
+compiling CO_NMT_Heartbeat.c...
+..\CANopenNode-master\stack\CO_driver.h(59): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+..\CANopenNode-master\stack\CO_NMT_Heartbeat.c: 0 warnings, 1 error
+compiling CO_PDO.c...
+..\CANopenNode-master\stack\CO_driver.h(59): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+..\CANopenNode-master\stack\CO_PDO.c: 0 warnings, 1 error
+compiling CO_SDO.c...
+..\CANopenNode-master\stack\CO_driver.h(59): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+..\CANopenNode-master\stack\CO_SDO.c: 0 warnings, 1 error
+compiling CO_SDOmaster.c...
+..\CANopenNode-master\stack\CO_driver.h(59): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+..\CANopenNode-master\stack\CO_SDOmaster.c: 0 warnings, 1 error
+compiling CO_trace.c...
+..\CANopenNode-master\stack\CO_driver.h(59): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+..\CANopenNode-master\stack\CO_trace.c: 0 warnings, 1 error
+compiling CO_SYNC.c...
+..\CANopenNode-master\stack\CO_driver.h(59): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+..\CANopenNode-master\stack\CO_SYNC.c: 0 warnings, 1 error
+compiling CO_OD.c...
+..\CANopenNode-master\example\CO_OD.c(53): error:  #5: cannot open source input file "CO_driver.h": No such file or directory
+  #include "CO_driver.h"
+..\CANopenNode-master\example\CO_OD.c: 0 warnings, 1 error
+compiling CANopen.c...
+..\CANopenNode-master\CANopen.h(75): error:  #5: cannot open source input file "CO_driver.h": No such file or directory
+      #include "CO_driver.h"
+..\CANopenNode-master\CANopen.c: 0 warnings, 1 error
+compiling CO_driver.c...
+..\CANopenNode-master\stack\CO_driver.h(59): error:  #5: cannot open source input file "stm32f0xx_hal.h": No such file or directory
+  #include "stm32f0xx_hal.h"
+..\CANopenNode-master\stack\CO_driver.c: 0 warnings, 1 error
+compiling crc16-ccitt.c...
+compiling system_stm32f0xx.c...
+".\STG.axf" - 37 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
+Package Vendor: ARM
+                http://www.keil.com/pack/ARM.CMSIS.5.9.0.pack
+                ARM.CMSIS.5.9.0
+                CMSIS (Common Microcontroller Software Interface Standard)
+   * Component: CORE Version: 5.6.0
+
+Package Vendor: Keil
+                https://www.keil.com/pack/Keil.STM32F0xx_DFP.2.1.1.pack
+                Keil.STM32F0xx_DFP.2.1.1
+                STMicroelectronics STM32F0 Series Device Support, Drivers and Examples
+
 <h2>Collection of Component include folders:</h2>
   ./RTE/_BARTH
+  C:/Users/zvdsteege/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include
+  C:/Users/zvdsteege/AppData/Local/Arm/Packs/Keil/STM32F0xx_DFP/2.1.1/Drivers/CMSIS/Device/ST/STM32F0xx/Include
 
 <h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE:5.6.0
 Target not created.
-Build Time Elapsed:  00:00:00
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>

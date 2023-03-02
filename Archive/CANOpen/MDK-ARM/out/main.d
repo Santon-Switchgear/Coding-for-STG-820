@@ -7,14 +7,14 @@
 .\out\main.o: ../Drivers/CMSIS/Device/ST/STM32F0xx/Include/stm32f0xx.h
 .\out\main.o: ../Drivers/CMSIS/Device/ST/STM32F0xx/Include/stm32f091xc.h
 .\out\main.o: ../Drivers/CMSIS/Include/core_cm0.h
-.\out\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\out\main.o: C:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
 .\out\main.o: ../Drivers/CMSIS/Include/core_cmInstr.h
 .\out\main.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
 .\out\main.o: ../Drivers/CMSIS/Include/core_cmFunc.h
 .\out\main.o: ../Drivers/CMSIS/Device/ST/STM32F0xx/Include/system_stm32f0xx.h
 .\out\main.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal.h
 .\out\main.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-.\out\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\out\main.o: C:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
 .\out\main.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_rcc_ex.h
 .\out\main.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_gpio.h
 .\out\main.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_gpio_ex.h
@@ -41,7 +41,7 @@
 .\out\main.o: ../Inc/main_hal.h
 .\out\main.o: ../Drivers/CMSIS/Include/CANopen.h
 .\out\main.o: ../Drivers/CMSIS/Include/CO_driver.h
-.\out\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\out\main.o: C:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdbool.h
 .\out\main.o: ..\CANopenNode-master\example\CO_OD.h
 .\out\main.o: ..\CANopenNode-master\stack\CO_SDO.h
 .\out\main.o: ..\CANopenNode-master\stack\CO_Emergency.h
@@ -49,7 +49,7 @@
 .\out\main.o: ..\CANopenNode-master\stack\CO_SYNC.h
 .\out\main.o: ..\CANopenNode-master\stack\CO_PDO.h
 .\out\main.o: ..\CANopenNode-master\stack\CO_HBconsumer.h
-.\out\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
-.\out\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\out\main.o: C:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdlib.h
+.\out\main.o: C:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
 .\out\main.o: ../Drivers/CMSIS/Include/stm32f0xx_hal_dac_ex.c
 .\out\main.o: ../Src/stm32f0xx_hal_dac.c
